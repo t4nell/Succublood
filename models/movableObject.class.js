@@ -8,6 +8,7 @@ class MovableObject {
     speed = 0.15;
     zoom = 1;
     offsetX = 0; 
+    otherDirection = false;
 
     loadImage(path) {
         this.img = new Image();
@@ -38,6 +39,7 @@ class MovableObject {
     moveRight() {
         console.log('hi');
     }
+
 
     moveLeft() {
         setInterval(() => {
