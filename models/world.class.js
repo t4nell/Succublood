@@ -1,28 +1,6 @@
 class World {
     character = new Character();  
-    enemies = [
-        new Demon(),
-        new Demon(),
-        new Demon(),
-    ];
-    sky = new Sky();
-    backgroundObjects = [
-        new BackgroundObject('img/background/graves.png', 0, 0),
-        new BackgroundObject('img/background/backTrees.png', 0, 0),
-        new BackgroundObject('img/background/crypt.png', 0, 0),
-        new BackgroundObject('img/background/wall.png', 0, 0),
-        new BackgroundObject('img/background/ground.png', 0, 0),
-        new BackgroundObject('img/background/tree.png', 0, 0),
-        new BackgroundObject('img/background/bones.png', 0, 0),
-
-        new BackgroundObject('img/background/graves.png', 1344, 0),
-        new BackgroundObject('img/background/backTrees.png', 1344, 0),
-        new BackgroundObject('img/background/crypt.png', 1344, 0),
-        new BackgroundObject('img/background/wall.png', 1344, 0),
-        new BackgroundObject('img/background/ground.png', 1344, 0),
-        new BackgroundObject('img/background/tree.png', 1344, 0),
-        new BackgroundObject('img/background/bones.png', 1344, 0),
-    ];
+    level = level_1;
     canvas;
     ctx;
     keyboard;
@@ -39,11 +17,14 @@ class World {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         this.ctx.translate(this.cameraX, 0)
-        this.addToMap(this.sky);
-        this.addObjectsToMap(this.backgroundObjects);
+
+        this.addObjectsToMap(this.level.sky);
+        this.addObjectsToMap(this.level.backgroundObjects);
         this.addToMap(this.character);
-        this.addObjectsToMap(this.enemies);
+        this.addObjectsToMap(this.level.enemies);
+        
         this.ctx.translate(-this.cameraX, 0)
 
 
@@ -69,7 +50,7 @@ class World {
     addToMap(mo) {
         if(mo.otherDirection) {
             this.ctx.save();
-            this.ctx.translate(mo.width / 6, 0);
+            this.ctx.translate(mo.offsetX / 6, 0);
             this.ctx.scale(-1, 1);
             mo.x = mo.x * -1;
         }

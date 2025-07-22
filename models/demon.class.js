@@ -1,5 +1,5 @@
 class Demon extends MovableObject {
-        IMAGES_IDLE = [
+    IMAGES_WALK = [
         {path:'img/enemies/demon1/walk/walk10.png',width: 44, height: 69, offsetX: -22}, 
         {path:'img/enemies/demon1/walk/walk9.png',width: 40, height: 70, offsetX: -20}, 
         {path:'img/enemies/demon1/walk/walk8.png',width: 31, height: 71, offsetX: -15.5}, 
@@ -17,10 +17,10 @@ class Demon extends MovableObject {
 
     constructor() {
         super().loadImage('img/enemies/demon1/idle/idle1.png');
-        this.loadImages(this.IMAGES_IDLE.map(sprite => sprite.path));
-        this.x = 450 + Math.random() * 800;
+        this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
+        this.x = 450 + Math.random() * 2000;
         this.y = 405;
-        this.speed = 0.15 + Math.random() * 1;
+        this.speed = 0.15 + Math.random() * 1.5;
 
         this.animate();
     }
@@ -31,10 +31,7 @@ class Demon extends MovableObject {
         this.moveLeft();
 
         setInterval(() => {
-            let i = this.currentImage % this.IMAGES_IDLE.length;
-            let sprite = this.IMAGES_IDLE[i];
-            this.swapImg(sprite);
-            this.currentImage++;
+            this.animateImages(this.IMAGES_WALK)
         }, 200);
         
     }

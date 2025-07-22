@@ -1,8 +1,9 @@
 class Sky extends MovableObject {
-    constructor() {
-        super().loadImage('img/background/sky.png'); 
-        this.x = 0;
-        this.y = 0;
+    zoom = 0.7;
+    constructor(imagePath, x, y) {
+        super().loadImage(imagePath);
+        this.x = x;
+        this.y = y;
         this.skyAnimation();
     }
 

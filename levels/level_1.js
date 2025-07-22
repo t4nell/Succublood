@@ -1,0 +1,56 @@
+const level_1 = new level (
+    [
+        new Demon(),
+        new Demon(),
+        new Demon(),
+        new Demon(),
+        new Demon(),
+        new Demon(),
+        new Demon(),
+        new Demon(),
+        new Demon(),
+        new Demon(),
+        new Endboss()
+    ],
+
+    [
+        new Sky('img/background/sky.png', -1344, 0),
+        new Sky('img/background/sky.png', 0, 0),
+        new Sky('img/background/sky.png', 1343, 0),
+        new Sky('img/background/sky.png', 2687, 0)
+    ],
+
+    [
+        new BackgroundObject('img/background/graves.png', -1344, 0),
+        new BackgroundObject('img/background/backTrees.png', -1344, 0),
+        // new BackgroundObject('img/background/crypt.png', -1344, 0),
+        new BackgroundObject('img/background/wall.png', -1344, 0),
+        new BackgroundObject('img/background/ground.png', -1344, 0),
+        // new BackgroundObject('img/background/tree.png', -1344, 0),
+        new BackgroundObject('img/background/bones.png', -1344, 0),
+
+        new BackgroundObject('img/background/graves.png', 0, 0),
+        new BackgroundObject('img/background/backTrees.png', 0, 0),
+        new BackgroundObject('img/background/crypt.png', 0, 0),
+        new BackgroundObject('img/background/wall.png', 0, 0),
+        new BackgroundObject('img/background/ground.png', 0, 0),
+        new BackgroundObject('img/background/tree.png', 0, 0),
+        new BackgroundObject('img/background/bones.png', 0, 0),
+
+        new BackgroundObject('img/background/graves.png', 1344, 0),
+        new BackgroundObject('img/background/backTrees.png', 1344, 0),
+        // new BackgroundObject('img/background/crypt.png', 1344, 0),
+        new BackgroundObject('img/background/wall.png', 1344, 0),
+        new BackgroundObject('img/background/ground.png', 1344, 0),
+        // new BackgroundObject('img/background/tree.png', 1344, 0),
+        new BackgroundObject('img/background/bones.png', 1344, 0),
+
+        new BackgroundObject('img/background/graves.png', 2688, 0),
+        new BackgroundObject('img/background/backTrees.png', 2688, 0),
+        new BackgroundObject('img/background/crypt.png', 2688, 0),
+        new BackgroundObject('img/background/wall.png', 2688, 0),
+        new BackgroundObject('img/background/ground.png', 2688, 0),
+        new BackgroundObject('img/background/tree.png', 2688, 0),
+        new BackgroundObject('img/background/bones.png', 2688, 0),
+    ]
+);

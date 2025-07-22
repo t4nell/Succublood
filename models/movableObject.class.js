@@ -31,8 +31,14 @@ class MovableObject {
             let img = new Image();
             img.src = path;
             this.imageCash[path] = img;
-        });
-        
+        });  
+    }
+
+    animateImages(images) {
+        let i = this.currentImage % this.IMAGES_WALK.length;
+        let sprite = images[i];
+        this.swapImg(sprite);
+        this.currentImage++;
     }
 
 

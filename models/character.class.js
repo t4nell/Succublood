@@ -29,10 +29,9 @@ class Character extends MovableObject {
     constructor() {
         super().loadImage('img/character/idle/idle1.png');
         this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
-        this.x = 120;
+        this.x = 200;
         this.y = 405;
-        this.height = 75;
-        this.width = 68;
+        this.offsetX = -34 * this.zoom;
 
         this.animate();
     }
@@ -42,25 +41,22 @@ class Character extends MovableObject {
 
         setInterval(() => {
 
-            if (this.world.keyboard.RIGHT) {
+            if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
                 this.x += this.speed;
                 this.otherDirection = false;
             }
             
-            if (this.world.keyboard.LEFT) {
+            if (this.world.keyboard.LEFT && this.x > 0) {
                 this.otherDirection = true;
                 this.x -= this.speed;
             }
-            this.world.cameraX = -this.x;
+            this.world.cameraX = -this.x + 200;
         }, 1000 / 60); 
 
         setInterval(() => {
 
             if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                let i = this.currentImage % this.IMAGES_WALK.length;
-                let sprite = this.IMAGES_WALK[i];
-                this.swapImg(sprite);
-                this.currentImage++;
+                this.animateImages(this.IMAGES_WALK)
             }
         }, 1000 / 60); 
     }
