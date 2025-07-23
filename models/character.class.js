@@ -1,11 +1,11 @@
 class Character extends MovableObject {
     IMAGES_IDLE = [
-        {path:'img/character/idle/idle1.png',width: 68, height: 75, offsetX: -34}, 
-        {path:'img/character/idle/idle2.png',width: 68, height: 75, offsetX: -34}, 
-        {path:'img/character/idle/idle3.png',width: 68, height: 75, offsetX: -34}, 
-        {path:'img/character/idle/idle4.png',width: 68, height: 75, offsetX: -34}, 
-        {path:'img/character/idle/idle5.png',width: 68, height: 75, offsetX: -34}, 
-        {path:'img/character/idle/idle6.png',width: 68, height: 75, offsetX: -34}
+        {path:'img/character/idle/idle1.png',width: 68, height: 75, offsetX: -37}, 
+        {path:'img/character/idle/idle2.png',width: 68, height: 75, offsetX: -38}, 
+        {path:'img/character/idle/idle3.png',width: 68, height: 75, offsetX: -39}, 
+        {path:'img/character/idle/idle4.png',width: 68, height: 75, offsetX: -40}, 
+        {path:'img/character/idle/idle5.png',width: 68, height: 75, offsetX: -38}, 
+        {path:'img/character/idle/idle6.png',width: 68, height: 75, offsetX: -36}
     ]; 
     IMAGES_WALK = [
         {path:'img/character/walk/walk1.png',width: 52, height: 72, offsetX: -34},  
@@ -28,11 +28,12 @@ class Character extends MovableObject {
 
     constructor() {
         super().loadImage('img/character/idle/idle1.png');
+        this.loadImages(this.IMAGES_IDLE.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
         this.x = 200;
-        this.y = 405;
+        this.y = 400;
         this.offsetX = -34 * this.zoom;
-
+        this.applyGravity();
         this.animate();
     }
 
@@ -42,27 +43,26 @@ class Character extends MovableObject {
         setInterval(() => {
 
             if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
-                this.x += this.speed;
-                this.otherDirection = false;
+                this.moveRight();
             }
             
             if (this.world.keyboard.LEFT && this.x > 0) {
-                this.otherDirection = true;
-                this.x -= this.speed;
+                this.moveLeft();
             }
-            this.world.cameraX = -this.x + 200;
+
+            if (this.world.keyboard.UP && !this.isAboveGround()) {
+                this.jump();
+            }
+            this.moveCamera();
         }, 1000 / 60); 
 
         setInterval(() => {
-
             if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                this.animateImages(this.IMAGES_WALK)
-            }
-        }, 1000 / 60); 
-    }
-
-    jump() {
-
+                this.animateImages(this.IMAGES_WALK);
+            } else {
+                this.animateImages(this.IMAGES_IDLE);
+            }    
+        }, 1000 / 10);
     }
 
 };

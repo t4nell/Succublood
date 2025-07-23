@@ -19,19 +19,21 @@ class Demon extends MovableObject {
         super().loadImage('img/enemies/demon1/idle/idle1.png');
         this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
         this.x = 450 + Math.random() * 2000;
-        this.y = 405;
-        this.speed = 0.15 + Math.random() * 1.5;
-
+        this.y = 410;
+        this.speed = 0.25 + Math.random() * 1.5;
+        this.applyGravity();
         this.animate();
     }
 
 
     animate() {
+        setInterval(() => {
+            this.moveLeft();
+        }, 1000 / 60);   
         
-        this.moveLeft();
 
         setInterval(() => {
-            this.animateImages(this.IMAGES_WALK)
+            this.animateImages(this.IMAGES_WALK);
         }, 200);
         
     }
