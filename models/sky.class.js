@@ -1,4 +1,5 @@
 class Sky extends MovableObject {
+    speed = 0.25;
     zoom = 0.7;
     constructor(imagePath, x, y) {
         super().loadImage(imagePath);
@@ -9,7 +10,9 @@ class Sky extends MovableObject {
 
 
     skyAnimation() {
-        this.moveLeft();
+        setInterval(() => {
+            this.x -= this.speed;
+        }, 1000 / 60);
     }
     
 
