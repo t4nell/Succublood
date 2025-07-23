@@ -18,12 +18,12 @@ class Demon extends MovableObject {
     constructor() {
         super().loadImage('img/enemies/demon1/idle/idle1.png');
         this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
-        this.x = 450 + Math.random() * 2000;
+        this.x = 1000 + Math.random() * 4000;
         this.y = 410;
         this.speed = 0.25 + Math.random() * 1.5;
         this.applyGravity();
         this.animate();
-    }
+    };
 
 
     animate() {
@@ -35,7 +35,6 @@ class Demon extends MovableObject {
         setInterval(() => {
             this.animateImages(this.IMAGES_WALK);
         }, 200);
-        
-    }
+    };
 };
 

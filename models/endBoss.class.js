@@ -18,11 +18,11 @@ class Endboss extends MovableObject {
         this.x = 3500;
         this.y = 250;
         this.animate();
-    }
+    };
 
    animate() {
         setInterval(() => {
-            this.animateImages(this.IMAGES_WALK)
+            this.animateImages(this.IMAGES_WALK);
         }, 1000 / 60);
-    }
+    };
 };

@@ -35,7 +35,7 @@ class Character extends MovableObject {
         this.offsetX = -34 * this.zoom;
         this.applyGravity();
         this.animate();
-    }
+    };
 
     
     animate() {
@@ -44,15 +44,15 @@ class Character extends MovableObject {
 
             if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
                 this.moveRight();
-            }
+            };
             
             if (this.world.keyboard.LEFT && this.x > 0) {
                 this.moveLeft();
-            }
+            };
 
             if (this.world.keyboard.UP && !this.isAboveGround()) {
                 this.jump();
-            }
+            };
             this.moveCamera();
         }, 1000 / 60); 
 
@@ -61,9 +61,9 @@ class Character extends MovableObject {
                 this.animateImages(this.IMAGES_WALK);
             } else {
                 this.animateImages(this.IMAGES_IDLE);
-            }    
+            };  
         }, 1000 / 10);
-    }
+    };
 
 };
 

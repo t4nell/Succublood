@@ -10,9 +10,24 @@ const level_1 = new level (
         new Demon(),
         new Demon(),
         new Demon(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
+        new Crow(),
         new Endboss()
     ],
-
+        
     [
         new Sky('img/background/sky.png', -1344, 0),
         new Sky('img/background/sky.png', 0, 0),
