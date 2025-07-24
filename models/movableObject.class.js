@@ -11,20 +11,48 @@ class MovableObject {
     otherDirection = false;
     speedY = 0;
     acceleration = 2.5;
+    HP = 100;
+    lastHit = 0;
     
     draw(ctx) {
         ctx.drawImage(this.img, this.x + this.offsetX, this.y, this.width, this.height); 
     };
 
     drawBorder(ctx){
-        ctx.beginPath();
-        ctx.lineWidth = '5';
-        ctx.strokeStyle = 'blue';
-        ctx.rect(this.x + this.offsetX, this.y,  this.width, this.height);
-        ctx.stroke();
+        if (this instanceof Character || this instanceof Demon) {
+            ctx.beginPath();
+            ctx.lineWidth = '5';
+            ctx.strokeStyle = 'blue';
+            ctx.rect(this.x + this.offsetX, this.y,  this.width, this.height);
+            ctx.stroke();
+        };
     };
 
+    isColliding(mo) {
+        return this.x + mo.offsetX + this.width > mo.x && 
+        this.y + this.height > mo.y &&
+        this.x + mo.offsetX < mo.x + mo.width &&
+        this.y < mo.y + mo.height;
+    };
 
+    hit() {
+        this.HP -= 5;
+        if (this.HP < 0) {
+           this.HP = 0 
+        } else {
+            this.lastHit = new Date().getTime();
+        };
+    };
+
+    isHurt() {
+        let timepassed = new Date().getTime() - this.lastHit;
+        timepassed = timepassed / 1000;
+        return timepassed < 0.4;
+    }
+
+    isDead() {
+        return this.HP == 0;
+    };
     
 
     applyGravity() {
