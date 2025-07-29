@@ -1,23 +1,13 @@
-class MovableObject {
-    x;
-    y;
-    img;
-    height;
-    width;
-    imageCash = {};
+class MovableObject extends DrawableObject{
     speed = 0.15;
     zoom = 1;
-    offsetX = 0; 
     otherDirection = false;
     speedY = 0;
     acceleration = 2.5;
     HP = 100;
     lastHit = 0;
     
-    draw(ctx) {
-        ctx.drawImage(this.img, this.x + this.offsetX, this.y, this.width, this.height); 
-    };
-
+    
     drawBorder(ctx){
         if (this instanceof Character || this instanceof Demon) {
             ctx.beginPath();
@@ -28,6 +18,7 @@ class MovableObject {
         };
     };
 
+
     isColliding(mo) {
         return this.x + mo.offsetX + this.width > mo.x && 
         this.y + this.height > mo.y &&
@@ -35,8 +26,9 @@ class MovableObject {
         this.y < mo.y + mo.height;
     };
 
+
     hit() {
-        this.HP -= 5;
+        this.HP -= 20;
         if (this.HP < 0) {
            this.HP = 0 
         } else {
@@ -44,11 +36,13 @@ class MovableObject {
         };
     };
 
+
     isHurt() {
         let timepassed = new Date().getTime() - this.lastHit;
         timepassed = timepassed / 1000;
         return timepassed < 0.4;
-    }
+    };
+
 
     isDead() {
         return this.HP == 0;
@@ -69,15 +63,6 @@ class MovableObject {
         return this.y < 400;
     };
 
-
-    loadImage(path) {
-        this.img = new Image();
-        this.img.onload = () => {
-            this.width = this.img.width * this.zoom;
-            this.height = this.img.height * this.zoom;
-        };
-        this.img.src = path;
-    };
     
     swapImg(sprite) {
         this.img = this.imageCash[sprite.path];
@@ -86,13 +71,7 @@ class MovableObject {
         this.offsetX = sprite.offsetX * this.zoom;
     };
     
-    loadImages(arr) {
-        arr.forEach(path => {
-            let img = new Image();
-            img.src = path;
-            this.imageCash[path] = img;
-        });  
-    };
+    
 
     animateImages(images) {
         let i = this.currentImage % images.length;
@@ -113,9 +92,11 @@ class MovableObject {
         this.x -= this.speed; 
     };
 
+
     jump() {
         this.speedY = 35;
     };
+
 
     moveCamera() {
         this.world.cameraX = -this.x + 200;

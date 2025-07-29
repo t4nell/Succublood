@@ -1,4 +1,5 @@
 class World {
+    statusBar = new StatusBar(); //HP
     character = new Character();  
     level = level_1;
     canvas;
@@ -18,9 +19,9 @@ class World {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
+        
         this.ctx.translate(this.cameraX, 0);
-
+        
         this.addObjectsToMap(this.level.sky);
         this.addObjectsToMap(this.level.enemies.filter(e => e instanceof Crow));
         this.addObjectsToMap(this.level.backgroundObjects);
@@ -28,6 +29,8 @@ class World {
         this.addObjectsToMap(this.level.enemies.filter(e => !(e instanceof Crow)));
         
         this.ctx.translate(-this.cameraX, 0);
+        
+        this.statusBar.draw(this.ctx); //HP
 
 
         let self = this;
@@ -46,8 +49,7 @@ class World {
             this.level.enemies.forEach((enemy) => {
                 if (this.character.isColliding(enemy)) {
                     this.character.hit();  
-                    console.log('boom', this.character.HP);
-                    
+                    this.statusBar.setPercentage(this.character.HP); //HP
                 }
             });
         }, 200);
