@@ -87,5 +87,13 @@ const level_1 = new level (
         new BackgroundObject('img/background/ground.png', 1344 * 4, 0),
         new BackgroundObject('img/background/tree.png', 1344 * 4, 0),
         new BackgroundObject('img/background/bones.png', 1344 * 4, 0),
+
+        new BackgroundObject('img/background/graves.png', 1344 * 5, 0),
+        new BackgroundObject('img/background/backTrees.png', 1344 * 5, 0),
+        // new BackgroundObject('img/background/crypt.png', 1344 * 5, 0),
+        new BackgroundObject('img/background/wall.png', 1344 * 5, 0),
+        new BackgroundObject('img/background/ground.png', 1344 * 5, 0),
+        // new BackgroundObject('img/background/tree.png', 1344 * 5, 0),
+        new BackgroundObject('img/background/bones.png', 1344 * 5, 0),
     ]
 );
