@@ -8,7 +8,7 @@ class DrawableObject {
     imageCash = {};
     
     draw(ctx) {
-        ctx.drawImage(this.img, this.x + this.offsetX, this.y, this.width, this.height); 
+        ctx.drawImage(this.img, this.x + this.offsetX, this.y - this.height, this.width, this.height); 
     };
 
     loadImage(path) {

@@ -23,13 +23,14 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         this.addObjectsToMap(this.level.sky);
-        this.addObjectsToMap(this.level.enemies.filter(e => e instanceof Crow));
+        this.addObjectsToMap(this.level.backgroundCrows);
+
         this.ctx.translate(this.cameraX, 0);
         
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addToMap(this.character);
         this.addObjectsToMap(this.throwableObject);
-        this.addObjectsToMap(this.level.enemies.filter(e => !(e instanceof Crow)));
+        this.addObjectsToMap(this.level.enemies);
         
         this.ctx.translate(-this.cameraX, 0);
         
@@ -50,19 +51,29 @@ class World {
         };
     };
 
+
     run() {
         setInterval(() => {
             this.checkCollisions();
+        }, 300);
+
+        setInterval(() => {
             this.checkThrowObjects();
-        }, 200);
+        }, 125);
+        
+        setInterval(() => {
+            this.checkSkullCollisions();
+        }, 25);
     };
+
 
     checkThrowObjects() {
         if (this.keyboard.SPACE) {
             let skull = new ThrowableObject(this.character.x + 34, this.character.y + 34);
             this.throwableObject.push(skull);
-        };
+        }
     };
+
 
     checkCollisions() {
         this.level.enemies.forEach((enemy) => {
@@ -71,7 +82,51 @@ class World {
                 this.statusBar.setPercentage(this.character.HP);
             }
         });
-    }
+    };
+
+
+    checkSkullCollisions() {
+        this.throwableObject.forEach(skull => {
+            this.level.enemies.forEach(enemy => {
+                if (skull.isColliding(enemy)) {
+                    // Schädel sofort entfernen
+                    this.removeSkull(skull);
+                    
+                    // Demon verliert HP
+                    if (enemy instanceof Demon) {
+                        enemy.getHit(); // Verwendet neues HP-System
+                        
+                        // Nur entfernen wenn tot
+                        if (enemy.isDead()) {
+                            setTimeout(() => {
+                                this.removeEnemy(enemy);
+                            }, enemy.IMAGES_DEAD.length * 200);
+                        }
+                    } else {
+                        // Andere Gegner sofort entfernen
+                        this.removeEnemy(enemy);
+                    }
+                }
+            });
+        });
+    };
+
+
+    removeEnemy(enemy) {
+        let index = this.level.enemies.indexOf(enemy);
+        if (index > -1) {
+            this.level.enemies.splice(index, 1);
+        }
+    };
+
+
+    removeSkull(skull) {
+        let index = this.throwableObject.indexOf(skull);
+        if (index > -1) {
+            this.throwableObject.splice(index, 1);
+        }
+    };
+
 
     addObjectsToMap(objects) {
         objects.forEach(o => {

@@ -13,7 +13,7 @@ class ThrowableObject extends MovableObject {
         super().loadImage('img/skull/skull1.png');
         this.loadImages(this.IMAGES_skull.map(sprite => sprite.path));
         this.x = x;
-        this.y = y;
+        this.y = y - 100;
         this.height = 24;
         this.width = 18;
         this.offsetX = -9;
@@ -29,7 +29,7 @@ class ThrowableObject extends MovableObject {
 
 
     throw() {
-        this.speedY = 15;
+        this.speedY = 20;
         this.applyGravity();
         setInterval(() => {
             this.x += 30;

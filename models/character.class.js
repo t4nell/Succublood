@@ -47,7 +47,7 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_DEAD.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_HURT.map(sprite => sprite.path));
         this.x = 200;
-        this.y = 430;
+        this.y = 500;
         this.offsetX = -34 * this.zoom;
         this.speed = settings.characterSpeed;
         this.applyGravity();

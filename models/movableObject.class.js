@@ -13,17 +13,17 @@ class MovableObject extends DrawableObject{
             ctx.beginPath();
             ctx.lineWidth = '5';
             ctx.strokeStyle = 'blue';
-            ctx.rect(this.x + this.offsetX, this.y,  this.width, this.height);
+            ctx.rect(this.x + this.offsetX, this.y - this.height,  this.width, this.height);
             ctx.stroke();
         };
     };
 
 
     isColliding(mo) {
-        return this.x + mo.offsetX + this.width > mo.x && 
-        this.y + this.height > mo.y &&
-        this.x + mo.offsetX < mo.x + mo.width &&
-        this.y < mo.y + mo.height;
+        return this.x + this.offsetX + this.width > mo.x + mo.offsetX && 
+        this.y > mo.y - mo.height &&
+        this.x + this.offsetX < mo.x + mo.offsetX + mo.width &&
+        this.y - this.height < mo.y;
     };
 
 
@@ -40,7 +40,7 @@ class MovableObject extends DrawableObject{
     isHurt() {
         let timepassed = new Date().getTime() - this.lastHit;
         timepassed = timepassed / 1000;
-        return timepassed < 0.4;
+        return timepassed < 0.3;
     };
 
 
@@ -63,7 +63,7 @@ class MovableObject extends DrawableObject{
         if (this instanceof ThrowableObject) {
             return true;
         }else {
-            return this.y < 400;
+            return this.y < 500;
         }
     };
 
