@@ -39,7 +39,6 @@ class Character extends MovableObject {
     world;
     currentImage = 0;
     zoom = 2;
-    speed = 10;
 
     constructor() {
         super().loadImage('img/character/idle/idle1.png');
@@ -48,8 +47,9 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_DEAD.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_HURT.map(sprite => sprite.path));
         this.x = 200;
-        this.y = 400;
+        this.y = 430;
         this.offsetX = -34 * this.zoom;
+        this.speed = settings.characterSpeed;
         this.applyGravity();
         this.animate();
     };
@@ -61,15 +61,19 @@ class Character extends MovableObject {
 
             if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
                 this.moveRight();
-            };
+            }else if (this.world.keyboard.RIGHT && this.x === this.world.level.levelEndX) {
+                this.world.keyboard.RIGHT = false;
+            }
             
-            if (this.world.keyboard.LEFT && this.x > 0) {
+            if (this.world.keyboard.LEFT && this.x > this.world.level.levelStartX) {
                 this.moveLeft();
-            };
+            }else if (this.world.keyboard.LEFT && this.x === this.world.level.levelStartX) {
+                this.world.keyboard.LEFT = false;
+            }
 
             if (this.world.keyboard.UP && !this.isAboveGround()) {
                 this.jump();
-            };
+            }
             this.moveCamera();
         }, 1000 / 60); 
 

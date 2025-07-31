@@ -60,7 +60,11 @@ class MovableObject extends DrawableObject{
 
     
     isAboveGround() {
-        return this.y < 400;
+        if (this instanceof ThrowableObject) {
+            return true;
+        }else {
+            return this.y < 400;
+        }
     };
 
     
@@ -72,7 +76,6 @@ class MovableObject extends DrawableObject{
     };
     
     
-
     animateImages(images) {
         let i = this.currentImage % images.length;
         let sprite = images[i];
@@ -99,7 +102,7 @@ class MovableObject extends DrawableObject{
 
 
     moveCamera() {
-        this.world.cameraX = -this.x + 200;
+        this.world.cameraX = -this.x + settings.characterOffsetLeft;
     };
 };
 

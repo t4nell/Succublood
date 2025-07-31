@@ -5,18 +5,15 @@ let keyboard = new Keyboard();
 function init() {
     canvas = document.getElementById('canvas');
     world = new World(canvas, keyboard);
-
-    console.log('My Character is', world.character);
-    
 };
 
 
 window.addEventListener('keydown', (event) => {
-    if (event.keyCode == 68) {
+    if (event.keyCode == 68 && world.cameraX - settings.characterOffsetLeft > -world.level.levelEndX) {
         keyboard.RIGHT = true;
     } 
     
-    if (event.keyCode == 65) {
+    if (event.keyCode == 65 && world.cameraX - settings.characterOffsetLeft < -world.level.levelStartX) {
         keyboard.LEFT = true;
     } 
     

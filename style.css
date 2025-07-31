@@ -1,7 +1,27 @@
+@font-face {
+    font-family: 'antiquityPrint';
+    src: url('font/antiquityPrint.ttf') format('truetype');
+}
+
 body {
     display: flex;
+    gap: 32px;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    margin: 0;
+    height: 100vh;
+    background-image: url('img/bodyBackground/bodyBackground.png');
+    background-position: center;
+    background-size: cover;
+    font-family: 'antiquityPrint';
+}
+
+h1 {
+    font-size: 80px;
+    color: #968344;
+    text-shadow: 6px 6px 10px rgba(0, 0, 0, 0.75); 
+    margin: 0;
 }
 
 canvas {
