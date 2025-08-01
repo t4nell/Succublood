@@ -88,6 +88,7 @@ class Character extends MovableObject {
                 this.animateImages(this.IMAGES_IDLE);
             };  
         }, 1000 / 10);
+        
     };
 
 };

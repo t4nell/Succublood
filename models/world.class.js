@@ -62,15 +62,15 @@ class World {
         }, 125);
         
         setInterval(() => {
-            this.checkSkullCollisions();
+            this.checkfireballCollisions();
         }, 25);
     };
 
 
     checkThrowObjects() {
         if (this.keyboard.SPACE) {
-            let skull = new ThrowableObject(this.character.x + 34, this.character.y + 34);
-            this.throwableObject.push(skull);
+            let fireball = new ThrowableObject(this.character.x + 34, this.character.y + 34);
+            this.throwableObject.push(fireball);
         }
     };
 
@@ -85,12 +85,12 @@ class World {
     };
 
 
-    checkSkullCollisions() {
-        this.throwableObject.forEach(skull => {
+    checkfireballCollisions() {
+        this.throwableObject.forEach(fireball => {
             this.level.enemies.forEach(enemy => {
-                if (skull.isColliding(enemy)) {
+                if (fireball.isColliding(enemy)) {
                     // Schädel sofort entfernen
-                    this.removeSkull(skull);
+                    this.removefireball(fireball);
                     
                     // Demon verliert HP
                     if (enemy instanceof Demon) {
@@ -120,8 +120,8 @@ class World {
     };
 
 
-    removeSkull(skull) {
-        let index = this.throwableObject.indexOf(skull);
+    removefireball(fireball) {
+        let index = this.throwableObject.indexOf(fireball);
         if (index > -1) {
             this.throwableObject.splice(index, 1);
         }

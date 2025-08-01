@@ -70,7 +70,7 @@ class Demon extends MovableObject {
 
             setTimeout(() => {
                 this.deathAnimationComplete = true;
-            }, this.IMAGES_DEAD.length * 200);
+            }, this.IMAGES_DEAD.length * 100);
         }
     };
 
