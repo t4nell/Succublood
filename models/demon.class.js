@@ -34,8 +34,6 @@ class Demon extends MovableObject {
     ];
     currentImage = 0;
     zoom = 2;
-    isDying = false;
-    deathAnimationComplete = false;
     HP = 60;
 
     constructor() {
@@ -51,40 +49,15 @@ class Demon extends MovableObject {
     };
 
 
-    getHit() {
-        this.HP -= 20;
-        if (this.HP <= 0) {
-            this.HP = 0;
-            this.die();
-        } else {
-            this.lastHit = new Date().getTime();
-        }
-    };
-
-
-    die() {
-        if (!this.isDying) {
-            this.isDying = true;
-            this.currentImage = 0;
-            this.speed = 0;
-
-            setTimeout(() => {
-                this.deathAnimationComplete = true;
-            }, this.IMAGES_DEAD.length * 100);
-        }
-    };
-
-
     animate() {
         setInterval(() => {
-            if (!this.isDying) {
-                this.moveLeft();
-            }
+            this.moveLeft();
         }, 1000 / 60);   
         
         setInterval(() => {
             if (this.isDying) {    
                 if (this.currentImage < this.IMAGES_DEAD.length) {
+                    this.speed = 0;
                     this.animateImages(this.IMAGES_DEAD);
                 }
             } else if (this.isHurt()) {

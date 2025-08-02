@@ -46,14 +46,12 @@ class StatusBar extends DrawableObject {
     }
 
     draw(ctx) {
-        // Zeichne leere Lebensleiste
         this.IMAGES_STATUSBAR_BACKGROUND.forEach((segment, index) => {
             let img = this.imageCash[segment.path];
             ctx.drawImage(img, this.x + (index * segment.width * this.zoom), this.y, segment.width * this.zoom, segment.height * this.zoom);
         });
 
-        // Zeichne gefüllte Lebensleiste basierend auf Prozent
-        let segments = Math.ceil(this.percentage / 20); // 100% = 5 Segmente
+        let segments = Math.ceil(this.percentage / 20);
         for(let i = 0; i < segments; i++) {
             let segment = this.IMAGES_STATUSBAR_FULL[i];
             let img = this.imageCash[segment.path];

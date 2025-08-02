@@ -39,6 +39,7 @@ class Character extends MovableObject {
     world;
     currentImage = 0;
     zoom = 2;
+    HP = 100;
 
     constructor() {
         super().loadImage('img/character/idle/idle1.png');
@@ -56,33 +57,38 @@ class Character extends MovableObject {
 
     
     animate() {
-
         setInterval(() => {
+            if (!this.isDying) {
+                if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
+                    this.moveRight();
+                }else if (this.world.keyboard.RIGHT && this.x === this.world.level.levelEndX) {
+                    this.world.keyboard.RIGHT = false;
+                }
+                
+                if (this.world.keyboard.LEFT && this.x > this.world.level.levelStartX) {
+                    this.moveLeft();
+                }else if (this.world.keyboard.LEFT && this.x === this.world.level.levelStartX) {
+                    this.world.keyboard.LEFT = false;
+                }
 
-            if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
-                this.moveRight();
-            }else if (this.world.keyboard.RIGHT && this.x === this.world.level.levelEndX) {
-                this.world.keyboard.RIGHT = false;
-            }
-            
-            if (this.world.keyboard.LEFT && this.x > this.world.level.levelStartX) {
-                this.moveLeft();
-            }else if (this.world.keyboard.LEFT && this.x === this.world.level.levelStartX) {
-                this.world.keyboard.LEFT = false;
-            }
-
-            if (this.world.keyboard.UP && !this.isAboveGround()) {
-                this.jump();
-            }
-            this.moveCamera();
+                if (this.world.keyboard.UP && !this.isAboveGround()) {
+                    this.jump();
+                }
+                this.moveCamera();
+            }    
         }, 1000 / 60); 
 
         setInterval(() => {
-            if (this.isDead()) {
-                this.animateImages(this.IMAGES_DEAD);
+            if (this.isDying) {
+                if (this.currentImage < this.IMAGES_DEAD.length) {
+                    // this.speed = 0;
+                    this.animateImages(this.IMAGES_DEAD);
+                }
             } else if (this.isHurt()) {
+                // this.speed = 0;
                 this.animateImages(this.IMAGES_HURT);
             } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+                // this.speed = settings.characterSpeed;
                 this.animateImages(this.IMAGES_WALK);
             } else {
                 this.animateImages(this.IMAGES_IDLE);

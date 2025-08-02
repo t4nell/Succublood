@@ -9,11 +9,11 @@ function init() {
 
 
 window.addEventListener('keydown', (event) => {
-    if (event.keyCode == 68 && world.cameraX - settings.characterOffsetLeft > -world.level.levelEndX) {
+    if (event.keyCode == 68 && world.cameraX - settings.characterOffsetLeft > -world.level.levelEndX && !world.character.isDying) {
         keyboard.RIGHT = true;
     } 
     
-    if (event.keyCode == 65 && world.cameraX - settings.characterOffsetLeft < -world.level.levelStartX) {
+    if (event.keyCode == 65 && world.cameraX - settings.characterOffsetLeft < -world.level.levelStartX && !world.character.isDying) {
         keyboard.LEFT = true;
     } 
     

@@ -4,8 +4,9 @@ class MovableObject extends DrawableObject{
     otherDirection = false;
     speedY = 0;
     acceleration = 2.5;
-    HP = 100;
     lastHit = 0;
+    isDying = false;
+    deathAnimationComplete = false;
     
     
     drawBorder(ctx){
@@ -29,8 +30,9 @@ class MovableObject extends DrawableObject{
 
     hit() {
         this.HP -= 20;
-        if (this.HP < 0) {
+        if (this.HP <= 0) {
            this.HP = 0 
+           this.die();
         } else {
             this.lastHit = new Date().getTime();
         };
@@ -38,14 +40,26 @@ class MovableObject extends DrawableObject{
 
 
     isHurt() {
-        let timepassed = new Date().getTime() - this.lastHit;
-        timepassed = timepassed / 1000;
-        return timepassed < 0.3;
+        let timePassed = new Date().getTime() - this.lastHit;
+        timePassed = timePassed / 1000;
+        return timePassed < 0.3;
     };
 
 
     isDead() {
         return this.HP == 0;
+    };
+
+
+    die() {
+        if (!this.isDying) {
+            this.isDying = true;
+            this.currentImage = 0;
+
+            setTimeout(() => {
+                this.deathAnimationComplete = true;
+            }, this.IMAGES_DEAD.length * 100);
+        }
     };
     
 

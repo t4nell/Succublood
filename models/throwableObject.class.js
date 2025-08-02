@@ -1,17 +1,17 @@
 class ThrowableObject extends MovableObject {
     IMAGES_fireball = [
-        {path:'img/fireball/fireball1.png', width: 18, height: 24, offsetX: -9},
-        {path:'img/fireball/fireball2.png', width: 18, height: 24, offsetX: -9},
-        {path:'img/fireball/fireball3.png', width: 18, height: 24, offsetX: -9},
-        {path:'img/fireball/fireball4.png', width: 18, height: 24, offsetX: -9},
-        {path:'img/fireball/fireball5.png', width: 18, height: 24, offsetX: -9},
-        {path:'img/fireball/fireball6.png', width: 18, height: 24, offsetX: -9},
-        {path:'img/fireball/fireball7.png', width: 18, height: 24, offsetX: -9},
-        {path:'img/fireball/fireball8.png', width: 18, height: 24, offsetX: -9},
-        {path:'img/fireball/fireball9.png', width: 18, height: 24, offsetX: -9},
-        {path:'img/fireball/fireball10.png', width: 18, height: 24, offsetX: -9},
-        {path:'img/fireball/fireball11.png', width: 18, height: 24, offsetX: -9},
-        {path:'img/fireball/fireball12.png', width: 18, height: 24, offsetX: -9}
+        {path:'img/fireball/fireball1.png', width: 20, height: 36, offsetX: -10},
+        {path:'img/fireball/fireball2.png', width: 20, height: 36, offsetX: -10},
+        {path:'img/fireball/fireball3.png', width: 20, height: 36, offsetX: -10},
+        {path:'img/fireball/fireball4.png', width: 20, height: 36, offsetX: -10},
+        {path:'img/fireball/fireball5.png', width: 20, height: 36, offsetX: -10},
+        {path:'img/fireball/fireball6.png', width: 20, height: 36, offsetX: -10},
+        {path:'img/fireball/fireball7.png', width: 20, height: 36, offsetX: -10},
+        {path:'img/fireball/fireball8.png', width: 20, height: 36, offsetX: -10},
+        {path:'img/fireball/fireball9.png', width: 20, height: 36, offsetX: -10},
+        {path:'img/fireball/fireball10.png', width: 20, height: 36, offsetX: -10},
+        {path:'img/fireball/fireball11.png', width: 20, height: 36, offsetX: -10},
+        {path:'img/fireball/fireball12.png', width: 20, height: 36, offsetX: -10}
     ];
     currentImage = 0;
     zoom = 2;
@@ -21,9 +21,9 @@ class ThrowableObject extends MovableObject {
         this.loadImages(this.IMAGES_fireball.map(sprite => sprite.path));
         this.x = x;
         this.y = y - 100;
-        this.height = 24;
-        this.width = 18;
-        this.offsetX = -9;
+        this.height = 36;
+        this.width = 20;
+        this.offsetX = -10;
         this.throw();
         this.animate();
     };
@@ -36,10 +36,10 @@ class ThrowableObject extends MovableObject {
 
 
     throw() {
-        this.speedY = 30;
-        this.applyGravity();
+        // this.speedY = 35;
+        // this.applyGravity();
         setInterval(() => {
-            this.x += 25;
+            this.x += 20;
         }, 25);
     };
     

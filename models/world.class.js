@@ -60,7 +60,7 @@ class World {
         setInterval(() => {
             this.checkThrowObjects();
         }, 125);
-        
+
         setInterval(() => {
             this.checkfireballCollisions();
         }, 25);
@@ -68,7 +68,7 @@ class World {
 
 
     checkThrowObjects() {
-        if (this.keyboard.SPACE) {
+        if (this.keyboard.SPACE && !this.character.isDying) {
             let fireball = new ThrowableObject(this.character.x + 34, this.character.y + 34);
             this.throwableObject.push(fireball);
         }
@@ -89,22 +89,14 @@ class World {
         this.throwableObject.forEach(fireball => {
             this.level.enemies.forEach(enemy => {
                 if (fireball.isColliding(enemy)) {
-                    // Schädel sofort entfernen
                     this.removefireball(fireball);
-                    
-                    // Demon verliert HP
                     if (enemy instanceof Demon) {
-                        enemy.getHit(); // Verwendet neues HP-System
-                        
-                        // Nur entfernen wenn tot
+                        enemy.hit();
                         if (enemy.isDead()) {
                             setTimeout(() => {
                                 this.removeEnemy(enemy);
                             }, enemy.IMAGES_DEAD.length * 200);
                         }
-                    } else {
-                        // Andere Gegner sofort entfernen
-                        this.removeEnemy(enemy);
                     }
                 }
             });
