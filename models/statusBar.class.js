@@ -1,35 +1,36 @@
 class StatusBar extends DrawableObject {
     IMAGES_STATUSBAR_BACKGROUND = [
-        {path:'img/statusBar/1b.png',width: 16, height: 8},
-        {path:'img/statusBar/2b.png',width: 16, height: 8},
-        {path:'img/statusBar/3b.png',width: 16, height: 8},
-        {path:'img/statusBar/4b.png',width: 16, height: 8},
-        {path:'img/statusBar/5b.png',width: 16, height: 8},
+        {path:'img/statusBar/HP/1b.png',width: 16, height: 8},
+        {path:'img/statusBar/HP/2b.png',width: 16, height: 8},
+        {path:'img/statusBar/HP/3b.png',width: 16, height: 8},
+        {path:'img/statusBar/HP/4b.png',width: 16, height: 8},
+        {path:'img/statusBar/HP/5b.png',width: 16, height: 8},
     ];
     IMAGES_STATUSBAR_FULL = [
-        {path:'img/statusBar/1f.png',width: 16, height: 8},
-        {path:'img/statusBar/2f.png',width: 16, height: 8},
-        {path:'img/statusBar/3f.png',width: 16, height: 8},
-        {path:'img/statusBar/4f.png',width: 16, height: 8},
-        {path:'img/statusBar/5f.png',width: 16, height: 8},
+        {path:'img/statusBar/HP/1f.png',width: 16, height: 8},
+        {path:'img/statusBar/HP/2f.png',width: 16, height: 8},
+        {path:'img/statusBar/HP/3f.png',width: 16, height: 8},
+        {path:'img/statusBar/HP/4f.png',width: 16, height: 8},
+        {path:'img/statusBar/HP/5f.png',width: 16, height: 8},
     ];
-    percentage = 100;
     zoom = 4;
+    hue = 0;
 
-    constructor() {
+    constructor(percentage, x, y, hue =0) {
         super();
         this.loadImages(this.IMAGES_STATUSBAR_BACKGROUND.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_STATUSBAR_FULL.map(sprite => sprite.path));
-        this.x = 30;
-        this.y = 30;
-        this.setPercentage(100);
-    }
+        this.x = x;
+        this.y = y;
+        this.hue = hue;
+        this.setPercentage(percentage);
+    };
 
     setPercentage(percentage) {
         this.percentage = percentage;
         let path = this.IMAGES_STATUSBAR_FULL[this.resolveImageIndex()].path;
         this.img = this.imageCash[path];
-    }
+    };
 
     resolveImageIndex() {
         if (this.percentage > 80) {
@@ -43,7 +44,7 @@ class StatusBar extends DrawableObject {
         } else {
             return 0;
         }
-    }
+    };
 
     draw(ctx) {
         this.IMAGES_STATUSBAR_BACKGROUND.forEach((segment, index) => {
@@ -55,7 +56,11 @@ class StatusBar extends DrawableObject {
         for(let i = 0; i < segments; i++) {
             let segment = this.IMAGES_STATUSBAR_FULL[i];
             let img = this.imageCash[segment.path];
+            if (this.hue !== 0) {
+                ctx.filter = `hue-rotate(${this.hue}deg)`; 
+            }
             ctx.drawImage(img, this.x + (i * segment.width * this.zoom), this.y, segment.width * this.zoom, segment.height * this.zoom);
+            ctx.filter = 'none';
         }
-    }
-}
+    };
+};

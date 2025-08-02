@@ -1,6 +1,7 @@
 class World {
-    statusBar = new StatusBar();
     character = new Character();  
+    statusLive = new StatusBar(this.character.HP, 30, 30);
+    statusMana = new StatusBar(this.character.MANA, 30, 70, 230);
     level = level_1;
     canvas;
     ctx;
@@ -34,7 +35,8 @@ class World {
         
         this.ctx.translate(-this.cameraX, 0);
         
-        this.statusBar.draw(this.ctx);
+        this.statusLive.draw(this.ctx);
+        this.statusMana.draw(this.ctx);
 
 
         let self = this;
@@ -79,7 +81,7 @@ class World {
         this.level.enemies.forEach((enemy) => {
             if (this.character.isColliding(enemy) && !this.character.isHurt() && !enemy.isDead()) {
                 this.character.hit();
-                this.statusBar.setPercentage(this.character.HP);
+                this.statusLive.setPercentage(this.character.HP);
             }
         });
     };

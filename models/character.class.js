@@ -40,6 +40,7 @@ class Character extends MovableObject {
     currentImage = 0;
     zoom = 2;
     HP = 100;
+    MANA = 0;
 
     constructor() {
         super().loadImage('img/character/idle/idle1.png');
