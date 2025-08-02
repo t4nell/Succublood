@@ -62,7 +62,7 @@ class World {
         }, 125);
 
         setInterval(() => {
-            this.checkfireballCollisions();
+            this.checkFireballCollisions();
         }, 25);
     };
 
@@ -77,7 +77,7 @@ class World {
 
     checkCollisions() {
         this.level.enemies.forEach((enemy) => {
-            if (this.character.isColliding(enemy)) {
+            if (this.character.isColliding(enemy) && !this.character.isHurt() && !enemy.isDead()) {
                 this.character.hit();
                 this.statusBar.setPercentage(this.character.HP);
             }
@@ -85,7 +85,7 @@ class World {
     };
 
 
-    checkfireballCollisions() {
+    checkFireballCollisions() {
         this.throwableObject.forEach(fireball => {
             this.level.enemies.forEach(enemy => {
                 if (fireball.isColliding(enemy)) {

@@ -12,7 +12,7 @@ class BackgroundObject extends MovableObject {
 
     animate() {
         setInterval(() => {
-            if (!this.world || !this.world.keyboard) {
+            if (!this.world || !this.world.keyboard || this.world.character.isDying) {
                 return;
             }
 

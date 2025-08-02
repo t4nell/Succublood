@@ -35,14 +35,16 @@ class MovableObject extends DrawableObject{
            this.die();
         } else {
             this.lastHit = new Date().getTime();
+            this.currentImage = 0;
         };
     };
 
 
     isHurt() {
         let timePassed = new Date().getTime() - this.lastHit;
+        let hurtArrLength = this.IMAGES_HURT ? this.IMAGES_HURT.length : 0;
         timePassed = timePassed / 1000;
-        return timePassed < 0.3;
+        return timePassed < (hurtArrLength * 0.1);
     };
 
 

@@ -81,14 +81,11 @@ class Character extends MovableObject {
         setInterval(() => {
             if (this.isDying) {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
-                    // this.speed = 0;
                     this.animateImages(this.IMAGES_DEAD);
                 }
             } else if (this.isHurt()) {
-                // this.speed = 0;
                 this.animateImages(this.IMAGES_HURT);
             } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                // this.speed = settings.characterSpeed;
                 this.animateImages(this.IMAGES_WALK);
             } else {
                 this.animateImages(this.IMAGES_IDLE);
