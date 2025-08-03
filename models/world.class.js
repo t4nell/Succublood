@@ -9,6 +9,8 @@ class World {
     cameraX = 0;
     throwableObject = [];
     spacePressed = false;
+    collectables = [];
+    crystalCount = 0;
     
 
     constructor(canvas, keyboard) {
@@ -33,6 +35,7 @@ class World {
         this.addToMap(this.character);
         this.addObjectsToMap(this.throwableObject);
         this.addObjectsToMap(this.level.enemies);
+        this.addObjectsToMap(this.collectables);
         
         this.ctx.translate(-this.cameraX, 0);
         
@@ -67,6 +70,10 @@ class World {
         setInterval(() => {
             this.checkFireballCollisions();
         }, 25);
+
+        setInterval(() => {
+            this.checkCollectableCollisions();
+        }, 50);
     };
 
 
@@ -91,6 +98,12 @@ class World {
     };
 
 
+    spawnHealPotion(x, y) {
+        let healPotion = new HealPotion(x, y);
+        this.collectables.push(healPotion);
+    };
+
+
     checkCollisions() {
         this.level.enemies.forEach((enemy) => {
             if (this.character.isColliding(enemy) && !this.character.isHurt() && !enemy.isDead()) {
@@ -109,6 +122,7 @@ class World {
                     if (enemy instanceof Demon) {
                         enemy.hit();
                         if (enemy.isDead()) {
+                            this.spawnHealPotion(enemy.x, enemy.y);
                             setTimeout(() => {
                                 this.removeEnemy(enemy);
                             }, enemy.IMAGES_DEAD.length * 200);
@@ -116,6 +130,17 @@ class World {
                     }
                 }
             });
+        });
+    };
+
+
+    checkCollectableCollisions() {
+        this.collectables.forEach((collectable, index) => {
+            if (this.character.isColliding(collectable) && !collectable.collected) {
+                collectable.world = this;
+                collectable.collect();
+                this.collectables.splice(index, 1);
+            }
         });
     };
 

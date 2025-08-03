@@ -51,7 +51,7 @@ class Character extends MovableObject {
     currentImage = 0;
     zoom = 2;
     HP = 100;
-    MANA = 20;
+    MANA = 100;
     isAttacking = false;
     attackAnimationStarted = false;
 
