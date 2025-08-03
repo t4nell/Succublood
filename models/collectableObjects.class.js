@@ -7,16 +7,12 @@ class CollectableObjects extends MovableObject {
         this.x = x;
         this.y = y;
         this.applyGravity();
-    }
+    };
 
     collect() {
         this.collected = true;
         this.applyEffect();
-    }
-
-    applyEffect() {
-        // Override in subclasses
-    }
+    };
 
     animate() {
         if (this.IMAGES && this.IMAGES.length > 1) {
@@ -24,5 +20,5 @@ class CollectableObjects extends MovableObject {
                 this.animateImages(this.IMAGES);
             }, 200);
         }
-    }
+    };
 };
