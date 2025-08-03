@@ -8,6 +8,7 @@ class World {
     keyboard;
     cameraX = 0;
     throwableObject = [];
+    spacePressed = false;
     
 
     constructor(canvas, keyboard) {
@@ -70,7 +71,18 @@ class World {
 
 
     checkThrowObjects() {
-        if (this.keyboard.SPACE && !this.character.isDying) {
+        if (this.keyboard.SPACE && !this.spacePressed && !this.character.isDying && !this.character.isAttacking) {
+            this.character.startAttack();
+            this.spacePressed = true;
+        }
+        
+        if (!this.keyboard.SPACE) {
+            this.spacePressed = false;
+        }
+    };
+
+    spawnFireball() {
+        if (!this.character.isDying) {
             let fireball = new ThrowableObject(this.character.x + 34, this.character.y + 34);
             this.throwableObject.push(fireball);
         }
@@ -91,7 +103,7 @@ class World {
         this.throwableObject.forEach(fireball => {
             this.level.enemies.forEach(enemy => {
                 if (fireball.isColliding(enemy)) {
-                    this.removefireball(fireball);
+                    this.removeFireball(fireball);
                     if (enemy instanceof Demon) {
                         enemy.hit();
                         if (enemy.isDead()) {
@@ -114,7 +126,7 @@ class World {
     };
 
 
-    removefireball(fireball) {
+    removeFireball(fireball) {
         let index = this.throwableObject.indexOf(fireball);
         if (index > -1) {
             this.throwableObject.splice(index, 1);

@@ -21,6 +21,17 @@ class Character extends MovableObject {
         {path:'img/character/walk/walk11.png',width: 43, height: 73, offsetX: -34},  
         {path:'img/character/walk/walk12.png',width: 51, height: 72, offsetX: -34},  
     ];
+    IMAGES_ATTACK_RANGE = [
+        {path:'img/character/attackRange/attackRange1.png',width: 61, height: 74, offsetX: -40},
+        {path:'img/character/attackRange/attackRange2.png',width: 66, height: 74, offsetX: -41},
+        {path:'img/character/attackRange/attackRange3.png',width: 68, height: 75, offsetX: -42},
+        {path:'img/character/attackRange/attackRange4.png',width: 68, height: 74, offsetX: -42},
+        {path:'img/character/attackRange/attackRange5.png',width: 57, height: 75, offsetX: -29},
+        {path:'img/character/attackRange/attackRange6.png',width: 54, height: 71, offsetX: -16},
+        {path:'img/character/attackRange/attackRange7.png',width: 54, height: 71, offsetX: -14},
+        {path:'img/character/attackRange/attackRange8.png',width: 45, height: 71, offsetX: -14},
+        {path:'img/character/attackRange/attackRange9.png',width: 47, height: 73, offsetX: -27},
+    ];
     IMAGES_DEAD = [
         {path:'img/character/dead/dead1.png',width: 61, height: 73, offsetX: -34},
         {path:'img/character/dead/dead2.png',width: 61, height: 73, offsetX: -34},
@@ -41,12 +52,15 @@ class Character extends MovableObject {
     zoom = 2;
     HP = 100;
     MANA = 0;
+    isAttacking = false;
+    attackAnimationStarted = false;
 
     constructor() {
         super().loadImage('img/character/idle/idle1.png');
         this.loadImages(this.IMAGES_IDLE.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_DEAD.map(sprite => sprite.path));
+        this.loadImages(this.IMAGES_ATTACK_RANGE.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_HURT.map(sprite => sprite.path));
         this.x = 200;
         this.y = 500;
@@ -88,11 +102,35 @@ class Character extends MovableObject {
                 this.animateImages(this.IMAGES_HURT);
             } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                 this.animateImages(this.IMAGES_WALK);
+            } else if (this.isAttacking) {
+                this.playAttackAnimation();
             } else {
                 this.animateImages(this.IMAGES_IDLE);
             };  
         }, 1000 / 10);
         
+    };
+
+    startAttack() {
+        if (!this.isAttacking && !this.isDying) {
+            this.isAttacking = true;
+            this.attackAnimationStarted = false;
+            this.currentImage = 0;
+        }
+    };
+
+    playAttackAnimation() {
+        if (this.currentImage < this.IMAGES_ATTACK_RANGE.length) {
+            if (this.currentImage === 5 && !this.attackAnimationStarted) {
+                this.world.spawnFireball();
+                this.attackAnimationStarted = true;
+            }
+            this.animateImages(this.IMAGES_ATTACK_RANGE);
+        } else {
+            this.isAttacking = false;
+            this.attackAnimationStarted = false;
+            this.currentImage = 0;
+        }
     };
 
 };
