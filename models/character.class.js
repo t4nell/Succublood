@@ -51,7 +51,7 @@ class Character extends MovableObject {
     currentImage = 0;
     zoom = 2;
     HP = 100;
-    MANA = 0;
+    MANA = 20;
     isAttacking = false;
     attackAnimationStarted = false;
 
@@ -102,7 +102,7 @@ class Character extends MovableObject {
                 this.animateImages(this.IMAGES_HURT);
             } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                 this.animateImages(this.IMAGES_WALK);
-            } else if (this.isAttacking) {
+            } else if (this.isAttacking && this.MANA > 0) {
                 this.playAttackAnimation();
             } else {
                 this.animateImages(this.IMAGES_IDLE);

@@ -82,9 +82,11 @@ class World {
     };
 
     spawnFireball() {
-        if (!this.character.isDying) {
+        if (!this.character.isDying && this.character.MANA > 0) {
             let fireball = new ThrowableObject(this.character.x + 34, this.character.y + 34);
             this.throwableObject.push(fireball);
+            this.character.MANA -= 20;
+            this.statusMana.setPercentage(this.character.MANA);
         }
     };
 

@@ -41,7 +41,7 @@ class Demon extends MovableObject {
         this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_HURT.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_DEAD.map(sprite => sprite.path));
-        this.x = 1000 + Math.random() * 4000;
+        this.x = 1280 + Math.random() * 5000;
         this.y = 500;
         this.speed = 0.25 + Math.random() * 1.5;
         this.applyGravity();

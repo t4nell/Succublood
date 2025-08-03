@@ -30,6 +30,7 @@ class MovableObject extends DrawableObject{
 
     hit() {
         this.HP -= 20;
+        // this.x -= 100;
         if (this.HP <= 0) {
            this.HP = 0 
            this.die();
