@@ -1,12 +1,12 @@
 class HealPotion extends CollectableObjects {
-    IMAGES = [
+    IMAGE_HEALPOTION = [
         {path:'img/icons/healPotion.png', width: 12, height: 30, offsetX: -6}
     ];
     zoom = 2;
 
     constructor(x, y) {
         super(x, y);
-        this.loadImage(this.IMAGES[0].path);
+        this.loadImage(this.IMAGE_HEALPOTION[0].path);
     }
 
     applyEffect() {

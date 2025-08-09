@@ -66,5 +66,18 @@ const level_1 = new level (
         new Crow(),
         new Crow(),
         new Crow()
+    ],
+
+    [
+        new ManaPotion(),
+        new ManaPotion(),
+        new ManaPotion(),
+        new ManaPotion(),
+        new ManaPotion(),
+        new ManaPotion(),
+        new ManaPotion(),
+        new ManaPotion(),
+        new ManaPotion(),
+        new ManaPotion()
     ]
 );

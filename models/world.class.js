@@ -36,6 +36,7 @@ class World {
         this.addObjectsToMap(this.throwableObject);
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.collectables);
+        this.addObjectsToMap(this.level.manaPotions);
         
         this.ctx.translate(-this.cameraX, 0);
         
@@ -55,6 +56,9 @@ class World {
         for (const backgroundObject of this.level.backgroundObjects) {
             backgroundObject.world = this
         };
+        for (const enemy of this.level.enemies) {
+            enemy.world = this;
+        }
     };
 
 
@@ -62,21 +66,34 @@ class World {
         setInterval(() => {
             this.checkCollisions();
         }, 300);
-
         setInterval(() => {
             this.checkThrowObjects();
         }, 125);
-
         setInterval(() => {
             this.checkFireballCollisions();
         }, 25);
-
         setInterval(() => {
             this.checkCollectableCollisions();
         }, 50);
     };
 
+    
+    spawnFireball() {
+        if (!this.character.isDying && this.character.MANA > 0) {
+            let fireball = new ThrowableObject(this.character.x + 34, this.character.y + 34);
+            this.throwableObject.push(fireball);
+            this.character.MANA -= 20;
+            this.statusMana.setPercentage(this.character.MANA);
+        }
+    };
+    
+    
+    spawnHealPotion(x, y) {
+        let healPotion = new HealPotion(x, y);
+        this.collectables.push(healPotion);
+    };
 
+    
     checkThrowObjects() {
         if (this.keyboard.SPACE && !this.spacePressed && !this.character.isDying && !this.character.isAttacking) {
             this.character.startAttack();
@@ -86,21 +103,6 @@ class World {
         if (!this.keyboard.SPACE) {
             this.spacePressed = false;
         }
-    };
-
-    spawnFireball() {
-        if (!this.character.isDying && this.character.MANA > 0) {
-            let fireball = new ThrowableObject(this.character.x + 34, this.character.y + 34);
-            this.throwableObject.push(fireball);
-            this.character.MANA -= 20;
-            this.statusMana.setPercentage(this.character.MANA);
-        }
-    };
-
-
-    spawnHealPotion(x, y) {
-        let healPotion = new HealPotion(x, y);
-        this.collectables.push(healPotion);
     };
 
 
@@ -120,14 +122,9 @@ class World {
                 if (fireball.isColliding(enemy)) {
                     this.removeFireball(fireball);
                     if (enemy instanceof Demon) {
-                        enemy.hit();
-                        if (enemy.isDead()) {
-                            this.spawnHealPotion(enemy.x, enemy.y);
-                            setTimeout(() => {
-                                this.removeEnemy(enemy);
-                            }, enemy.IMAGES_DEAD.length * 200);
-                        }
-                    }
+                    enemy.world = this;
+                    enemy.killDemon();
+                }
                 }
             });
         });
@@ -140,6 +137,13 @@ class World {
                 collectable.world = this;
                 collectable.collect();
                 this.collectables.splice(index, 1);
+            }
+        });
+        this.level.manaPotions.forEach((manaPotion, index) => {
+            if (this.character.isColliding(manaPotion) && !manaPotion.collected) {
+                manaPotion.world = this;
+                manaPotion.collect();
+                this.level.manaPotions.splice(index, 1);
             }
         });
     };

@@ -34,18 +34,29 @@ class Demon extends MovableObject {
     ];
     currentImage = 0;
     zoom = 2;
-    HP = 60;
+    HP = 40;
 
     constructor() {
         super().loadImage('img/enemies/demon2/walk/walk10.png');
         this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_HURT.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_DEAD.map(sprite => sprite.path));
-        this.x = 1280 + Math.random() * 5000;
+        this.x = 800 + Math.random() * 4000;
         this.y = 500;
         this.speed = 0.25 + Math.random() * 1.5;
         this.applyGravity();
         this.animate();
+    };
+
+
+    killDemon() {
+        this.hit();
+        if (this.isDead()) {
+            this.world.spawnHealPotion(this.x, this.y);
+            setTimeout(() => {
+                this.world.removeEnemy(this);
+            }, this.IMAGES_DEAD.length * 200);
+        }
     };
 
 
