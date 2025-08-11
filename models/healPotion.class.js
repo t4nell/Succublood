@@ -1,6 +1,6 @@
 class HealPotion extends CollectableObjects {
     IMAGE_HEAL_POTION = [
-        {path:'img/icons/healPotion.png', width: 12, height: 30, offsetX: -6}
+        {path:'img/potion/healPotion.png', width: 12, height: 30, offsetX: -6}
     ];
     zoom = 2;
     floatSpeed = 0.1;

@@ -32,9 +32,9 @@ class World {
         this.ctx.translate(this.cameraX, 0);
         
         this.addObjectsToMap(this.level.backgroundObjects);
+        this.addObjectsToMap(this.level.enemies);
         this.addToMap(this.character);
         this.addObjectsToMap(this.throwableObject);
-        this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.collectables);
         this.addObjectsToMap(this.level.manaPotions);
         
@@ -108,7 +108,7 @@ class World {
 
     checkCollisions() {
         this.level.enemies.forEach((enemy) => {
-            if (this.character.isColliding(enemy) && !this.character.isHurt() && !enemy.isDead()) {
+            if (this.character.isColliding(enemy) && !this.character.isHurt() && !enemy.isDead() && !enemy.isAttacking) {
                 this.character.hit();
                 this.statusLive.setPercentage(this.character.HP);
             }

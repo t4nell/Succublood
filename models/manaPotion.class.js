@@ -1,6 +1,6 @@
 class ManaPotion extends CollectableObjects {
         IMAGES = [
-        {path:'img/icons/manaPotion.png', width: 12, height: 30, offsetX: -6}
+        {path:'img/potion/manaPotion.png', width: 12, height: 30, offsetX: -6}
     ];
     zoom = 2;
     floatSpeed = 0.1;
