@@ -121,9 +121,9 @@ class World {
             this.level.enemies.forEach(enemy => {
                 if (fireball.isColliding(enemy)) {
                     this.removeFireball(fireball);
-                    if (enemy instanceof Demon) {
+                    if (enemy instanceof meeleDemon) {
                     enemy.world = this;
-                    enemy.killDemon();
+                    enemy.killMeleeDemon();
                 }
                 }
             });

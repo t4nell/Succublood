@@ -1,4 +1,4 @@
-class Demon extends MovableObject {
+class meeleDemon extends MovableObject {
     IMAGES_WALK = [
         {path:'img/enemies/demon2/walk/walk10.png',width: 44, height: 69, offsetX: -22}, 
         {path:'img/enemies/demon2/walk/walk9.png',width: 40, height: 70, offsetX: -20}, 
@@ -40,20 +40,31 @@ class Demon extends MovableObject {
         {path:'img/enemies/demon2/attack/attack5.png', width: 71, height: 71, offsetX: -10},
         {path:'img/enemies/demon2/attack/attack6.png', width: 40, height: 65, offsetX: -10}
     ];
+    IMAGES_IDLE = [
+        {path:'img/enemies/demon2/idle/idle1.png', width: 38, height: 69, offsetX: -17},
+        {path:'img/enemies/demon2/idle/idle2.png', width: 37, height: 69, offsetX: -16},
+        {path:'img/enemies/demon2/idle/idle3.png', width: 36, height: 69, offsetX: -15},
+        {path:'img/enemies/demon2/idle/idle4.png', width: 36, height: 69, offsetX: -15},
+        {path:'img/enemies/demon2/idle/idle5.png', width: 36, height: 69, offsetX: -15},
+        {path:'img/enemies/demon2/idle/idle6.png', width: 36, height: 69, offsetX: -15},
+        {path:'img/enemies/demon2/idle/idle7.png', width: 39, height: 69, offsetX: -18},
+        {path:'img/enemies/demon2/idle/idle8.png', width: 39, height: 69, offsetX: -18},
+    ];
     currentImage = 0;
     zoom = 2;
     HP = 40;
     isAttacking = false;
     lastAttack = 0;
-    attackCooldown = 1000;
+    attackCooldown = 2000;
 
 
     constructor() {
-        super().loadImage('img/enemies/demon2/walk/walk10.png');
+        super().loadImage('img/enemies/demon2/walk/walk1.png');
         this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_HURT.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_DEAD.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_ATTACK.map(sprite => sprite.path));
+        this.loadImages(this.IMAGES_IDLE.map(sprite => sprite.path));
         this.x = 800 + Math.random() * 4000;
         this.y = 500;
         this.speed = 0.25 + Math.random() * 1.5;
@@ -62,7 +73,7 @@ class Demon extends MovableObject {
     };
 
 
-    killDemon() {
+    killMeleeDemon() {
         this.hit();
         if (this.isDead()) {
             this.world.spawnHealPotion(this.x, this.y);
@@ -90,7 +101,7 @@ class Demon extends MovableObject {
 
 
     isCharacterInRange() {
-        if (!this.world || !this.world.character) return false;
+        if (!this.world || !this.world.character || this.world.character.isDying) return false;
         
         let distance = Math.abs(this.x - this.world.character.x);
         return distance < 190; // 190px Angriffs-Reichweite
@@ -99,11 +110,11 @@ class Demon extends MovableObject {
 
     animate() {
         setInterval(() => {
-            if (!this.isAttacking && !this.isDying) {
+            if ((!this.isCharacterInRange() && !this.isAttacking && !this.isDying)) {
                 this.moveLeft();
-                if (this.isCharacterInRange()) {
-                    this.startAttack();
-                }
+            }
+            if (this.isCharacterInRange() && !this.isAttacking && !this.world.character.isDying) {
+                this.startAttack();
             }
         }, 1000 / 60);  
         
@@ -119,6 +130,7 @@ class Demon extends MovableObject {
                     this.animateImages(this.IMAGES_HURT);
                 }
             } else if (this.isAttacking) {
+                this.speed = 0;
                 if (this.currentImage < this.IMAGES_ATTACK.length) {
                     this.animateImages(this.IMAGES_ATTACK);
                     if (this.currentImage === 3 && this.isCharacterInRange()) {
@@ -127,8 +139,13 @@ class Demon extends MovableObject {
                 } else {
                     this.isAttacking = false;
                     this.currentImage = 0;
-                    this.speed = 0.25 + Math.random() * 1.5;
+                    if (!this.isCharacterInRange()) {
+                        this.speed = 0.25 + Math.random() * 1.5;
+                    }
                 }
+            } else if (this.isCharacterInRange() && !this.world.character.isDying) {
+                this.speed = 0;
+                this.animateImages(this.IMAGES_IDLE);
             } else {
                 this.speed = 0.25 + Math.random() * 1.5;
                 this.animateImages(this.IMAGES_WALK);
@@ -138,7 +155,7 @@ class Demon extends MovableObject {
 
 
     dealDamageToCharacter() {
-        if (this.world && this.world.character && this.isCharacterInRange() && !this.world.character.isHurt()) {
+        if (this.world && this.world.character && this.isCharacterInRange() && !this.world.character.isHurt() && !this.world.character.isDying) {
             this.world.character.hit();
             this.world.statusLive.setPercentage(this.world.character.HP);
         }
