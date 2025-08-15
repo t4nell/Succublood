@@ -1,4 +1,4 @@
-class meeleDemon extends MovableObject {
+class meleeDemon extends MovableObject {
     IMAGES_WALK = [
         {path:'img/enemies/demon2/walk/walk10.png',width: 44, height: 69, offsetX: -22}, 
         {path:'img/enemies/demon2/walk/walk9.png',width: 40, height: 70, offsetX: -20}, 

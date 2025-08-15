@@ -1,11 +1,11 @@
 const level_1 = new level (
     [
-        new meeleDemon(),
-        new meeleDemon(),
-        new meeleDemon(),
-        new meeleDemon(),
-        new meeleDemon(),
-        new meeleDemon(),
+        new meleeDemon(),
+        new meleeDemon(),
+        new meleeDemon(),
+        new meleeDemon(),
+        new meleeDemon(),
+        new meleeDemon(),
 
         new Endboss()
     ],
