@@ -56,6 +56,7 @@ class meleeDemon extends MovableObject {
     isAttacking = false;
     lastAttack = 0;
     attackCooldown = 2000;
+    attackRange = 150;
 
 
     constructor() {
@@ -104,7 +105,7 @@ class meleeDemon extends MovableObject {
         if (!this.world || !this.world.character || this.world.character.isDying) return false;
         
         let distance = Math.abs(this.x - this.world.character.x);
-        return distance < 190; // 190px Angriffs-Reichweite
+        return distance < this.attackRange;
     }
 
 
