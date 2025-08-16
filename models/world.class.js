@@ -11,7 +11,7 @@ class World {
     spacePressed = false;
     collectables = [];
     crystalCount = 0;
-    
+    enemyProjectiles = []; // Array für Feuerbälle der Dämonen
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -37,6 +37,7 @@ class World {
         this.addObjectsToMap(this.throwableObject);
         this.addObjectsToMap(this.collectables);
         this.addObjectsToMap(this.level.manaPotions);
+        this.addObjectsToMap(this.enemyProjectiles);
         
         this.ctx.translate(-this.cameraX, 0);
         
@@ -75,6 +76,9 @@ class World {
         setInterval(() => {
             this.checkCollectableCollisions();
         }, 50);
+        setInterval(() => {
+            this.checkEnemyProjectileCollisions();
+        }, 25);
     };
 
     
@@ -93,6 +97,13 @@ class World {
         this.collectables.push(healPotion);
     };
 
+    spawnManaPotion(x, y) {
+        let manaPotion = new ManaPotion();
+        manaPotion.x = x;
+        manaPotion.y = y;
+        manaPotion.baseY = manaPotion.y;
+        this.level.manaPotions.push(manaPotion);
+    }
     
     checkThrowObjects() {
         if (this.keyboard.SPACE && !this.spacePressed && !this.character.isDying && !this.character.isAttacking) {
@@ -122,9 +133,12 @@ class World {
                 if (fireball.isColliding(enemy)) {
                     this.removeFireball(fireball);
                     if (enemy instanceof meleeDemon) {
-                    enemy.world = this;
-                    enemy.killMeleeDemon();
-                }
+                        enemy.world = this;
+                        enemy.killMeleeDemon();
+                    } else if (enemy instanceof rangeDemon) {
+                        enemy.world = this;
+                        enemy.killRangeDemon();
+                    }
                 }
             });
         });
@@ -144,6 +158,22 @@ class World {
                 manaPotion.world = this;
                 manaPotion.collect();
                 this.level.manaPotions.splice(index, 1);
+            }
+        });
+    };
+
+
+    checkEnemyProjectileCollisions() {
+        this.enemyProjectiles.forEach((projectile, index) => {
+            if (this.character.isColliding(projectile) && !this.character.isHurt() && !this.character.isDying) {
+                if (!projectile.isExploding) {
+                    projectile.startExplosion();
+                    this.character.hit();
+                    this.statusLive.setPercentage(this.character.HP);
+                }
+            }
+            if (projectile.isExplosionFinished() || projectile.x < -500 || projectile.x > 6500) {
+                this.enemyProjectiles.splice(index, 1);
             }
         });
     };
