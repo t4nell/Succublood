@@ -54,7 +54,7 @@ class rangeDemon extends MovableObject {
     ];
     currentImage = 0;
     zoom = 2;
-    HP = 30;
+    HP = 20;
     isAttacking = false;
     lastAttack = 0;
     attackCooldown = 3000;

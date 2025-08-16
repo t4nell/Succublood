@@ -44,7 +44,7 @@ class EnemyProjectile extends MovableObject {
     shoot() {
         setInterval(() => {
             if (!this.isExploding) {
-                this.x -= 10;
+                this.x -= 20;
             }
         }, 40);
     };
