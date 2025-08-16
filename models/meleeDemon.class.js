@@ -68,7 +68,7 @@ class meleeDemon extends MovableObject {
         this.loadImages(this.IMAGES_IDLE.map(sprite => sprite.path));
         this.x = 800 + Math.random() * 4000;
         this.y = 500;
-        this.speed = 0.25 + Math.random() * 1.5;
+        this.speed = 1.25 + Math.random() * 3;
         this.applyGravity();
         this.animate();
     };
@@ -117,7 +117,7 @@ class meleeDemon extends MovableObject {
             if (this.isCharacterInRange() && !this.isAttacking && !this.world.character.isDying) {
                 this.startAttack();
             }
-        }, 1000 / 60);  
+        }, 1000 / 30);  
         
         setInterval(() => {
             if (this.isDying) {    
@@ -141,14 +141,14 @@ class meleeDemon extends MovableObject {
                     this.isAttacking = false;
                     this.currentImage = 0;
                     if (!this.isCharacterInRange()) {
-                        this.speed = 0.25 + Math.random() * 1.5;
+                        this.speed = 1 + Math.random() * 2;
                     }
                 }
             } else if (this.isCharacterInRange() && !this.world.character.isDying) {
                 this.speed = 0;
                 this.animateImages(this.IMAGES_IDLE);
             } else {
-                this.speed = 0.25 + Math.random() * 1.5;
+                this.speed = 1 + Math.random() * 2;
                 this.animateImages(this.IMAGES_WALK);
             }
         }, 100);

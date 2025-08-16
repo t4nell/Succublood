@@ -31,7 +31,7 @@ class ThrowableObject extends MovableObject {
     animate() {
         setInterval(() => {
             this.animateImages(this.IMAGES_fireball);
-        }, 1000 / 20);
+        }, 1000 / 30);
     }
 
 

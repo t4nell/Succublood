@@ -21,7 +21,7 @@ class ManaPotion extends CollectableObjects {
         setInterval(() => {
             this.floatOffset += this.floatSpeed;
             this.y = this.baseY + Math.sin(this.floatOffset) * this.floatAmplitude;
-        }, 1000 / 60);
+        }, 1000 / 30);
     };
 
 

@@ -13,7 +13,7 @@ class Sky extends MovableObject {
     skyAnimation() {
         setInterval(() => {
             this.x -= this.speed;
-        }, 1000 / 60);
+        }, 1000 / 30);
     };
     
 };

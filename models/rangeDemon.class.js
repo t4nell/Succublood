@@ -119,7 +119,7 @@ class rangeDemon extends MovableObject {
             if (this.isCharacterInRange() && !this.isAttacking && !this.world.character.isDying) {
                 this.startAttack();
             }
-        }, 1000 / 60);  
+        }, 1000 / 30);  
 
         setInterval(() => {
             if (this.isDying) {    
