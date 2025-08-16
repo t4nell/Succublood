@@ -28,12 +28,10 @@ class EnemyProjectile extends MovableObject {
     animate() {
         setInterval(() => {
             if (this.isExploding) {
-                // Explosion: Spiele alle Bilder ab (ab Bild 3)
                 if (this.currentImage < this.IMAGES_CHARGE.length) {
                     this.animateImages(this.IMAGES_CHARGE);
                 }
             } else {
-                // Flug: Nur zwischen den ersten 2 Bildern wechseln
                 let flightImage = this.currentImage % this.maxFlightImages;
                 let sprite = this.IMAGES_CHARGE[flightImage];
                 this.swapImg(sprite);
@@ -45,7 +43,7 @@ class EnemyProjectile extends MovableObject {
 
     shoot() {
         setInterval(() => {
-            if (!this.isExploding) { // Nur bewegen wenn nicht explodierend
+            if (!this.isExploding) {
                 this.x -= 10;
             }
         }, 40);
@@ -55,7 +53,7 @@ class EnemyProjectile extends MovableObject {
     startExplosion() {
         if (!this.isExploding) {
             this.isExploding = true;
-            this.currentImage = 2; // Starte ab dem 3. Bild (Index 2)
+            this.currentImage = 2;
         }
     };
 

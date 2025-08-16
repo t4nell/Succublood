@@ -11,7 +11,7 @@ class World {
     spacePressed = false;
     collectables = [];
     crystalCount = 0;
-    enemyProjectiles = []; // Array für Feuerbälle der Dämonen
+    enemyProjectiles = [];
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -110,7 +110,6 @@ class World {
             this.character.startAttack();
             this.spacePressed = true;
         }
-        
         if (!this.keyboard.SPACE) {
             this.spacePressed = false;
         }
