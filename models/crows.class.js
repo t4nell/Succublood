@@ -13,9 +13,9 @@ class Crow extends MovableObject {
     constructor() {
         super().loadImage('img/crow/crow1.png');
         this.loadImages(this.IMAGES_FLY.map(sprite => sprite.path));
-        this.x = 1200 + Math.random() * 5000;
+        this.x = 120 + Math.random() * 5000;
         this.y = 30 + Math.random() * 100;
-        this.speed = 0.5 + Math.random() * 1;
+        this.speed = 0.5 + Math.random() * 3;
         this.animate();
     };
 

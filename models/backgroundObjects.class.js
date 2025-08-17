@@ -29,6 +29,6 @@ class BackgroundObject extends MovableObject {
                     this.x -= this.width * 2;
                 }
             }
-        }, 1000 / 60);
+        }, 1000 / 30);
     };
 };

@@ -117,7 +117,7 @@ class meleeDemon extends MovableObject {
             if (this.isCharacterInRange() && !this.isAttacking && !this.world.character.isDying) {
                 this.startAttack();
             }
-        }, 1000 / 30);  
+        }, 1000 / 20);  
         
         setInterval(() => {
             if (this.isDying) {    
