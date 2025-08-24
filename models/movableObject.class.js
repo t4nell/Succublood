@@ -10,7 +10,7 @@ class MovableObject extends DrawableObject{
     
     
     drawBorder(ctx){
-        if (this instanceof Character || this instanceof meleeDemon) {
+        if (this instanceof Character || this instanceof meleeDemon || this instanceof rangeDemon || this instanceof Endboss) {
             ctx.beginPath();
             ctx.lineWidth = '5';
             ctx.strokeStyle = 'blue';

@@ -97,6 +97,7 @@ class World {
         this.collectables.push(healPotion);
     };
 
+
     spawnManaPotion(x, y) {
         let manaPotion = new ManaPotion();
         manaPotion.x = x;
@@ -104,6 +105,7 @@ class World {
         manaPotion.baseY = manaPotion.y;
         this.level.manaPotions.push(manaPotion);
     }
+
     
     checkThrowObjects() {
         if (this.keyboard.SPACE && !this.spacePressed && !this.character.isDying && !this.character.isAttacking) {
@@ -137,6 +139,9 @@ class World {
                     } else if (enemy instanceof rangeDemon) {
                         enemy.world = this;
                         enemy.killRangeDemon();
+                    } else if (enemy instanceof Endboss) {
+                        enemy.world = this;
+                        enemy.killEndboss();
                     }
                 }
             });

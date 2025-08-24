@@ -66,7 +66,7 @@ class meleeDemon extends MovableObject {
         this.loadImages(this.IMAGES_DEAD.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_ATTACK.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_IDLE.map(sprite => sprite.path));
-        this.x = 800 + Math.random() * 4000;
+        this.x = 800 + Math.random() * 2000;
         this.y = 500;
         this.speed = 1.25 + Math.random() * 3;
         this.applyGravity();

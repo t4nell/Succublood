@@ -68,7 +68,7 @@ class rangeDemon extends MovableObject {
         this.loadImages(this.IMAGES_DEAD.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_ATTACK.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_IDLE.map(sprite => sprite.path));
-        this.x = 1200 + Math.random() * 3500;
+        this.x = 1200 + Math.random() * 2000;
         this.y = 500;
         this.speed = 0.15 + Math.random() * 1;
         this.applyGravity();
