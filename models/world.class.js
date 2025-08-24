@@ -12,6 +12,7 @@ class World {
     collectables = [];
     crystalCount = 0;
     enemyProjectiles = [];
+    bossProjectiles = [];
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -38,6 +39,7 @@ class World {
         this.addObjectsToMap(this.collectables);
         this.addObjectsToMap(this.level.manaPotions);
         this.addObjectsToMap(this.enemyProjectiles);
+        this.addObjectsToMap(this.bossProjectiles);
         
         this.ctx.translate(-this.cameraX, 0);
         
@@ -59,7 +61,7 @@ class World {
         };
         for (const enemy of this.level.enemies) {
             enemy.world = this;
-        }
+        };
     };
 
 
@@ -78,6 +80,9 @@ class World {
         }, 50);
         setInterval(() => {
             this.checkEnemyProjectileCollisions();
+        }, 25);
+        setInterval(() => {
+            this.checkBossProjectileCollisions();
         }, 25);
     };
 
@@ -104,7 +109,7 @@ class World {
         manaPotion.y = y;
         manaPotion.baseY = manaPotion.y;
         this.level.manaPotions.push(manaPotion);
-    }
+    };
 
     
     checkThrowObjects() {
@@ -178,6 +183,22 @@ class World {
             }
             if (projectile.isExplosionFinished() || projectile.x < -500 || projectile.x > 6500) {
                 this.enemyProjectiles.splice(index, 1);
+            }
+        });
+    };
+
+
+    checkBossProjectileCollisions() {
+        this.bossProjectiles.forEach((projectile, index) => {
+            if (this.character.isColliding(projectile) && !this.character.isHurt() && !this.character.isDying) {
+                if (!projectile.isExploding) {
+                    projectile.startExplosion();
+                    this.character.hit();
+                    this.statusLive.setPercentage(this.character.HP);
+                }
+            }
+            if (projectile.isExplosionFinished() || projectile.x < -500 || projectile.x > 6500) {
+                this.bossProjectiles.splice(index, 1);
             }
         });
     };

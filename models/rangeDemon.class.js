@@ -111,6 +111,14 @@ class rangeDemon extends MovableObject {
     };
 
 
+    shootEnemyProjectile() {
+        if (this.world) {
+            let enemyProjectile = new EnemyProjectile(this.x - 110, this.y - 115);
+            this.world.enemyProjectiles.push(enemyProjectile);
+        }
+    };
+    
+
     animate() {
         setInterval(() => {
             if ((!this.isCharacterInRange() && !this.isAttacking && !this.isDying)) {
@@ -154,13 +162,5 @@ class rangeDemon extends MovableObject {
                 this.animateImages(this.IMAGES_WALK);
             }
         }, 100);
-    };
-
-
-    shootEnemyProjectile() {
-        if (this.world) {
-            let enemyProjectile = new EnemyProjectile(this.x - 110, this.y - 115);
-            this.world.enemyProjectiles.push(enemyProjectile);
-        }
     };
 };
