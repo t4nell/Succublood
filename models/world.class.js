@@ -104,7 +104,7 @@ class World {
 
 
     setWorld() {
-        this.character.world = this;
+            this.character.world = this;
         for (const backgroundObject of this.level.backgroundObjects) {
             backgroundObject.world = this
         };
@@ -115,37 +115,37 @@ class World {
 
 
     run() {
-    setInterval(() => {
-        if (this.gameStarted) {
-            this.checkCollisions();
-        }
-    }, 300);
-    setInterval(() => {
-        if (this.gameStarted) {
-            this.checkThrowObjects();
-        }    
-    }, 125);
-    setInterval(() => {
-        if (this.gameStarted) {
-            this.checkFireballCollisions();
-        }
-    }, 25);
-    setInterval(() => {
-        if (this.gameStarted) {
-            this.checkCollectableCollisions();
-        }
-    }, 50);
-    setInterval(() => {
-        if (this.gameStarted) {
-            this.checkEnemyProjectileCollisions();
-        }
-    }, 25);
-    setInterval(() => {
-        if (this.gameStarted) {
-            this.checkBossProjectileCollisions();
-        }
-    }, 25);
-};
+        setInterval(() => {
+            if (this.gameStarted) {
+                this.checkCollisions();
+            }
+        }, 300);
+        setInterval(() => {
+            if (this.gameStarted) {
+                this.checkThrowObjects();
+            }    
+        }, 125);
+        setInterval(() => {
+            if (this.gameStarted) {
+                this.checkFireballCollisions();
+            }
+        }, 25);
+        setInterval(() => {
+            if (this.gameStarted) {
+                this.checkCollectableCollisions();
+            }
+        }, 50);
+        setInterval(() => {
+            if (this.gameStarted) {
+                this.checkEnemyProjectileCollisions();
+            }
+        }, 25);
+        setInterval(() => {
+            if (this.gameStarted) {
+                this.checkBossProjectileCollisions();
+            }
+        }, 25);
+    };
 
     
 
