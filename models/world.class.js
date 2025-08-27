@@ -10,14 +10,19 @@ class World {
     throwableObject = [];
     spacePressed = false;
     collectables = [];
-    crystalCount = 0;
+    rubyCount = 0;
     enemyProjectiles = [];
     bossProjectiles = [];
+    gameStarted = false; // Neue Property
+    startScreen; // Neue Property
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.rubyCounter = new RubyCounter();
+        this.startScreen = new StartScreen(canvas.width, canvas.height);
+        this.setupMouseEvents();
         this.draw();
         this.setWorld();
         this.run();
@@ -27,30 +32,78 @@ class World {
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        this.addObjectsToMap(this.level.sky);
-        this.addObjectsToMap(this.level.backgroundCrows);
+        if (!this.gameStarted) {
+            // StartScreen zeichnen wenn Spiel nicht gestartet
+            this.startScreen.draw(this.ctx);
+        } else {
+            // Normales Spiel zeichnen
+            this.addObjectsToMap(this.level.sky);
+            this.addObjectsToMap(this.level.backgroundCrows);
 
-        this.ctx.translate(this.cameraX, 0);
-        
-        this.addObjectsToMap(this.level.backgroundObjects);
-        this.addObjectsToMap(this.level.enemies);
-        this.addToMap(this.character);
-        this.addObjectsToMap(this.throwableObject);
-        this.addObjectsToMap(this.collectables);
-        this.addObjectsToMap(this.level.manaPotions);
-        this.addObjectsToMap(this.enemyProjectiles);
-        this.addObjectsToMap(this.bossProjectiles);
-        
-        this.ctx.translate(-this.cameraX, 0);
-        
-        this.statusLive.draw(this.ctx);
-        this.statusMana.draw(this.ctx);
+            this.ctx.translate(this.cameraX, 0);
+            
+            this.addObjectsToMap(this.level.backgroundObjects);
+            this.addObjectsToMap(this.level.enemies);
+            this.addToMap(this.character);
+            this.addObjectsToMap(this.throwableObject);
+            this.addObjectsToMap(this.collectables);
+            this.addObjectsToMap(this.level.manaPotions);
+            this.addObjectsToMap(this.level.rubys);
+            this.addObjectsToMap(this.enemyProjectiles);
+            this.addObjectsToMap(this.bossProjectiles);
+            
+            this.ctx.translate(-this.cameraX, 0);
+            
+            this.statusLive.draw(this.ctx);
+            this.statusMana.draw(this.ctx);
+            this.rubyCounter.draw(this.ctx, this.rubyCount, this.canvas.width);
+        }
 
 
         let self = this;
         requestAnimationFrame(function() {
             self.draw();
         });
+    };
+    
+
+    setupMouseEvents() {
+        this.canvas.addEventListener('click', (event) => {
+            if (!this.gameStarted) {
+                let rect = this.canvas.getBoundingClientRect();
+                let mouseX = event.clientX - rect.left;
+                let mouseY = event.clientY - rect.top;
+                
+                if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
+                    this.startGame();
+                }
+            }
+        });
+        // Optional: Hover-Effekt
+        this.canvas.addEventListener('mousemove', (event) => {
+            if (!this.gameStarted) {
+                let rect = this.canvas.getBoundingClientRect();
+                let mouseX = event.clientX - rect.left;
+                let mouseY = event.clientY - rect.top;
+                
+                if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
+                    this.canvas.style.cursor = 'pointer';
+                } else {
+                    this.canvas.style.cursor = 'default';
+                }
+            } else {
+                this.canvas.style.cursor = 'default';
+            }
+        });
+    };
+
+
+    // Neue Methode: Spiel starten
+    startGame() {
+        if (!this.gameStarted) {
+            this.gameStarted = true;
+            this.startScreen.hide();
+        }
     };
 
 
@@ -66,25 +119,37 @@ class World {
 
 
     run() {
-        setInterval(() => {
+    setInterval(() => {
+        if (this.gameStarted) { // Nur wenn Spiel läuft
             this.checkCollisions();
-        }, 300);
-        setInterval(() => {
-            this.checkThrowObjects();
-        }, 125);
-        setInterval(() => {
+        }
+    }, 300);
+    setInterval(() => {
+        this.checkThrowObjects(); // Läuft immer (enthält jetzt Game-Check)
+    }, 125);
+    setInterval(() => {
+        if (this.gameStarted) { // Nur wenn Spiel läuft
             this.checkFireballCollisions();
-        }, 25);
-        setInterval(() => {
+        }
+    }, 25);
+    setInterval(() => {
+        if (this.gameStarted) { // Nur wenn Spiel läuft
             this.checkCollectableCollisions();
-        }, 50);
-        setInterval(() => {
+        }
+    }, 50);
+    setInterval(() => {
+        if (this.gameStarted) { // Nur wenn Spiel läuft
             this.checkEnemyProjectileCollisions();
-        }, 25);
-        setInterval(() => {
+        }
+    }, 25);
+    setInterval(() => {
+        if (this.gameStarted) { // Nur wenn Spiel läuft
             this.checkBossProjectileCollisions();
-        }, 25);
-    };
+        }
+    }, 25);
+};
+
+    
 
     
     spawnFireball() {
@@ -94,6 +159,12 @@ class World {
             this.character.MANA -= 20;
             this.statusMana.setPercentage(this.character.MANA);
         }
+    };
+
+    
+    spawnRuby(x, y) {
+        let ruby = new Ruby(x, y);
+        this.collectables.push(ruby);
     };
     
     
@@ -167,6 +238,13 @@ class World {
                 manaPotion.world = this;
                 manaPotion.collect();
                 this.level.manaPotions.splice(index, 1);
+            }
+        });
+        this.level.rubys.forEach((ruby, index) => {
+            if (this.character.isColliding(ruby) && !ruby.collected) {
+                ruby.world = this;
+                ruby.collect();
+                this.level.rubys.splice(index, 1);
             }
         });
     };

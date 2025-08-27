@@ -80,5 +80,15 @@ const level_1 = new level (
         new ManaPotion(),
         new ManaPotion(),
         new ManaPotion()
+    ],
+
+    [
+        new Ruby(1000, 490),
+        new Ruby(1500, 490),
+        new Ruby(2200, 490),
+        new Ruby(2500, 490),
+        new Ruby(2400, 490),
+        new Ruby(3100, 490),
+        new Ruby(3700, 490)
     ]
 );

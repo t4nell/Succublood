@@ -1,17 +1,17 @@
 class StatusBar extends DrawableObject {
     IMAGES_STATUSBAR_BACKGROUND = [
-        {path:'img/statusBar/HP/1b.png',width: 16, height: 8},
-        {path:'img/statusBar/HP/2b.png',width: 16, height: 8},
-        {path:'img/statusBar/HP/3b.png',width: 16, height: 8},
-        {path:'img/statusBar/HP/4b.png',width: 16, height: 8},
-        {path:'img/statusBar/HP/5b.png',width: 16, height: 8},
+        {path:'img/statusBar/hpAndMana/1b.png',width: 16, height: 8},
+        {path:'img/statusBar/hpAndMana/2b.png',width: 16, height: 8},
+        {path:'img/statusBar/hpAndMana/3b.png',width: 16, height: 8},
+        {path:'img/statusBar/hpAndMana/4b.png',width: 16, height: 8},
+        {path:'img/statusBar/hpAndMana/5b.png',width: 16, height: 8},
     ];
     IMAGES_STATUSBAR_FULL = [
-        {path:'img/statusBar/HP/1f.png',width: 16, height: 8},
-        {path:'img/statusBar/HP/2f.png',width: 16, height: 8},
-        {path:'img/statusBar/HP/3f.png',width: 16, height: 8},
-        {path:'img/statusBar/HP/4f.png',width: 16, height: 8},
-        {path:'img/statusBar/HP/5f.png',width: 16, height: 8},
+        {path:'img/statusBar/hpAndMana/1f.png',width: 16, height: 8},
+        {path:'img/statusBar/hpAndMana/2f.png',width: 16, height: 8},
+        {path:'img/statusBar/hpAndMana/3f.png',width: 16, height: 8},
+        {path:'img/statusBar/hpAndMana/4f.png',width: 16, height: 8},
+        {path:'img/statusBar/hpAndMana/5f.png',width: 16, height: 8},
     ];
     zoom = 4;
     hue = 0;
