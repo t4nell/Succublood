@@ -10,7 +10,6 @@ class StartScreen extends DrawableObject {
         super();
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
-        // Button-Position berechnen und als Properties speichern
         this.buttonX = (this.canvasWidth / 2) - (this.buttonWidth / 2);
         this.buttonY = (this.canvasHeight / 2) + 50;
         this.loadStartScreenImages();
@@ -23,13 +22,11 @@ class StartScreen extends DrawableObject {
     draw(ctx) {
         if (!this.isVisible) return;
 
-            // Titel zeichnen
             ctx.font = 'bold 120px antiquityPrint';
             ctx.fillStyle = '#968344';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             
-            // Text-Schatten
             ctx.shadowColor = 'rgba(0, 0, 0, 0.75)';
             ctx.shadowOffsetX = 6;
             ctx.shadowOffsetY = 6;
@@ -37,9 +34,7 @@ class StartScreen extends DrawableObject {
             
             ctx.fillText('Succublood', this.canvasWidth / 2, this.canvasHeight / 2 - 100);
             
-            // Start Button Bild zeichnen
             if (this.playButtonImage.complete) {
-            // Pulsierender Schatten
                 let glowIntensity = (Math.sin(Date.now() * 0.005) + 1) / 2;
                 ctx.shadowColor = `rgba(150, 131, 68, ${glowIntensity})`;
                 ctx.shadowOffsetX = 0;

@@ -13,8 +13,8 @@ class World {
     rubyCount = 0;
     enemyProjectiles = [];
     bossProjectiles = [];
-    gameStarted = false; // Neue Property
-    startScreen; // Neue Property
+    gameStarted = false;
+    startScreen;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -33,10 +33,8 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         if (!this.gameStarted) {
-            // StartScreen zeichnen wenn Spiel nicht gestartet
             this.startScreen.draw(this.ctx);
         } else {
-            // Normales Spiel zeichnen
             this.addObjectsToMap(this.level.sky);
             this.addObjectsToMap(this.level.backgroundCrows);
 
@@ -79,7 +77,6 @@ class World {
                 }
             }
         });
-        // Optional: Hover-Effekt
         this.canvas.addEventListener('mousemove', (event) => {
             if (!this.gameStarted) {
                 let rect = this.canvas.getBoundingClientRect();
@@ -98,7 +95,6 @@ class World {
     };
 
 
-    // Neue Methode: Spiel starten
     startGame() {
         if (!this.gameStarted) {
             this.gameStarted = true;
@@ -120,30 +116,32 @@ class World {
 
     run() {
     setInterval(() => {
-        if (this.gameStarted) { // Nur wenn Spiel läuft
+        if (this.gameStarted) {
             this.checkCollisions();
         }
     }, 300);
     setInterval(() => {
-        this.checkThrowObjects(); // Läuft immer (enthält jetzt Game-Check)
+        if (this.gameStarted) {
+            this.checkThrowObjects();
+        }    
     }, 125);
     setInterval(() => {
-        if (this.gameStarted) { // Nur wenn Spiel läuft
+        if (this.gameStarted) {
             this.checkFireballCollisions();
         }
     }, 25);
     setInterval(() => {
-        if (this.gameStarted) { // Nur wenn Spiel läuft
+        if (this.gameStarted) {
             this.checkCollectableCollisions();
         }
     }, 50);
     setInterval(() => {
-        if (this.gameStarted) { // Nur wenn Spiel läuft
+        if (this.gameStarted) {
             this.checkEnemyProjectileCollisions();
         }
     }, 25);
     setInterval(() => {
-        if (this.gameStarted) { // Nur wenn Spiel läuft
+        if (this.gameStarted) {
             this.checkBossProjectileCollisions();
         }
     }, 25);
