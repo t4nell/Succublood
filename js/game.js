@@ -9,6 +9,8 @@ function init() {
 
 
 window.addEventListener('keydown', (event) => {
+    if (!world || !world.gameStarted) return;
+
     if (event.keyCode == 68 && world.cameraX - settings.characterOffsetLeft > -world.level.levelEndX && !world.character.isDying) {
         keyboard.RIGHT = true;
     } 

@@ -111,26 +111,28 @@ class meleeDemon extends MovableObject {
 
     animate() {
         setInterval(() => {
-            if ((!this.isCharacterInRange() && !this.isAttacking && !this.isDying)) {
-                this.moveLeft();
-            }
-            if (this.isCharacterInRange() && !this.isAttacking && !this.world.character.isDying) {
-                this.startAttack();
+            if (this.world && this.world.gameStarted) {
+                if ((!this.isCharacterInRange() && !this.isAttacking && !this.isDying)) {
+                    this.moveLeft();
+                }
+                if (this.isCharacterInRange() && !this.isAttacking && !this.world.character.isDying) {
+                    this.startAttack();
+                }
             }
         }, 1000 / 20);  
         
         setInterval(() => {
-            if (this.isDying) {    
+            if (this.world && this.world.gameStarted && this.isDying) {    
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.speed = 0;
                     this.animateImages(this.IMAGES_DEAD);
                 }
-            } else if (this.isHurt()) {
+            } else if (this.world && this.world.gameStarted && this.isHurt()) {
                 this.speed = 0;
                 if (this.currentImage < this.IMAGES_HURT.length) {
                     this.animateImages(this.IMAGES_HURT);
                 }
-            } else if (this.isAttacking) {
+            } else if (this.world && this.world.gameStarted && this.isAttacking) {
                 this.speed = 0;
                 if (this.currentImage < this.IMAGES_ATTACK.length) {
                     this.animateImages(this.IMAGES_ATTACK);
@@ -144,12 +146,15 @@ class meleeDemon extends MovableObject {
                         this.speed = 1 + Math.random() * 2;
                     }
                 }
-            } else if (this.isCharacterInRange() && !this.world.character.isDying) {
+            } else if (this.world && this.world.gameStarted && this.isCharacterInRange() && !this.world.character.isDying) {
                 this.speed = 0;
                 this.animateImages(this.IMAGES_IDLE);
-            } else {
+            } else if (this.world && this.world.gameStarted) {
                 this.speed = 1 + Math.random() * 2;
                 this.animateImages(this.IMAGES_WALK);
+            } else {
+                this.speed = 0;
+                this.animateImages(this.IMAGES_IDLE);
             }
         }, 100);
     };

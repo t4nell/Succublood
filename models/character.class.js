@@ -46,7 +46,7 @@ class Character extends MovableObject {
         {path:'img/character/hurt/hurt1.png',width: 54, height: 72, offsetX: -31},
         {path:'img/character/hurt/hurt2.png',width: 57, height: 73, offsetX: -28},
         {path:'img/character/hurt/hurt3.png',width: 57, height: 73, offsetX: -32},
-    ]
+    ];
     world;
     currentImage = 0;
     zoom = 2;
@@ -73,7 +73,7 @@ class Character extends MovableObject {
     
     animate() {
         setInterval(() => {
-            if (!this.isDying) {
+            if (this.world && this.world.gameStarted && !this.isDying) {
                 if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
                     this.moveRight();
                 }else if (this.world.keyboard.RIGHT && this.x === this.world.level.levelEndX) {
@@ -94,15 +94,17 @@ class Character extends MovableObject {
         }, 1000 / 60); 
 
         setInterval(() => {
-            if (this.isDying) {
+            if (this.world && this.world.gameStarted && this.isDying) {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.animateImages(this.IMAGES_DEAD);
+                } else {
+                 this.deathAnimationComplete = true;
                 }
             } else if (this.isHurt()) {
                 this.animateImages(this.IMAGES_HURT);
-            } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            } else if (this.world && this.world.gameStarted && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
                 this.animateImages(this.IMAGES_WALK);
-            } else if (this.isAttacking && this.MANA > 0) {
+            } else if (this.world && this.world.gameStarted && this.isAttacking && this.MANA > 0) {
                 this.playAttackAnimation();
             } else {
                 this.animateImages(this.IMAGES_IDLE);

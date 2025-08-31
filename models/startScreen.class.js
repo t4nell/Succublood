@@ -22,12 +22,15 @@ class StartScreen extends DrawableObject {
     draw(ctx) {
         if (!this.isVisible) return;
 
+            ctx.fillStyle = '#26212bff';
+            ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+
             ctx.font = 'bold 120px antiquityPrint';
             ctx.fillStyle = '#968344';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.75)';
+            ctx.shadowColor = 'rgba(71, 71, 71, 0.75)';
             ctx.shadowOffsetX = 6;
             ctx.shadowOffsetY = 6;
             ctx.shadowBlur = 10;
@@ -42,6 +45,11 @@ class StartScreen extends DrawableObject {
                 ctx.shadowBlur = 20;
                 
                 ctx.drawImage(this.playButtonImage, this.buttonX, this.buttonY, this.buttonWidth, this.buttonHeight);
+
+                ctx.shadowColor = 'transparent';
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+                ctx.shadowBlur = 0;
         }
     };
  
