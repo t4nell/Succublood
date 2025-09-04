@@ -37,6 +37,29 @@ class World {
         if (!this.gameStarted) {
             this.startScreen.draw(this.ctx);
         } else if (this.gameEnded) {
+            if (this.endScreen.fadePhase === 'darkening') {
+                this.addObjectsToMap(this.level.sky);
+                this.addObjectsToMap(this.level.backgroundCrows);
+
+                this.ctx.translate(this.cameraX, 0);
+                
+                this.addObjectsToMap(this.level.backgroundObjects);
+                this.addObjectsToMap(this.level.enemies);
+                this.addToMap(this.character);
+                this.addObjectsToMap(this.throwableObject);
+                this.addObjectsToMap(this.collectables);
+                this.addObjectsToMap(this.level.manaPotions);
+                this.addObjectsToMap(this.level.rubys);
+                this.addObjectsToMap(this.enemyProjectiles);
+                this.addObjectsToMap(this.bossProjectiles);
+                
+                this.ctx.translate(-this.cameraX, 0);
+                
+                this.statusLive.draw(this.ctx);
+                this.statusMana.draw(this.ctx);
+                this.rubyCounter.draw(this.ctx, this.rubyCount, this.canvas.width);
+            }
+    
             this.endScreen.draw(this.ctx);
         } else {
             this.addObjectsToMap(this.level.sky);
@@ -166,8 +189,10 @@ class World {
 
 
     showGameOverScreen() {
-        this.gameEnded = true;
-        this.endScreen.show('defeat');
+        setTimeout(() => {
+            this.gameEnded = true;
+            this.endScreen.show('defeat');
+        }, 250);
     };
 
 
