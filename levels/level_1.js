@@ -38,7 +38,6 @@ const level_1 = new level (
         new BackgroundObject('img/background/backTrees.png', 1280, 720, 0.5),
 
         new BackgroundObject('img/background/crypt.png', 0, 720, 0.75),
-        // new BackgroundObject('img/background/crypt.png', 1280, 720, 0.75),
 
         new BackgroundObject('img/background/wall.png', 0, 720, 0.75),
         new BackgroundObject('img/background/wallOffset.png', 640, 720, 0.75),
@@ -49,7 +48,6 @@ const level_1 = new level (
         new BackgroundObject('img/background/ground.png', 1280, 720, 1),
 
         new BackgroundObject('img/background/tree.png', 0, 720, 1),
-        // new BackgroundObject('img/background/tree.png', 1280, 720, 1),
         
         new BackgroundObject('img/background/bones.png', 0, 720, 1),
         new BackgroundObject('img/background/bones.png', 1280, 720, 1)

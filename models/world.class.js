@@ -25,6 +25,7 @@ class World {
         this.rubyCounter = new RubyCounter();
         this.startScreen = new StartScreen(canvas.width, canvas.height);
         this.endScreen = new EndScreen(canvas.width, canvas.height);
+        this.level = createLevel1();
         this.setupMouseEvents();
         this.draw();
     };
@@ -73,7 +74,6 @@ class World {
             let rect = this.canvas.getBoundingClientRect();
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
-
             if (!this.gameStarted) {
                 if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
                     this.startGame();
@@ -88,7 +88,6 @@ class World {
             let rect = this.canvas.getBoundingClientRect();
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
-
             if (!this.gameStarted) {
                 if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
                     this.canvas.style.cursor = 'pointer';
@@ -119,72 +118,57 @@ class World {
     };
 
 
-    // Spiel neu starten
     restartGame() {
-        // Spiel-Status zurücksetzen
+        this.clearAllIntervals();
         this.gameStarted = false;
         this.gameEnded = false;
-        
-        // Character zurücksetzen
+
         this.character = new Character();
-        
-        // Status Bars neu erstellen
         this.statusLive = new StatusBar(this.character.HP, 30, 30);
         this.statusMana = new StatusBar(this.character.MANA, 30, 70, 230);
-        
-        // Ruby Count zurücksetzen
         this.rubyCount = 0;
-        
-        // Level neu laden
-        this.level = level_1;
-        
-        // Arrays leeren
+
+        this.level = createLevel1();
+
         this.throwableObject = [];
         this.collectables = [];
         this.enemyProjectiles = [];
         this.bossProjectiles = [];
-        
-        // Kamera zurücksetzen
         this.cameraX = 0;
-        
-        // World-Referenzen neu setzen
-        this.setWorld();
-        
-        // EndScreen verstecken, StartScreen anzeigen
+
         this.endScreen.hide();
         this.startScreen.show();
     };
 
 
-    // Spiel-Ende prüfen
+    clearAllIntervals() {
+        location.reload();
+    };
+
+
     checkGameEnd() {
-        // Prüfe ob Character tot ist
         if (this.character.isDead() && this.character.deathAnimationComplete) {
             this.showGameOverScreen();
         }
-        
-        // Prüfe ob alle Enemies tot sind
         let allEnemiesDead = this.level.enemies.every(enemy => enemy.isDead());
         if (allEnemiesDead && this.level.enemies.length > 0) {
             setTimeout(() => {
                 this.showVictoryScreen();
             }, 1000);
         }
-    }
+    };
 
 
-    // Victory Screen anzeigen
     showVictoryScreen() {
         this.gameEnded = true;
         this.endScreen.show('victory');
     };
 
 
-    // Game Over Screen anzeigen
     showGameOverScreen() {
         this.gameEnded = true;
         this.endScreen.show('defeat');
-    }
+    };
 
 
     setWorld() {
@@ -202,7 +186,7 @@ class World {
         setInterval(() => {
             if (this.gameStarted && !this.gameEnded) {
                 this.checkCollisions();
-                this.checkGameEnd(); // Methode aufrufen
+                this.checkGameEnd();
             }
         }, 300);
         setInterval(() => {
