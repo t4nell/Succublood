@@ -1,7 +1,7 @@
 class EndScreen extends DrawableObject {
     isVisible = false;
     screenType = '';
-    restartButtonImage = new Image();
+    menuButton = new Image();
     buttonWidth = 250;
     buttonHeight = 150;
     buttonX;
@@ -22,7 +22,7 @@ class EndScreen extends DrawableObject {
 
 
     loadEndScreenImages() {
-        this.restartButtonImage.src = 'img/buttons/restartButton.png';
+        this.menuButton.src = 'img/buttons/menuButton2.png';
     };
 
 
@@ -121,7 +121,7 @@ class EndScreen extends DrawableObject {
 
         // Phase 3: Button einblenden
         if (this.fadePhase === 'button-fade' || this.fadePhase === 'complete') {
-            if (this.restartButtonImage.complete) {
+            if (this.menuButton.complete) {
                 let buttonOpacity = this.fadePhase === 'button-fade' ? this.fadeProgress : 1;
                 
                 let glowIntensity = (Math.sin(Date.now() * 0.005) + 1) / 2 * buttonOpacity;
@@ -131,7 +131,7 @@ class EndScreen extends DrawableObject {
                 ctx.shadowBlur = 20;
                 
                 ctx.globalAlpha = buttonOpacity;
-                ctx.drawImage(this.restartButtonImage, this.buttonX, this.buttonY, this.buttonWidth, this.buttonHeight);
+                ctx.drawImage(this.menuButton, this.buttonX, this.buttonY, this.buttonWidth, this.buttonHeight);
                 ctx.globalAlpha = 1;
 
                 ctx.shadowColor = 'transparent';

@@ -107,6 +107,7 @@ class World {
                 }
             }
         });
+        
         this.canvas.addEventListener('mousemove', (event) => {
             let rect = this.canvas.getBoundingClientRect();
             let mouseX = event.clientX - rect.left;
@@ -114,18 +115,28 @@ class World {
             if (!this.gameStarted) {
                 if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
                     this.canvas.style.cursor = 'pointer';
+                    this.startScreen.setHovered(true);
                 } else {
                     this.canvas.style.cursor = 'default';
+                    this.startScreen.setHovered(false);
                 }
             } else if (this.gameEnded) {
                 if (this.endScreen.isButtonClicked(mouseX, mouseY)) {
                     this.canvas.style.cursor = 'pointer';
+                    // Hier für EndScreen Hover hinzufügen
                 } else {
                     this.canvas.style.cursor = 'default';
                 }
             } else {
                 this.canvas.style.cursor = 'default';
             }
+        });
+        
+        this.canvas.addEventListener('mouseleave', () => {
+            if (!this.gameStarted) {
+                this.startScreen.setHovered(false);
+            }
+            this.canvas.style.cursor = 'default';
         });
     };
 
