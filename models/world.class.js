@@ -15,8 +15,10 @@ class World {
     bossProjectiles = [];
     gameStarted = false;
     gameEnded = false;
+    imprintVisible = false;
     startScreen;
     endScreen;
+    imprintScreen;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -25,6 +27,7 @@ class World {
         this.rubyCounter = new RubyCounter();
         this.startScreen = new StartScreen(canvas.width, canvas.height);
         this.endScreen = new EndScreen(canvas.width, canvas.height);
+        this.imprintScreen = new ImprintScreen(canvas.width, canvas.height);
         this.level = createLevel1();
         this.setupMouseEvents();
         this.draw();
@@ -33,9 +36,11 @@ class World {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        if (!this.gameStarted) {
+        if (!this.gameStarted && !this.imprintVisible) {
             this.startScreen.draw(this.ctx);
+        } else if (!this.gameStarted && this.imprintVisible) {
+            this.startScreen.draw(this.ctx);
+            this.imprintScreen.draw(this.ctx);
         } else if (this.gameEnded) {
             if (this.endScreen.fadePhase === 'darkening') {
                 this.addObjectsToMap(this.level.sky);
@@ -59,7 +64,7 @@ class World {
                 this.statusMana.draw(this.ctx);
                 this.rubyCounter.draw(this.ctx, this.rubyCount, this.canvas.width);
             }
-    
+
             this.endScreen.draw(this.ctx);
         } else {
             this.addObjectsToMap(this.level.sky);
@@ -97,9 +102,18 @@ class World {
             let rect = this.canvas.getBoundingClientRect();
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
-            if (!this.gameStarted) {
+            
+            if (!this.gameStarted && !this.imprintVisible) {
                 if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
                     this.startGame();
+                } else if (this.startScreen.isImprintButtonClicked(mouseX, mouseY)) {
+                    this.showImprint();
+                } else if (this.startScreen.isControlsButtonClicked(mouseX, mouseY)) {
+                    this.showControls();
+                }   
+            } else if (!this.gameStarted && this.imprintVisible) {
+                if (this.imprintScreen.isBackButtonClicked(mouseX, mouseY)) {
+                    this.hideImprint();
                 }
             } else if (this.gameEnded) {
                 if (this.endScreen.isButtonClicked(mouseX, mouseY)) {
@@ -112,18 +126,40 @@ class World {
             let rect = this.canvas.getBoundingClientRect();
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
-            if (!this.gameStarted) {
+
+            if (!this.gameStarted && !this.imprintVisible) {
                 if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
                     this.canvas.style.cursor = 'pointer';
                     this.startScreen.setHovered(true);
+                    this.startScreen.setImprintHovered(false);
+                    this.startScreen.setControlsHovered(false);
+                } else if (this.startScreen.isImprintButtonClicked(mouseX, mouseY)) {
+                    this.canvas.style.cursor = 'pointer';
+                    this.startScreen.setHovered(false);
+                    this.startScreen.setImprintHovered(true);
+                    this.startScreen.setControlsHovered(false);
+                } else if (this.startScreen.isControlsButtonClicked(mouseX, mouseY)) {
+                    this.canvas.style.cursor = 'pointer';
+                    this.startScreen.setHovered(false);
+                    this.startScreen.setImprintHovered(false);
+                    this.startScreen.setControlsHovered(true);
                 } else {
                     this.canvas.style.cursor = 'default';
                     this.startScreen.setHovered(false);
+                    this.startScreen.setImprintHovered(false);
+                    this.startScreen.setControlsHovered(false);
+                }
+            } else if (!this.gameStarted && this.imprintVisible) {
+                if (this.imprintScreen.isBackButtonClicked(mouseX, mouseY)) {
+                    this.canvas.style.cursor = 'pointer';
+                    this.imprintScreen.setBackHovered(true);
+                } else {
+                    this.canvas.style.cursor = 'default';
+                    this.imprintScreen.setBackHovered(false);
                 }
             } else if (this.gameEnded) {
                 if (this.endScreen.isButtonClicked(mouseX, mouseY)) {
                     this.canvas.style.cursor = 'pointer';
-                    // Hier für EndScreen Hover hinzufügen
                 } else {
                     this.canvas.style.cursor = 'default';
                 }
@@ -133,11 +169,20 @@ class World {
         });
         
         this.canvas.addEventListener('mouseleave', () => {
-            if (!this.gameStarted) {
+            if (!this.gameStarted && !this.imprintVisible) {
                 this.startScreen.setHovered(false);
+                this.startScreen.setImprintHovered(false);
+                this.startScreen.setControlsHovered(false);
+            } else if (!this.gameStarted && this.imprintVisible) {
+                this.imprintScreen.setBackHovered(false);
             }
             this.canvas.style.cursor = 'default';
         });
+    };
+
+
+    showControls() {
+        console.log('Controls button clicked!');
     };
 
 
@@ -152,10 +197,23 @@ class World {
     };
 
 
+    showImprint() {
+        this.imprintVisible = true;
+        this.imprintScreen.show();
+    };
+
+
+    hideImprint() {
+        this.imprintVisible = false;
+        this.imprintScreen.hide();
+    };
+
+
     restartGame() {
         this.clearAllIntervals();
         this.gameStarted = false;
         this.gameEnded = false;
+        this.imprintVisible = false;
 
         this.character = new Character();
         this.statusLive = new StatusBar(this.character.HP, 30, 30);
@@ -171,6 +229,7 @@ class World {
         this.cameraX = 0;
 
         this.endScreen.hide();
+        this.imprintScreen.hide();
         this.startScreen.show();
     };
 
