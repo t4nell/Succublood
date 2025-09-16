@@ -154,7 +154,6 @@ class Character extends MovableObject {
     // Neue Methode für Nahkampf-Animation
     playMeleeAttackAnimation() {
         if (this.currentImage < this.IMAGES_ATTACK_MELEE.length) {
-            // Beim mittleren Frame Schaden auslösen
             if (this.currentImage === 8) {
                 this.checkMeleeHit();
             }
