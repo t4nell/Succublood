@@ -24,14 +24,14 @@ class Character extends MovableObject {
     // Neue Bilder für Nahkampf-Angriff
     IMAGES_ATTACK_MELEE = [
         {path:'img/character/attackMeele/attackMeele1.png',width: 60, height: 74, offsetX: -35},
-        {path:'img/character/attackMeele/attackMeele2.png',width: 65, height: 75, offsetX: -37},
+        {path:'img/character/attackMeele/attackMeele2.png',width: 65, height: 74, offsetX: -37},
         {path:'img/character/attackMeele/attackMeele3.png',width: 70, height: 75, offsetX: -40},
-        {path:'img/character/attackMeele/attackMeele4.png',width: 85, height: 76, offsetX: -45},
-        {path:'img/character/attackMeele/attackMeele5.png',width: 90, height: 76, offsetX: -50},
-        {path:'img/character/attackMeele/attackMeele6.png',width: 75, height: 75, offsetX: -40},
-        {path:'img/character/attackMeele/attackMeele7.png',width: 75, height: 75, offsetX: -40},
-        {path:'img/character/attackMeele/attackMeele8.png',width: 75, height: 75, offsetX: -40},
-        {path:'img/character/attackMeele/attackMeele9.png',width: 75, height: 75, offsetX: -40},
+        {path:'img/character/attackMeele/attackMeele4.png',width: 85, height: 74, offsetX: -45},
+        {path:'img/character/attackMeele/attackMeele5.png',width: 90, height: 75, offsetX: -50},
+        {path:'img/character/attackMeele/attackMeele6.png',width: 75, height: 71, offsetX: -40},
+        {path:'img/character/attackMeele/attackMeele7.png',width: 75, height: 71, offsetX: -40},
+        {path:'img/character/attackMeele/attackMeele8.png',width: 75, height: 71, offsetX: -40},
+        {path:'img/character/attackMeele/attackMeele9.png',width: 75, height: 73, offsetX: -40},
     ];
     IMAGES_ATTACK_RANGE = [
         {path:'img/character/attackRange/attackRange1.png',width: 61, height: 74, offsetX: -40},
