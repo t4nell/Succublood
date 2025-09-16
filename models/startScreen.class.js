@@ -33,6 +33,25 @@ class StartScreen extends DrawableObject {
         this.controlsButtonY = (this.canvasHeight / 2) + 50;
         this.imprintButtonX = (this.canvasWidth / 2) - this.imprintButtonWidth + 400;
         this.imprintButtonY = (this.canvasHeight / 2) + 150;
+
+        // Parallax Hintergrund initialisieren
+        this.skyObjects = [
+            new Sky('img/background/sky.png', 0, 720),
+            new Sky('img/background/sky.png', 1279, 720),
+            new Sky('img/background/sky.png', 1278 * 2, 720),
+            new Sky('img/background/sky.png', 1277 * 3, 720)
+        ];
+        this.backgroundObjects = [
+            new BackgroundObject('img/background/graves.png', 0, 720, 0.25),
+            new BackgroundObject('img/background/gravesOffset.png', 640, 720, 0.25),
+            new BackgroundObject('img/background/backTrees.png', 0, 720, 0.5),
+            new BackgroundObject('img/background/crypt.png', 0, 720, 0.75),
+            new BackgroundObject('img/background/wall.png', 0, 720, 0.75),
+            new BackgroundObject('img/background/ground.png', 0, 720, 1),
+            new BackgroundObject('img/background/tree.png', 0, 720, 1),
+            new BackgroundObject('img/background/bones.png', 0, 720, 1),
+        ];
+
         this.createStartScreenCharacter();
 
         this.loadStartScreenImages();
@@ -102,7 +121,11 @@ class StartScreen extends DrawableObject {
     draw(ctx) {
         if (!this.isVisible) return;
 
-        ctx.fillStyle = '#26212bff';
+        // Parallax Hintergrund zeichnen
+        this.skyObjects.forEach(sky => sky.draw(ctx));
+        this.backgroundObjects.forEach(bg => bg.draw(ctx));
+
+        ctx.fillStyle = 'rgba(38, 33, 43, 0.8)';
         ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
 
         ctx.font = 'bold 120px antiquityPrint';
