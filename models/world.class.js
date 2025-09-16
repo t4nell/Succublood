@@ -346,7 +346,7 @@ class World {
 
     
     checkThrowObjects() {
-        if (this.keyboard.SPACE && !this.spacePressed && !this.character.isDying && !this.character.isAttacking) {
+        if (this.keyboard.SPACE && !this.spacePressed && !this.character.isDying && !this.character.isAttacking && !this.character.isMeleeAttacking) {
             this.character.startAttack();
             this.spacePressed = true;
         }

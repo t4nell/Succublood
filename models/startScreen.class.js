@@ -33,8 +33,6 @@ class StartScreen extends DrawableObject {
         this.controlsButtonY = (this.canvasHeight / 2) + 50;
         this.imprintButtonX = (this.canvasWidth / 2) - this.imprintButtonWidth + 400;
         this.imprintButtonY = (this.canvasHeight / 2) + 150;
-
-        // Parallax Hintergrund initialisieren
         this.skyObjects = [
             new Sky('img/background/sky.png', 0, 720),
             new Sky('img/background/sky.png', 1279, 720),
@@ -51,15 +49,12 @@ class StartScreen extends DrawableObject {
             new BackgroundObject('img/background/tree.png', 0, 720, 1),
             new BackgroundObject('img/background/bones.png', 0, 720, 1),
         ];
-
         this.createStartScreenCharacter();
-
         this.loadStartScreenImages();
     };
 
 
     createStartScreenCharacter() {
-        // Vereinfachte Character-Klasse nur für StartScreen
         this.character = {
             IMAGES_IDLE: [
                 {path:'img/character/idle/idle1.png',width: 68, height: 75, offsetX: -37}, 
