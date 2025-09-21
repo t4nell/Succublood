@@ -21,6 +21,8 @@ class StartScreen extends DrawableObject {
     character;
     characterX;
     characterY;
+    isCharacterHurt = false;
+    hurtTimer = 0;
 
     
     constructor(canvasWidth, canvasHeight) {
@@ -64,6 +66,11 @@ class StartScreen extends DrawableObject {
                 {path:'img/character/idle/idle5.png',width: 68, height: 75, offsetX: -38}, 
                 {path:'img/character/idle/idle6.png',width: 68, height: 75, offsetX: -36}
             ],
+            IMAGES_HURT: [
+                {path:'img/character/hurt/hurt1.png',width: 54, height: 72, offsetX: -31},
+                {path:'img/character/hurt/hurt2.png',width: 57, height: 73, offsetX: -28},
+                {path:'img/character/hurt/hurt3.png',width: 57, height: 73, offsetX: -32},
+            ],
             currentImage: 0,
             zoom: 4,
             imageCash: {},
@@ -86,21 +93,46 @@ class StartScreen extends DrawableObject {
             img.src = sprite.path;
             this.character.imageCash[sprite.path] = img;
         });
+
+        this.character.IMAGES_HURT.forEach(sprite => {
+            let img = new Image();
+            img.src = sprite.path;
+            this.character.imageCash[sprite.path] = img;
+        });
     };
 
 
     startCharacterAnimation() {
         setInterval(() => {
             if (this.isVisible) {
-                let spriteIndex = this.character.currentImage % this.character.IMAGES_IDLE.length;
-                let sprite = this.character.IMAGES_IDLE[spriteIndex];
-                
-                this.character.img = this.character.imageCash[sprite.path];
-                this.character.width = sprite.width * this.character.zoom;
-                this.character.height = sprite.height * this.character.zoom;
-                this.character.offsetX = sprite.offsetX * this.character.zoom;
-                
-                this.character.currentImage++;
+                if (this.isCharacterHurt) {
+                    let spriteIndex = this.character.currentImage % this.character.IMAGES_HURT.length;
+                    let sprite = this.character.IMAGES_HURT[spriteIndex];
+                    
+                    this.character.img = this.character.imageCash[sprite.path];
+                    this.character.width = sprite.width * this.character.zoom;
+                    this.character.height = sprite.height * this.character.zoom;
+                    this.character.offsetX = sprite.offsetX * this.character.zoom;
+                    
+                    this.character.currentImage++;
+                    
+                    this.hurtTimer++;
+                    if (this.hurtTimer >= this.character.IMAGES_HURT.length * 1) {
+                        this.isCharacterHurt = false;
+                        this.hurtTimer = 0;
+                        this.character.currentImage = 0;
+                    }
+                } else {
+                    let spriteIndex = this.character.currentImage % this.character.IMAGES_IDLE.length;
+                    let sprite = this.character.IMAGES_IDLE[spriteIndex];
+                    
+                    this.character.img = this.character.imageCash[sprite.path];
+                    this.character.width = sprite.width * this.character.zoom;
+                    this.character.height = sprite.height * this.character.zoom;
+                    this.character.offsetX = sprite.offsetX * this.character.zoom;
+                    
+                    this.character.currentImage++;
+                }
             }
         }, 1000 / 8);
     };
@@ -246,6 +278,23 @@ class StartScreen extends DrawableObject {
                mouseX <= this.controlsButtonX + this.controlsButtonWidth &&
                mouseY >= this.controlsButtonY && 
                mouseY <= this.controlsButtonY + this.controlsButtonHeight;
+    };
+
+
+    isCharacterClicked(mouseX, mouseY) {
+        return mouseX >= this.characterX + this.character.offsetX && 
+               mouseX <= this.characterX + this.character.offsetX + this.character.width &&
+               mouseY >= this.characterY - this.character.height && 
+               mouseY <= this.characterY;
+    };
+
+
+    triggerHurtAnimation() {
+        if (!this.isCharacterHurt) {
+            this.isCharacterHurt = true;
+            this.hurtTimer = 0;
+            this.character.currentImage = 0;
+        }
     };
 
 

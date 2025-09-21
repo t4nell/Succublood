@@ -21,7 +21,6 @@ class Character extends MovableObject {
         {path:'img/character/walk/walk11.png',width: 43, height: 73, offsetX: -34},  
         {path:'img/character/walk/walk12.png',width: 51, height: 72, offsetX: -34},  
     ];
-    // Neue Bilder für Nahkampf-Angriff
     IMAGES_ATTACK_MELEE = [
         {path:'img/character/attackMelee/attackMelee1.png',width: 61, height: 74, offsetX: -40},
         {path:'img/character/attackMelee/attackMelee2.png',width: 66, height: 74, offsetX: -41},
@@ -120,7 +119,7 @@ class Character extends MovableObject {
             } else if (this.world && this.world.gameStarted && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
                 this.animateImages(this.IMAGES_WALK);
             } else if (this.world && this.world.gameStarted && this.isAttacking && this.MANA > 0) {
-                this.playAttackAnimation();
+                this.playRangeAttackAnimation();
             } else if (this.world && this.world.gameStarted && this.isMeleeAttacking){
                 this.playMeleeAttackAnimation();
             } else {    
@@ -142,7 +141,7 @@ class Character extends MovableObject {
         }
     };
 
-    startAttack() {
+    startRangeAttack() {
         if (!this.isAttacking && !this.isDying) {
             this.isAttacking = true;
             this.attackAnimationStarted = false;
@@ -151,7 +150,6 @@ class Character extends MovableObject {
     };
 
 
-    // Neue Methode für Nahkampf-Animation
     playMeleeAttackAnimation() {
         if (this.currentImage < this.IMAGES_ATTACK_MELEE.length) {
             if (this.currentImage === 8) {
@@ -164,9 +162,9 @@ class Character extends MovableObject {
         }
     };
 
-    playAttackAnimation() {
+    playRangeAttackAnimation() {
         if (this.currentImage < this.IMAGES_ATTACK_RANGE.length) {
-            if (this.currentImage === 5 && !this.attackAnimationStarted) {
+            if (this.currentImage === 6 && !this.attackAnimationStarted) {
                 this.world.spawnFireball();
                 this.attackAnimationStarted = true;
             }
@@ -178,25 +176,17 @@ class Character extends MovableObject {
         }
     };
 
-    // Methode zur Überprüfung von Nahkampf-Treffern
+
     checkMeleeHit() {
         if (!this.world) return;
-        
-        // Berechne den Bereich vor dem Charakter
         let hitX = this.otherDirection ? 
                 this.x - this.meleeAttackRange : 
                 this.x + (this.width / 2);
-        
-        // Prüfe alle Feinde
         this.world.level.enemies.forEach(enemy => {
-            // Nahkampfreichweite berechnen
             let isInRange = this.otherDirection ? 
                             (enemy.x > hitX && enemy.x < this.x) :
                             (enemy.x > this.x && enemy.x < hitX + this.meleeAttackRange);
-            
-            // Wenn Feind in Reichweite ist und noch lebt
             if (isInRange && !enemy.isDead() && !enemy.isHurt()) {
-                // Schaden auslösen
                 if (enemy instanceof meleeDemon) {
                     enemy.killMeleeDemon();
                 } else if (enemy instanceof rangeDemon) {
@@ -206,7 +196,6 @@ class Character extends MovableObject {
                 }
             }
         });
-    }
-
+    };
 };
 

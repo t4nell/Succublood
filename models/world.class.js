@@ -104,7 +104,10 @@ class World {
             let mouseY = event.clientY - rect.top;
             
             if (!this.gameStarted && !this.imprintVisible) {
-                if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
+                if (this.startScreen.isCharacterClicked(mouseX, mouseY)) {
+                    this.startScreen.triggerHurtAnimation();
+                }
+                else if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
                     this.startGame();
                 } else if (this.startScreen.isImprintButtonClicked(mouseX, mouseY)) {
                     this.showImprint();
@@ -128,7 +131,13 @@ class World {
             let mouseY = event.clientY - rect.top;
 
             if (!this.gameStarted && !this.imprintVisible) {
-                if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
+                if (this.startScreen.isCharacterClicked(mouseX, mouseY)) {
+                    this.canvas.style.cursor = 'pointer';
+                    this.startScreen.setHovered(false);
+                    this.startScreen.setImprintHovered(false);
+                    this.startScreen.setControlsHovered(false);
+                }
+                else if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
                     this.canvas.style.cursor = 'pointer';
                     this.startScreen.setHovered(true);
                     this.startScreen.setImprintHovered(false);
@@ -347,7 +356,7 @@ class World {
     
     checkThrowObjects() {
         if (this.keyboard.SPACE && !this.spacePressed && !this.character.isDying && !this.character.isAttacking && !this.character.isMeleeAttacking) {
-            this.character.startAttack();
+            this.character.startRangeAttack();
             this.spacePressed = true;
         }
         if (!this.keyboard.SPACE) {
