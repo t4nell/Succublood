@@ -16,9 +16,11 @@ class World {
     gameStarted = false;
     gameEnded = false;
     imprintVisible = false;
+    controlsVisible = false;
     startScreen;
     endScreen;
     imprintScreen;
+    controlsScreen;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -28,26 +30,36 @@ class World {
         this.startScreen = new StartScreen(canvas.width, canvas.height);
         this.endScreen = new EndScreen(canvas.width, canvas.height);
         this.imprintScreen = new ImprintScreen(canvas.width, canvas.height);
+        this.controlsScreen = new ControlsScreen(canvas.width, canvas.height);
         this.level = createLevel1();
+        this.loadSounds();
         this.setupMouseEvents();
         this.draw();
     };
 
 
+    loadSounds() {
+        soundManager.loadSound('buttonClick', 'audio/gameSounds/buttonClick.mp3');
+        soundManager.loadSound('characterHurt', 'audio/gameSounds/characterHurt.mp3');
+    };
+
+
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        if (!this.gameStarted && !this.imprintVisible) {
+        
+        if (!this.gameStarted && !this.imprintVisible && !this.controlsVisible) {
             this.startScreen.draw(this.ctx);
         } else if (!this.gameStarted && this.imprintVisible) {
             this.startScreen.draw(this.ctx);
             this.imprintScreen.draw(this.ctx);
+        } else if (!this.gameStarted && this.controlsVisible) { 
+            this.startScreen.draw(this.ctx);
+            this.controlsScreen.draw(this.ctx);
         } else if (this.gameEnded) {
             if (this.endScreen.fadePhase === 'darkening') {
                 this.addObjectsToMap(this.level.sky);
                 this.addObjectsToMap(this.level.backgroundCrows);
-
                 this.ctx.translate(this.cameraX, 0);
-                
                 this.addObjectsToMap(this.level.backgroundObjects);
                 this.addObjectsToMap(this.level.enemies);
                 this.addToMap(this.character);
@@ -57,21 +69,16 @@ class World {
                 this.addObjectsToMap(this.level.rubys);
                 this.addObjectsToMap(this.enemyProjectiles);
                 this.addObjectsToMap(this.bossProjectiles);
-                
                 this.ctx.translate(-this.cameraX, 0);
-                
                 this.statusLive.draw(this.ctx);
                 this.statusMana.draw(this.ctx);
                 this.rubyCounter.draw(this.ctx, this.rubyCount, this.canvas.width);
             }
-
             this.endScreen.draw(this.ctx);
         } else {
             this.addObjectsToMap(this.level.sky);
             this.addObjectsToMap(this.level.backgroundCrows);
-
             this.ctx.translate(this.cameraX, 0);
-            
             this.addObjectsToMap(this.level.backgroundObjects);
             this.addObjectsToMap(this.level.enemies);
             this.addToMap(this.character);
@@ -81,14 +88,11 @@ class World {
             this.addObjectsToMap(this.level.rubys);
             this.addObjectsToMap(this.enemyProjectiles);
             this.addObjectsToMap(this.bossProjectiles);
-            
             this.ctx.translate(-this.cameraX, 0);
-            
             this.statusLive.draw(this.ctx);
             this.statusMana.draw(this.ctx);
             this.rubyCounter.draw(this.ctx, this.rubyCount, this.canvas.width);
         }
-
 
         let self = this;
         requestAnimationFrame(function() {
@@ -103,23 +107,34 @@ class World {
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
             
-            if (!this.gameStarted && !this.imprintVisible) {
+            if (!this.gameStarted && !this.imprintVisible && !this.controlsVisible) {
                 if (this.startScreen.isCharacterClicked(mouseX, mouseY)) {
+                    soundManager.playSound('characterHurt', 0.5);
                     this.startScreen.triggerHurtAnimation();
                 }
                 else if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
+                    soundManager.playSound('buttonClick', 0.7);
                     this.startGame();
                 } else if (this.startScreen.isImprintButtonClicked(mouseX, mouseY)) {
+                    soundManager.playSound('buttonClick', 0.7);
                     this.showImprint();
                 } else if (this.startScreen.isControlsButtonClicked(mouseX, mouseY)) {
+                    soundManager.playSound('buttonClick', 0.7);
                     this.showControls();
                 }   
             } else if (!this.gameStarted && this.imprintVisible) {
                 if (this.imprintScreen.isBackButtonClicked(mouseX, mouseY)) {
+                    soundManager.playSound('buttonClick', 0.7);
                     this.hideImprint();
+                }
+            } else if (!this.gameStarted && this.controlsVisible) {
+                if (this.controlsScreen.isBackButtonClicked(mouseX, mouseY)) {
+                    soundManager.playSound('buttonClick', 0.7);
+                    this.hideControls();
                 }
             } else if (this.gameEnded) {
                 if (this.endScreen.isButtonClicked(mouseX, mouseY)) {
+                    soundManager.playSound('buttonClick', 0.7);
                     this.restartGame();
                 }
             }
@@ -130,7 +145,7 @@ class World {
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
 
-            if (!this.gameStarted && !this.imprintVisible) {
+            if (!this.gameStarted && !this.imprintVisible && !this.controlsVisible) {
                 if (this.startScreen.isCharacterClicked(mouseX, mouseY)) {
                     this.canvas.style.cursor = 'pointer';
                     this.startScreen.setHovered(false);
@@ -166,6 +181,14 @@ class World {
                     this.canvas.style.cursor = 'default';
                     this.imprintScreen.setBackHovered(false);
                 }
+            } else if (!this.gameStarted && this.controlsVisible) {
+                if (this.controlsScreen.isBackButtonClicked(mouseX, mouseY)) {
+                    this.canvas.style.cursor = 'pointer';
+                    this.controlsScreen.setBackHovered(true);
+                } else {
+                    this.canvas.style.cursor = 'default';
+                    this.controlsScreen.setBackHovered(false);
+                }
             } else if (this.gameEnded) {
                 if (this.endScreen.isButtonClicked(mouseX, mouseY)) {
                     this.canvas.style.cursor = 'pointer';
@@ -178,12 +201,14 @@ class World {
         });
         
         this.canvas.addEventListener('mouseleave', () => {
-            if (!this.gameStarted && !this.imprintVisible) {
+            if (!this.gameStarted && !this.imprintVisible && !this.controlsVisible) {
                 this.startScreen.setHovered(false);
                 this.startScreen.setImprintHovered(false);
                 this.startScreen.setControlsHovered(false);
             } else if (!this.gameStarted && this.imprintVisible) {
                 this.imprintScreen.setBackHovered(false);
+            } else if (!this.gameStarted && this.controlsVisible) {
+                this.controlsScreen.setBackHovered(false);
             }
             this.canvas.style.cursor = 'default';
         });
@@ -191,7 +216,8 @@ class World {
 
 
     showControls() {
-        console.log('Controls button clicked!');
+        this.controlsVisible = true;
+        this.controlsScreen.show();
     };
 
 
@@ -199,7 +225,6 @@ class World {
         if (!this.gameStarted) {
             this.gameStarted = true;
             this.startScreen.hide();
-
             this.setWorld();
             this.run();
         }
@@ -218,11 +243,18 @@ class World {
     };
 
 
+    hideControls() {
+        this.controlsVisible = false;
+        this.controlsScreen.hide();
+    };
+
+
     restartGame() {
         this.clearAllIntervals();
         this.gameStarted = false;
         this.gameEnded = false;
         this.imprintVisible = false;
+        this.controlsVisible = false;
 
         this.character = new Character();
         this.statusLive = new StatusBar(this.character.HP, 30, 30);
@@ -239,6 +271,7 @@ class World {
 
         this.endScreen.hide();
         this.imprintScreen.hide();
+        this.controlsScreen.hide();
         this.startScreen.show();
     };
 
