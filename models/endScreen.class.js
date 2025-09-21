@@ -9,8 +9,8 @@ class EndScreen extends DrawableObject {
     fadePhase = 'none';
     fadeProgress = 0;
     fadeSpeed = 0.015;
+    isMenuHovered = false;
 
-    
     constructor(canvasWidth, canvasHeight) {
         super();
         this.canvasWidth = canvasWidth;
@@ -123,12 +123,13 @@ class EndScreen extends DrawableObject {
         if (this.fadePhase === 'button-fade' || this.fadePhase === 'complete') {
             if (this.menuButton.complete) {
                 let buttonOpacity = this.fadePhase === 'button-fade' ? this.fadeProgress : 1;
-                
-                let glowIntensity = (Math.sin(Date.now() * 0.005) + 1) / 2 * buttonOpacity;
-                ctx.shadowColor = `rgba(150, 131, 68, ${glowIntensity})`;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 0;
-                ctx.shadowBlur = 20;
+                if (this.isMenuHovered) {
+                    let glowIntensity = (Math.sin(Date.now() * 0.005) + 1) / 2 * buttonOpacity;
+                    ctx.shadowColor = `rgba(150, 131, 68, ${glowIntensity})`;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                    ctx.shadowBlur = 20;
+                }
                 
                 ctx.globalAlpha = buttonOpacity;
                 ctx.drawImage(this.menuButton, this.buttonX, this.buttonY, this.buttonWidth, this.buttonHeight);
@@ -139,6 +140,12 @@ class EndScreen extends DrawableObject {
             }
         }
     };
+
+
+    setMenuHovered(hovered) {
+        this.isMenuHovered = hovered;
+    };
+
 
     isButtonClicked(mouseX, mouseY) {
         if (this.fadePhase !== 'complete') return false;

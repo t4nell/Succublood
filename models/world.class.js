@@ -192,8 +192,10 @@ class World {
             } else if (this.gameEnded) {
                 if (this.endScreen.isButtonClicked(mouseX, mouseY)) {
                     this.canvas.style.cursor = 'pointer';
+                    this.endScreen.setMenuHovered(true);
                 } else {
                     this.canvas.style.cursor = 'default';
+                    this.endScreen.setMenuHovered(false);
                 }
             } else {
                 this.canvas.style.cursor = 'default';
@@ -209,6 +211,8 @@ class World {
                 this.imprintScreen.setBackHovered(false);
             } else if (!this.gameStarted && this.controlsVisible) {
                 this.controlsScreen.setBackHovered(false);
+            } else if (this.gameEnded) {
+                this.endScreen.setMenuHovered(false);
             }
             this.canvas.style.cursor = 'default';
         });
