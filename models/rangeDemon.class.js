@@ -78,6 +78,7 @@ class rangeDemon extends MovableObject {
 
     killRangeDemon() {
         this.hit();
+        soundManager.playSound('demonHurt', 0.5);
         if (this.isDead()) {
             this.world.spawnManaPotion(this.x, this.y);
             setTimeout(() => {

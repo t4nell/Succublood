@@ -76,6 +76,7 @@ class meleeDemon extends MovableObject {
 
     killMeleeDemon() {
         this.hit();
+        soundManager.playSound('demonHurt', 0.5);
         if (this.isDead()) {
             this.world.spawnHealPotion(this.x, this.y);
             setTimeout(() => {

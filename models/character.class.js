@@ -116,6 +116,7 @@ class Character extends MovableObject {
                 }
             } else if (this.isHurt()) {
                 this.animateImages(this.IMAGES_HURT);
+                soundManager.playSound('characterHurt', 0.5);
             } else if (this.world && this.world.gameStarted && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
                 this.animateImages(this.IMAGES_WALK);
             } else if (this.world && this.world.gameStarted && this.isAttacking && this.MANA > 0) {
@@ -138,6 +139,10 @@ class Character extends MovableObject {
         if (!this.isMeleeAttacking && !this.isDying) {
             this.isMeleeAttacking = true;
             this.currentImage = 0;
+            soundManager.playSound('whipSwing', 0.3);
+            setTimeout(() => {
+                soundManager.playSound('whipCrack', 0.3);
+            }, 650);
         }
     };
 

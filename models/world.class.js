@@ -41,6 +41,11 @@ class World {
     loadSounds() {
         soundManager.loadSound('buttonClick', 'audio/gameSounds/buttonClick.mp3');
         soundManager.loadSound('characterHurt', 'audio/gameSounds/characterHurt.mp3');
+
+        soundManager.loadSound('fireball', 'audio/gameSounds/fireball.mp3');
+        soundManager.loadSound('demonHurt', 'audio/gameSounds/demonHurt.mp3');
+        soundManager.loadSound('whipSwing', 'audio/gameSounds/whipSwing.mp3');
+        soundManager.loadSound('whipCrack', 'audio/gameSounds/whipCrack.mp3');
     };
 
 
@@ -364,6 +369,7 @@ class World {
         if (!this.character.isDying && this.character.MANA > 0) {
             let fireball = new ThrowableObject(this.character.x + 34, this.character.y + 34);
             this.throwableObject.push(fireball);
+            soundManager.playSound('fireball', 0.3);
             this.character.MANA -= 20;
             this.statusMana.setPercentage(this.character.MANA);
         }
