@@ -101,6 +101,7 @@ class Character extends MovableObject {
                 }
 
                 if (this.world.keyboard.UP && !this.isAboveGround()) {
+                    soundManager.playSound('jump', 0.5);
                     this.jump();
                 }
                 this.moveCamera();

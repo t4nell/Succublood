@@ -40,10 +40,19 @@ class World {
 
     loadSounds() {
         soundManager.loadSound('buttonClick', 'audio/gameSounds/buttonClick.mp3');
+
+        soundManager.loadSound('bossBackground', 'audio/gameSounds/bossBackground.mp3');
+
         soundManager.loadSound('characterHurt', 'audio/gameSounds/characterHurt.mp3');
+        soundManager.loadSound('jump', 'audio/gameSounds/jump.mp3');
+        soundManager.loadSound('demonHurt', 'audio/gameSounds/demonHurt.mp3');
+        soundManager.loadSound('bossAttack', 'audio/gameSounds/bossAttack.mp3');
+        soundManager.loadSound('bossHurt', 'audio/gameSounds/bossHurt.mp3');
+        
+        soundManager.loadSound('collectRuby', 'audio/gameSounds/collectRuby.mp3');
+        soundManager.loadSound('collectPotion', 'audio/gameSounds/collectPotion.mp3');
 
         soundManager.loadSound('fireball', 'audio/gameSounds/fireball.mp3');
-        soundManager.loadSound('demonHurt', 'audio/gameSounds/demonHurt.mp3');
         soundManager.loadSound('whipSwing', 'audio/gameSounds/whipSwing.mp3');
         soundManager.loadSound('whipCrack', 'audio/gameSounds/whipCrack.mp3');
     };

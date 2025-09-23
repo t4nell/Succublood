@@ -28,7 +28,7 @@ class Ruby extends CollectableObjects {
     applyEffect() {
         if (this.world && this.world.character) {
             this.world.rubyCount += this.value;
-            // Hier Ruby-Statusbar aktualisieren
+            soundManager.playSound('collectRuby', 0.5);
         }
     };
 };

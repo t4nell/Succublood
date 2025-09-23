@@ -48,7 +48,7 @@ class Endboss extends MovableObject {
     baseY = 500;
     isAwakened = false;
     walkSpeed = 3;
-
+    
 
     constructor() {
         super().loadImage(this.IMAGES_IDLE[0].path);
@@ -64,9 +64,82 @@ class Endboss extends MovableObject {
     };
 
 
+    animate() {
+        setInterval(() => {
+            if (!this.isDying) {
+                this.awakeBoss();
+                if (this.isAwakened && !this.isAttacking && !this.isHurt() && !this.isCharacterInAttackRange()) {
+                    this.moveLeft();
+                }
+                if (this.isAwakened && this.isCharacterInAttackRange() && !this.isAttacking && !this.world.character.isDying) {
+                    this.startAttack();
+                }
+            }
+        }, 1000 / 60);
+
+        setInterval(() => {
+            if (!this.isHurt() && !this.isDying && !this.isAttacking) {
+                this.startIdleAnimation();
+            }
+        }, 3000);
+
+        setInterval(() => {
+            if (this.isDying) {
+                if (this.currentImage < this.IMAGES_DEAD.length) {
+                    this.speed = 0;
+                    this.animateImages(this.IMAGES_DEAD);
+                }
+            } else if (this.isHurt()) {
+                this.speed = 0;
+                if (this.currentImage < this.IMAGES_HURT.length) {
+                    this.animateImages(this.IMAGES_HURT);
+                    soundManager.playSound('bossHurt');
+                }
+            } else if (this.isAttacking) {
+                this.speed = 0;
+                if (this.currentImage < this.IMAGES_ATTACK.length) {
+                    this.animateImages(this.IMAGES_ATTACK);
+                    if (this.currentImage === 11 && this.isCharacterInAttackRange()) {
+                        this.shootBossProjectile();
+                        soundManager.playSound('bossAttack');
+                    }
+                } else {
+                    this.isAttacking = false;
+                    this.currentImage = 0;
+                    if (!this.isCharacterInAttackRange()) {
+                        this.speed = this.walkSpeed;
+                    }
+                }
+            } else if (this.isAnimating) {
+                if (this.currentImage < this.IMAGES_IDLE.length) {
+                    this.animateImages(this.IMAGES_IDLE);
+                } else {
+                    this.isAnimating = false;
+                    this.currentImage = 0;
+                }
+            } else if (this.isAwakened && !this.isCharacterInAttackRange()) {
+                this.speed = this.walkSpeed;
+                this.swapImg(this.IMAGES_WALK[0]);
+            } else {
+                this.speed = 0;
+                this.swapImg(this.IMAGES_IDLE[0]);
+            }
+                
+        }, 120);
+
+        setInterval(() => {
+            if (!this.isDying) {
+                this.floatOffset += this.floatSpeed;
+                this.y = this.baseY + Math.sin(this.floatOffset) * this.floatAmplitude;
+            }
+        }, 1000 / 60);
+    };
+
+
     killEndboss() {
         this.hit();
         if (this.isDead()) {
+            soundManager.stopSound('bossBackground');
             this.world.spawnHealPotion(this.x - 50, this.y);
             this.world.spawnHealPotion(this.x + 50, this.y);
             setTimeout(() => {
@@ -75,18 +148,19 @@ class Endboss extends MovableObject {
             
             setTimeout(() => {
                 this.world.removeEnemy(this);
-                // Hier "Victory!" Screen zeigen
             }, this.IMAGES_DEAD.length * 200);
         }
     };
+
+    
 
 
     isCharacterInTriggerRange() {
         if (!this.world || !this.world.character) return false;
         return this.world.character.x >= 4000;
     };
-
-
+    
+    
     isCharacterInAttackRange() {
         if (!this.world || !this.world.character || this.world.character.isDying) return false;
         let distance = Math.abs(this.x - this.world.character.x);
@@ -121,79 +195,12 @@ class Endboss extends MovableObject {
     awakeBoss() {
         if (!this.isAwakened && this.isCharacterInTriggerRange()) {
             this.isAwakened = true;
+            soundManager.playSound('bossBackground');
             this.speed = this.walkSpeed;
         }
     };
 
 
-    animate() {
-        setInterval(() => {
-            if (!this.isDying) {
-                this.awakeBoss();
-                if (this.isAwakened && !this.isAttacking && !this.isHurt() && !this.isCharacterInAttackRange()) {
-                    this.moveLeft();
-                }
-                if (this.isAwakened && this.isCharacterInAttackRange() && !this.isAttacking && !this.world.character.isDying) {
-                    this.startAttack();
-                }
-            }
-        }, 1000 / 60);
-
-        setInterval(() => {
-            if (!this.isHurt() && !this.isDying && !this.isAttacking) {
-                this.startIdleAnimation();
-            }
-        }, 3000);
-
-        setInterval(() => {
-            if (this.isDying) {
-                if (this.currentImage < this.IMAGES_DEAD.length) {
-                    this.speed = 0;
-                    this.animateImages(this.IMAGES_DEAD);
-                }
-            } else if (this.isHurt()) {
-                this.speed = 0;
-                if (this.currentImage < this.IMAGES_HURT.length) {
-                    this.animateImages(this.IMAGES_HURT);
-                }
-            } else if (this.isAttacking) {
-                this.speed = 0;
-                if (this.currentImage < this.IMAGES_ATTACK.length) {
-                    this.animateImages(this.IMAGES_ATTACK);
-                    if (this.currentImage === 11 && this.isCharacterInAttackRange()) {
-                        this.shootBossProjectile();
-                    }
-                } else {
-                    this.isAttacking = false;
-                    this.currentImage = 0;
-                    if (!this.isCharacterInAttackRange()) {
-                        this.speed = this.walkSpeed;
-                    }
-                }
-            } else if (this.isAnimating) {
-                if (this.currentImage < this.IMAGES_IDLE.length) {
-                    this.animateImages(this.IMAGES_IDLE);
-                } else {
-                    this.isAnimating = false;
-                    this.currentImage = 0;
-                }
-            } else if (this.isAwakened && !this.isCharacterInAttackRange()) {
-                this.speed = this.walkSpeed;
-                this.swapImg(this.IMAGES_WALK[0]);
-            } else {
-                this.speed = 0;
-                this.swapImg(this.IMAGES_IDLE[0]);
-            }
-                
-        }, 120);
-
-        setInterval(() => {
-            if (!this.isDying) {
-                this.floatOffset += this.floatSpeed;
-                this.y = this.baseY + Math.sin(this.floatOffset) * this.floatAmplitude;
-            }
-        }, 1000 / 60);
-    };
 
 
     startIdleAnimation() {
