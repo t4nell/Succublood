@@ -112,6 +112,7 @@ class Character extends MovableObject {
             if (this.world && this.world.gameStarted && this.isDying) {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.animateImages(this.IMAGES_DEAD);
+                    soundManager.playSound('characterDeath', 0.5);
                 } else {
                  this.deathAnimationComplete = true;
                 }
@@ -120,6 +121,7 @@ class Character extends MovableObject {
                 soundManager.playSound('characterHurt', 0.5);
             } else if (this.world && this.world.gameStarted && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
                 this.animateImages(this.IMAGES_WALK);
+
             } else if (this.world && this.world.gameStarted && this.isAttacking && this.MANA > 0) {
                 this.playRangeAttackAnimation();
             } else if (this.world && this.world.gameStarted && this.isMeleeAttacking){
@@ -140,6 +142,7 @@ class Character extends MovableObject {
         if (!this.isMeleeAttacking && !this.isDying) {
             this.isMeleeAttacking = true;
             this.currentImage = 0;
+            soundManager.playSound('characterAttackVoice', 0.3);
             soundManager.playSound('whipSwing', 0.3);
             setTimeout(() => {
                 soundManager.playSound('whipCrack', 0.3);
@@ -152,13 +155,17 @@ class Character extends MovableObject {
             this.isAttacking = true;
             this.attackAnimationStarted = false;
             this.currentImage = 0;
+            setTimeout(() => {
+                soundManager.playSound('characterAttackVoice', 0.3);
+                soundManager.playSound('fireball', 0.3);
+            }, 600);
         }
     };
 
 
     playMeleeAttackAnimation() {
         if (this.currentImage < this.IMAGES_ATTACK_MELEE.length) {
-            if (this.currentImage === 8) {
+            if (this.currentImage === 6) {
                 this.checkMeleeHit();
             }
             this.animateImages(this.IMAGES_ATTACK_MELEE);

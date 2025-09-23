@@ -43,9 +43,15 @@ class World {
 
         soundManager.loadSound('bossBackground', 'audio/gameSounds/bossBackground.mp3');
 
+        soundManager.loadSound('characterAttackVoice', 'audio/gameSounds/characterAttackVoice.mp3');
+        soundManager.loadSound('footSteps', 'audio/gameSounds/footSteps.mp3');//noch nicht eingebaut
         soundManager.loadSound('characterHurt', 'audio/gameSounds/characterHurt.mp3');
+        soundManager.loadSound('characterDeath', 'audio/gameSounds/characterDeath.mp3');
         soundManager.loadSound('jump', 'audio/gameSounds/jump.mp3');
+
         soundManager.loadSound('demonHurt', 'audio/gameSounds/demonHurt.mp3');
+        soundManager.loadSound('demonDeath', 'audio/gameSounds/demonDeath.mp3');
+        
         soundManager.loadSound('bossAttack', 'audio/gameSounds/bossAttack.mp3');
         soundManager.loadSound('bossHurt', 'audio/gameSounds/bossHurt.mp3');
         
@@ -123,7 +129,7 @@ class World {
             
             if (!this.gameStarted && !this.imprintVisible && !this.controlsVisible) {
                 if (this.startScreen.isCharacterClicked(mouseX, mouseY)) {
-                    soundManager.playSound('characterHurt', 0.5);
+                    soundManager.playSound('characterHurt', 0.7);
                     this.startScreen.triggerHurtAnimation();
                 }
                 else if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
@@ -378,7 +384,6 @@ class World {
         if (!this.character.isDying && this.character.MANA > 0) {
             let fireball = new ThrowableObject(this.character.x + 34, this.character.y + 34);
             this.throwableObject.push(fireball);
-            soundManager.playSound('fireball', 0.3);
             this.character.MANA -= 20;
             this.statusMana.setPercentage(this.character.MANA);
         }

@@ -72,11 +72,64 @@ class meleeDemon extends MovableObject {
         this.applyGravity();
         this.animate();
     };
+    
+    
+    animate() {
+        setInterval(() => {
+            if (this.world && this.world.gameStarted) {
+                if ((!this.isCharacterInRange() && !this.isAttacking && !this.isDying)) {
+                    this.moveLeft();
+                }
+                if (this.isCharacterInRange() && !this.isAttacking && !this.world.character.isDying) {
+                    this.startAttack();
+                }
+            }
+        }, 1000 / 20);  
+        
+        setInterval(() => {
+            if (this.world && this.world.gameStarted && this.isDying) {    
+                if (this.currentImage < this.IMAGES_DEAD.length) {
+                    soundManager.stopSound('demonHurt');
+                    soundManager.playSound('demonDeath', 0.5);
+                    this.speed = 0;
+                    this.animateImages(this.IMAGES_DEAD);
+                }
+            } else if (this.world && this.world.gameStarted && this.isHurt()) {
+                this.speed = 0;
+                if (this.currentImage < this.IMAGES_HURT.length) {
+                    soundManager.playSound('demonHurt', 0.5);
+                    this.animateImages(this.IMAGES_HURT);
+                }
+            } else if (this.world && this.world.gameStarted && this.isAttacking) {
+                this.speed = 0;
+                if (this.currentImage < this.IMAGES_ATTACK.length) {
+                    this.animateImages(this.IMAGES_ATTACK);
+                    if (this.currentImage === 3 && this.isCharacterInRange()) {
+                        this.dealDamageToCharacter();
+                    }
+                } else {
+                    this.isAttacking = false;
+                    this.currentImage = 0;
+                    if (!this.isCharacterInRange()) {
+                        this.speed = 1 + Math.random() * 2;
+                    }
+                }
+            } else if (this.world && this.world.gameStarted && this.isCharacterInRange() && !this.world.character.isDying) {
+                this.speed = 0;
+                this.animateImages(this.IMAGES_IDLE);
+            } else if (this.world && this.world.gameStarted) {
+                this.speed = 1 + Math.random() * 2;
+                this.animateImages(this.IMAGES_WALK);
+            } else {
+                this.speed = 0;
+                this.animateImages(this.IMAGES_IDLE);
+            }
+        }, 100);
+    };
 
 
     killMeleeDemon() {
         this.hit();
-        soundManager.playSound('demonHurt', 0.5);
         if (this.isDead()) {
             this.world.spawnHealPotion(this.x, this.y);
             setTimeout(() => {
@@ -110,55 +163,6 @@ class meleeDemon extends MovableObject {
     }
 
 
-    animate() {
-        setInterval(() => {
-            if (this.world && this.world.gameStarted) {
-                if ((!this.isCharacterInRange() && !this.isAttacking && !this.isDying)) {
-                    this.moveLeft();
-                }
-                if (this.isCharacterInRange() && !this.isAttacking && !this.world.character.isDying) {
-                    this.startAttack();
-                }
-            }
-        }, 1000 / 20);  
-        
-        setInterval(() => {
-            if (this.world && this.world.gameStarted && this.isDying) {    
-                if (this.currentImage < this.IMAGES_DEAD.length) {
-                    this.speed = 0;
-                    this.animateImages(this.IMAGES_DEAD);
-                }
-            } else if (this.world && this.world.gameStarted && this.isHurt()) {
-                this.speed = 0;
-                if (this.currentImage < this.IMAGES_HURT.length) {
-                    this.animateImages(this.IMAGES_HURT);
-                }
-            } else if (this.world && this.world.gameStarted && this.isAttacking) {
-                this.speed = 0;
-                if (this.currentImage < this.IMAGES_ATTACK.length) {
-                    this.animateImages(this.IMAGES_ATTACK);
-                    if (this.currentImage === 3 && this.isCharacterInRange()) {
-                        this.dealDamageToCharacter();
-                    }
-                } else {
-                    this.isAttacking = false;
-                    this.currentImage = 0;
-                    if (!this.isCharacterInRange()) {
-                        this.speed = 1 + Math.random() * 2;
-                    }
-                }
-            } else if (this.world && this.world.gameStarted && this.isCharacterInRange() && !this.world.character.isDying) {
-                this.speed = 0;
-                this.animateImages(this.IMAGES_IDLE);
-            } else if (this.world && this.world.gameStarted) {
-                this.speed = 1 + Math.random() * 2;
-                this.animateImages(this.IMAGES_WALK);
-            } else {
-                this.speed = 0;
-                this.animateImages(this.IMAGES_IDLE);
-            }
-        }, 100);
-    };
 
 
     dealDamageToCharacter() {
