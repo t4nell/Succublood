@@ -50,8 +50,9 @@ class World {
         soundManager.loadSound('jump', 'audio/gameSounds/jump.mp3');
 
         soundManager.loadSound('demonHurt', 'audio/gameSounds/demonHurt.mp3');
-        soundManager.loadSound('demonDeath', 'audio/gameSounds/demonDeath.mp3');
-        
+        soundManager.loadSound('meleeDemonDeath', 'audio/gameSounds/meleeDemonDeath.mp3');
+        soundManager.loadSound('rangeDemonDeath', 'audio/gameSounds/rangeDemonDeath2.mp3');
+
         soundManager.loadSound('bossAttack', 'audio/gameSounds/bossAttack.mp3');
         soundManager.loadSound('bossHurt', 'audio/gameSounds/bossHurt.mp3');
         

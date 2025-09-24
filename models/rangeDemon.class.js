@@ -91,15 +91,12 @@ class rangeDemon extends MovableObject {
         setInterval(() => {
             if (this.world && this.world.gameStarted && this.isDying) {    
                 if (this.currentImage < this.IMAGES_DEAD.length) {
-                    soundManager.stopSound('demonHurt');
-                    soundManager.playSound('demonDeath', 0.5);
                     this.speed = 0;
                     this.animateImages(this.IMAGES_DEAD);
                 }
             } else if (this.world && this.world.gameStarted && this.isHurt()) {
                 this.speed = 0;
                 if (this.currentImage < this.IMAGES_HURT.length) {
-                    soundManager.playSound('demonHurt', 0.5);
                     this.animateImages(this.IMAGES_HURT);
                 }
             } else if (this.world && this.world.gameStarted && this.isAttacking) {
@@ -132,7 +129,10 @@ class rangeDemon extends MovableObject {
 
     killRangeDemon() {
         this.hit();
+        soundManager.playSound('demonHurt', 0.5);
         if (this.isDead()) {
+            soundManager.stopSound('demonHurt');
+            soundManager.playSound('rangeDemonDeath', 0.5);
             this.world.spawnManaPotion(this.x, this.y);
             setTimeout(() => {
                 this.world.removeEnemy(this);
