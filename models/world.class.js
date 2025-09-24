@@ -39,22 +39,28 @@ class World {
 
 
     loadSounds() {
+        soundManager.loadSound('startScreenBackgroundMusic', 'audio/gameSounds/startScreenBackground.mp3', true);
+        soundManager.loadSound('gameBackground', 'audio/gameSounds/gameBackground.mp3', true);
+        soundManager.loadSound('victory', 'audio/gameSounds/victory.mp3');
         soundManager.loadSound('buttonClick', 'audio/gameSounds/buttonClick.mp3');
 
-        soundManager.loadSound('bossBackground', 'audio/gameSounds/bossBackground.mp3');
-
+        
         soundManager.loadSound('characterAttackVoice', 'audio/gameSounds/characterAttackVoice.mp3');
         soundManager.loadSound('footSteps', 'audio/gameSounds/footSteps.mp3');//noch nicht eingebaut
         soundManager.loadSound('characterHurt', 'audio/gameSounds/characterHurt.mp3');
         soundManager.loadSound('characterDeath', 'audio/gameSounds/characterDeath.mp3');
         soundManager.loadSound('jump', 'audio/gameSounds/jump.mp3');
-
+        
+        soundManager.loadSound('meleeDemonAttack', 'audio/gameSounds/meleeDemonAttack.mp3');
+        soundManager.loadSound('rangeDemonAttack', 'audio/gameSounds/rangeDemonAttack.mp3');
         soundManager.loadSound('demonHurt', 'audio/gameSounds/demonHurt.mp3');
         soundManager.loadSound('meleeDemonDeath', 'audio/gameSounds/meleeDemonDeath.mp3');
-        soundManager.loadSound('rangeDemonDeath', 'audio/gameSounds/rangeDemonDeath2.mp3');
-
+        soundManager.loadSound('rangeDemonDeath', 'audio/gameSounds/rangeDemonDeath.mp3');
+        
+        soundManager.loadSound('bossBackground', 'audio/gameSounds/bossBackground.mp3', true);
         soundManager.loadSound('bossAttack', 'audio/gameSounds/bossAttack.mp3');
         soundManager.loadSound('bossHurt', 'audio/gameSounds/bossHurt.mp3');
+        soundManager.loadSound('bossDeath', 'audio/gameSounds/bossDeath.mp3');
         
         soundManager.loadSound('collectRuby', 'audio/gameSounds/collectRuby.mp3');
         soundManager.loadSound('collectPotion', 'audio/gameSounds/collectPotion.mp3');
@@ -124,6 +130,10 @@ class World {
 
     setupMouseEvents() {
         this.canvas.addEventListener('click', (event) => {
+            if (!this.startScreenMusicStarted && !this.gameStarted) {
+                soundManager.playSound('startScreenBackgroundMusic', 0.5);
+                this.startScreenMusicStarted = true;
+            }
             let rect = this.canvas.getBoundingClientRect();
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
@@ -248,6 +258,8 @@ class World {
 
     startGame() {
         if (!this.gameStarted) {
+            soundManager.stopSound('startScreenBackgroundMusic');
+            soundManager.playSound('gameBackground', 0.3);
             this.gameStarted = true;
             this.startScreen.hide();
             this.setWorld();
@@ -281,6 +293,8 @@ class World {
         this.imprintVisible = false;
         this.controlsVisible = false;
 
+        soundManager.stopSound('victory');
+
         this.character = new Character();
         this.statusLive = new StatusBar(this.character.HP, 30, 30);
         this.statusMana = new StatusBar(this.character.MANA, 30, 70, 230);
@@ -298,6 +312,10 @@ class World {
         this.imprintScreen.hide();
         this.controlsScreen.hide();
         this.startScreen.show();
+
+        setTimeout(() => {
+            soundManager.playSound('startScreenBackgroundMusic', 1);
+        }, 100);
     };
 
 
@@ -320,13 +338,17 @@ class World {
 
 
     showVictoryScreen() {
-        this.gameEnded = true;
-        this.endScreen.show('victory');
+        setTimeout(() => {
+            this.gameEnded = true;
+            this.endScreen.show('victory');
+            soundManager.playSound('victory', 0.5);
+        }, 1500);
     };
 
 
     showGameOverScreen() {
         setTimeout(() => {
+            soundManager.stopSound('gameBackground');
             this.gameEnded = true;
             this.endScreen.show('defeat');
         }, 250);

@@ -90,12 +90,14 @@ class Character extends MovableObject {
             if (this.world && this.world.gameStarted && !this.isDying) {
                 if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
                     this.moveRight();
+                    soundManager.playSound('footSteps', 0.7);
                 }else if (this.world.keyboard.RIGHT && this.x === this.world.level.levelEndX) {
                     this.world.keyboard.RIGHT = false;
                 }
                 
                 if (this.world.keyboard.LEFT && this.x > this.world.level.levelStartX) {
                     this.moveLeft();
+                    soundManager.playSound('footSteps', 0.7);
                 }else if (this.world.keyboard.LEFT && this.x === this.world.level.levelStartX) {
                     this.world.keyboard.LEFT = false;
                 }
@@ -137,6 +139,7 @@ class Character extends MovableObject {
             }
         }, 1000 / 30);
     };
+
 
     startMeleeAttack() {
         if (!this.isMeleeAttacking && !this.isDying) {

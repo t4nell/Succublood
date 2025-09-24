@@ -104,6 +104,7 @@ class rangeDemon extends MovableObject {
                 if (this.currentImage < this.IMAGES_ATTACK.length) {
                     this.animateImages(this.IMAGES_ATTACK);
                     if (this.currentImage === 7 && this.isCharacterInRange()) {
+                        soundManager.playSound('rangeDemonAttack', 0.5);
                         this.shootEnemyProjectile();
                     }
                 } else {

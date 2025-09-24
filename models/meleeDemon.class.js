@@ -102,9 +102,11 @@ class meleeDemon extends MovableObject {
                 if (this.currentImage < this.IMAGES_ATTACK.length) {
                     this.animateImages(this.IMAGES_ATTACK);
                     if (this.currentImage === 3 && this.isCharacterInRange()) {
+                        soundManager.playSound('meleeDemonAttack', 0.5);
                         this.dealDamageToCharacter();
                     }
                 } else {
+
                     this.isAttacking = false;
                     this.currentImage = 0;
                     if (!this.isCharacterInRange()) {
