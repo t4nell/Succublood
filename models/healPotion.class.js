@@ -28,6 +28,7 @@ class HealPotion extends CollectableObjects {
         if (this.world && this.world.character) {
             this.world.character.HP = Math.min(100, this.world.character.HP + 20);
             this.world.statusLive.setPercentage(this.world.character.HP);
+            soundManager.playSound('collectPotion', 0.2);
         }
     };
 }

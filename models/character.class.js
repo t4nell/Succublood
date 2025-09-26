@@ -114,13 +114,13 @@ class Character extends MovableObject {
             if (this.world && this.world.gameStarted && this.isDying) {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.animateImages(this.IMAGES_DEAD);
-                    soundManager.playSound('characterDeath', 0.5);
+                    soundManager.playSound('characterDeath', 0.2);
                 } else {
                  this.deathAnimationComplete = true;
                 }
             } else if (this.isHurt()) {
                 this.animateImages(this.IMAGES_HURT);
-                soundManager.playSound('characterHurt', 0.5);
+                soundManager.playSound('characterHurt', 0.4);
             } else if (this.world && this.world.gameStarted && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
                 this.animateImages(this.IMAGES_WALK);
 

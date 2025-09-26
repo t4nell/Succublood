@@ -77,6 +77,12 @@ class rangeDemon extends MovableObject {
 
 
     animate() {
+        this.startMovementControl();  
+        this.updateAnimationState();
+    };
+
+
+    startMovementControl() {
         setInterval(() => {
             if (this.world && this.world.gameStarted) {
                 if ((!this.isCharacterInRange() && !this.isAttacking && !this.isDying)) {
@@ -86,10 +92,13 @@ class rangeDemon extends MovableObject {
                     this.startAttack();
                 }
             }
-        }, 1000 / 30);  
+        }, 1000 / 30);
+    };
 
+
+    updateAnimationState() {
         setInterval(() => {
-            if (this.world && this.world.gameStarted && this.isDying) {    
+            if (this.world && this.world.gameStarted && this.isDying) {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.speed = 0;
                     this.animateImages(this.IMAGES_DEAD);
@@ -104,7 +113,7 @@ class rangeDemon extends MovableObject {
                 if (this.currentImage < this.IMAGES_ATTACK.length) {
                     this.animateImages(this.IMAGES_ATTACK);
                     if (this.currentImage === 7 && this.isCharacterInRange()) {
-                        soundManager.playSound('rangeDemonAttack', 0.5);
+                        soundManager.playSound('rangeDemonAttack', 0.3);
                         this.shootEnemyProjectile();
                     }
                 } else {
@@ -130,10 +139,10 @@ class rangeDemon extends MovableObject {
 
     killRangeDemon() {
         this.hit();
-        soundManager.playSound('demonHurt', 0.5);
+        soundManager.playSound('demonHurt', 0.3);
         if (this.isDead()) {
             soundManager.stopSound('demonHurt');
-            soundManager.playSound('rangeDemonDeath', 0.5);
+            soundManager.playSound('rangeDemonDeath', 0.3);
             this.world.spawnManaPotion(this.x, this.y);
             setTimeout(() => {
                 this.world.removeEnemy(this);

@@ -100,7 +100,7 @@ class Endboss extends MovableObject {
                     this.animateImages(this.IMAGES_ATTACK);
                     if (this.currentImage === 11 && this.isCharacterInAttackRange()) {
                         this.shootBossProjectile();
-                        soundManager.playSound('bossAttack');
+                        soundManager.playSound('bossAttack', 0.3);
                     }
                 } else {
                     this.isAttacking = false;
@@ -136,12 +136,12 @@ class Endboss extends MovableObject {
 
 
     killEndboss() {
-        soundManager.playSound('bossHurt');
+        soundManager.playSound('bossHurt', 0.1);
         this.hit();
         if (this.isDead()) {
             soundManager.stopSound('bossHurt');
             soundManager.stopSound('bossBackground');
-            soundManager.playSound('bossDeath');
+            soundManager.playSound('bossDeath', 0.1);
             this.world.spawnHealPotion(this.x - 50, this.y);
             this.world.spawnHealPotion(this.x + 50, this.y);
             setTimeout(() => {
@@ -198,7 +198,7 @@ class Endboss extends MovableObject {
         if (!this.isAwakened && this.isCharacterInTriggerRange()) {
             this.isAwakened = true;
             soundManager.stopSound('gameBackground');
-            soundManager.playSound('bossBackground');
+            soundManager.playSound('bossBackground', 0.2);
             this.speed = this.walkSpeed;
         }
     };

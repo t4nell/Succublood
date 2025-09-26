@@ -131,7 +131,7 @@ class World {
     setupMouseEvents() {
         this.canvas.addEventListener('click', (event) => {
             if (!this.startScreenMusicStarted && !this.gameStarted) {
-                soundManager.playSound('startScreenBackgroundMusic', 0.5);
+                soundManager.playSound('startScreenBackgroundMusic', 0.2);
                 this.startScreenMusicStarted = true;
             }
             let rect = this.canvas.getBoundingClientRect();
@@ -259,7 +259,7 @@ class World {
     startGame() {
         if (!this.gameStarted) {
             soundManager.stopSound('startScreenBackgroundMusic');
-            soundManager.playSound('gameBackground', 0.3);
+            soundManager.playSound('gameBackground', 0.2);
             this.gameStarted = true;
             this.startScreen.hide();
             this.setWorld();
@@ -313,9 +313,8 @@ class World {
         this.controlsScreen.hide();
         this.startScreen.show();
 
-        setTimeout(() => {
-            soundManager.playSound('startScreenBackgroundMusic', 1);
-        }, 100);
+        soundManager.playSound('startScreenBackgroundMusic', 0.2);
+        
     };
 
 
@@ -335,14 +334,14 @@ class World {
             }, 1000);
         }
     };
-
-
+    
+    
     showVictoryScreen() {
         setTimeout(() => {
             this.gameEnded = true;
-            this.endScreen.show('victory');
-            soundManager.playSound('victory', 0.5);
-        }, 1500);
+            this.endScreen.show('victory'); 
+            // soundManager.playSound('victory', 0.3);
+        }, 5000);
     };
 
 

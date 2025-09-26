@@ -29,7 +29,7 @@ class ManaPotion extends CollectableObjects {
         if (this.world && this.world.character) {
             this.world.character.MANA = Math.min(100, this.world.character.MANA + 20);
             this.world.statusMana.setPercentage(this.world.character.MANA);
-            soundManager.playSound('collectPotion');
+            soundManager.playSound('collectPotion', 0.2);
         }
     };
 };

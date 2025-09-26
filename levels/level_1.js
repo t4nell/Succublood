@@ -1,12 +1,16 @@
 const level_1 = new level (
     [
         new meleeDemon(),
+        new meleeDemon(),
+        new meleeDemon(),
+        new meleeDemon(),
+        new meleeDemon(),
   
-
         new rangeDemon(),
-      
-
-        
+        new rangeDemon(),
+        new rangeDemon(),
+        new rangeDemon(),
+        new rangeDemon(),
 
         new Endboss()
     ],
@@ -68,11 +72,6 @@ const level_1 = new level (
     ],
 
     [
-        new ManaPotion(),
-        new ManaPotion(),
-        new ManaPotion(),
-        new ManaPotion(),
-        new ManaPotion(),
         new ManaPotion(),
         new ManaPotion(),
         new ManaPotion(),

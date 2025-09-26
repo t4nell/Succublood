@@ -102,7 +102,7 @@ class meleeDemon extends MovableObject {
                 if (this.currentImage < this.IMAGES_ATTACK.length) {
                     this.animateImages(this.IMAGES_ATTACK);
                     if (this.currentImage === 3 && this.isCharacterInRange()) {
-                        soundManager.playSound('meleeDemonAttack', 0.5);
+                        soundManager.playSound('meleeDemonAttack', 0.4);
                         this.dealDamageToCharacter();
                     }
                 } else {
@@ -129,10 +129,10 @@ class meleeDemon extends MovableObject {
 
     killMeleeDemon() {
         this.hit();
-        soundManager.playSound('demonHurt', 0.5);
+        soundManager.playSound('demonHurt', 0.3);
         if (this.isDead()) {
             soundManager.stopSound('demonHurt');
-            soundManager.playSound('meleeDemonDeath', 0.5);
+            soundManager.playSound('meleeDemonDeath', 0.3);
             this.world.spawnHealPotion(this.x, this.y);
             setTimeout(() => {
                 this.world.removeEnemy(this);

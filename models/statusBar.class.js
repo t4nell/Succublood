@@ -47,17 +47,24 @@ class StatusBar extends DrawableObject {
     };
 
     draw(ctx) {
+        this.drawStatusBarBackground(ctx);
+        this.drawStatusBarSegments(ctx);
+    };
+
+    drawStatusBarBackground(ctx) {
         this.IMAGES_STATUSBAR_BACKGROUND.forEach((segment, index) => {
             let img = this.imageCash[segment.path];
             ctx.drawImage(img, this.x + (index * segment.width * this.zoom), this.y, segment.width * this.zoom, segment.height * this.zoom);
         });
+    };
 
+    drawStatusBarSegments(ctx) {
         let segments = Math.ceil(this.percentage / 20);
-        for(let i = 0; i < segments; i++) {
+        for (let i = 0; i < segments; i++) {
             let segment = this.IMAGES_STATUSBAR_FULL[i];
             let img = this.imageCash[segment.path];
             if (this.hue !== 0) {
-                ctx.filter = `hue-rotate(${this.hue}deg)`; 
+                ctx.filter = `hue-rotate(${this.hue}deg)`;
             }
             ctx.drawImage(img, this.x + (i * segment.width * this.zoom), this.y, segment.width * this.zoom, segment.height * this.zoom);
             ctx.filter = 'none';

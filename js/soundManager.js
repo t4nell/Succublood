@@ -41,5 +41,4 @@ class SoundManager {
     };
 };
 
-// Globale SoundManager-Instanz
 const soundManager = new SoundManager();

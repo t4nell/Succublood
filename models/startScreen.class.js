@@ -35,6 +35,13 @@ class StartScreen extends DrawableObject {
         this.controlsButtonY = (this.canvasHeight / 2) + 50;
         this.imprintButtonX = (this.canvasWidth / 2) - this.imprintButtonWidth + 400;
         this.imprintButtonY = (this.canvasHeight / 2) + 150;
+        this.createStartScreenBackground();
+        this.createStartScreenCharacter();
+        this.loadStartScreenImages();
+    };
+
+
+    createStartScreenBackground() {
         this.skyObjects = [
             new Sky('img/background/sky.png', 0, 720),
             new Sky('img/background/sky.png', 1279, 720),
@@ -51,10 +58,8 @@ class StartScreen extends DrawableObject {
             new BackgroundObject('img/background/tree.png', 0, 720, 1),
             new BackgroundObject('img/background/bones.png', 0, 720, 1),
         ];
-        this.createStartScreenCharacter();
-        this.loadStartScreenImages();
     };
-
+    
 
     createStartScreenCharacter() {
         this.character = {
@@ -106,37 +111,52 @@ class StartScreen extends DrawableObject {
         setInterval(() => {
             if (this.isVisible) {
                 if (this.isCharacterHurt) {
-                    let spriteIndex = this.character.currentImage % this.character.IMAGES_HURT.length;
-                    let sprite = this.character.IMAGES_HURT[spriteIndex];
-                    
-                    this.character.img = this.character.imageCash[sprite.path];
-                    this.character.width = sprite.width * this.character.zoom;
-                    this.character.height = sprite.height * this.character.zoom;
-                    this.character.offsetX = sprite.offsetX * this.character.zoom;
-                    
-                    this.character.currentImage++;
-                    
-                    this.hurtTimer++;
-                    if (this.hurtTimer >= this.character.IMAGES_HURT.length * 1) {
-                        this.isCharacterHurt = false;
-                        this.hurtTimer = 0;
-                        this.character.currentImage = 0;
-                    }
+                    this.updateHurtAnimation();
+                    this.updateHurtTimer();
                 } else {
-                    let spriteIndex = this.character.currentImage % this.character.IMAGES_IDLE.length;
-                    let sprite = this.character.IMAGES_IDLE[spriteIndex];
-                    
-                    this.character.img = this.character.imageCash[sprite.path];
-                    this.character.width = sprite.width * this.character.zoom;
-                    this.character.height = sprite.height * this.character.zoom;
-                    this.character.offsetX = sprite.offsetX * this.character.zoom;
-                    
-                    this.character.currentImage++;
+                    this.updateIdleAnimation();
                 }
             }
         }, 1000 / 8);
     };
 
+
+    updateHurtTimer() {
+        if (this.hurtTimer >= this.character.IMAGES_HURT.length * 1) {
+            this.isCharacterHurt = false;
+            this.hurtTimer = 0;
+            this.character.currentImage = 0;
+        }
+    };
+
+
+    updateHurtAnimation() {
+        let spriteIndex = this.character.currentImage % this.character.IMAGES_HURT.length;
+        let sprite = this.character.IMAGES_HURT[spriteIndex];
+
+        this.character.img = this.character.imageCash[sprite.path];
+        this.character.width = sprite.width * this.character.zoom;
+        this.character.height = sprite.height * this.character.zoom;
+        this.character.offsetX = sprite.offsetX * this.character.zoom;
+
+        this.character.currentImage++;
+
+        this.hurtTimer++;
+    };
+
+
+    updateIdleAnimation() {
+        let spriteIndex = this.character.currentImage % this.character.IMAGES_IDLE.length;
+        let sprite = this.character.IMAGES_IDLE[spriteIndex];
+
+        this.character.img = this.character.imageCash[sprite.path];
+        this.character.width = sprite.width * this.character.zoom;
+        this.character.height = sprite.height * this.character.zoom;
+        this.character.offsetX = sprite.offsetX * this.character.zoom;
+
+        this.character.currentImage++;
+    };
+    
 
     loadStartScreenImages() {
         this.playButtonImage.src = 'img/buttons/startButton.png';
@@ -148,7 +168,18 @@ class StartScreen extends DrawableObject {
     draw(ctx) {
         if (!this.isVisible) return;
 
-        // Parallax Hintergrund zeichnen
+        this.drawBackground(ctx);
+        this.drawCharacter(ctx);
+        this.drawStartButton(ctx);
+        this.drawImprintButton(ctx);
+        this.drawControlsButton(ctx);
+        
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+    };
+
+
+    drawBackground(ctx) {
         this.skyObjects.forEach(sky => sky.draw(ctx));
         this.backgroundObjects.forEach(bg => bg.draw(ctx));
 
@@ -159,22 +190,22 @@ class StartScreen extends DrawableObject {
         ctx.fillStyle = '#968344';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        
+
         ctx.shadowColor = 'rgba(71, 71, 71, 0.75)';
         ctx.shadowOffsetX = 6;
         ctx.shadowOffsetY = 6;
         ctx.shadowBlur = 10;
-        
+
         ctx.fillText('Succublood', this.canvasWidth / 2, this.canvasHeight / 2 - 200);
-        
+
         ctx.shadowColor = 'transparent';
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
         ctx.shadowBlur = 0;
+    };
 
-        this.drawCharacter(ctx);
 
-        // Start-Button zeichnen
+    drawStartButton(ctx) {
         if (this.playButtonImage.complete) {
             if (this.isHovered) {
                 let glowIntensity = (Math.sin(Date.now() * 0.004) + 1) / 2;
@@ -187,22 +218,10 @@ class StartScreen extends DrawableObject {
             ctx.shadowColor = 'transparent';
             ctx.shadowBlur = 0;
         }
+    };
 
-        // Imprint-Button zeichnen
-        if (this.imprintButtonImage.complete) {
-            if (this.isImprintHovered) {
-                let glowIntensity = (Math.sin(Date.now() * 0.004) + 1) / 2;
-                ctx.shadowColor = `rgba(150, 131, 68, ${glowIntensity})`;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 0;
-                ctx.shadowBlur = 30;
-            }
-            ctx.drawImage(this.imprintButtonImage, this.imprintButtonX, this.imprintButtonY, this.imprintButtonWidth, this.imprintButtonHeight);
-            ctx.shadowColor = 'transparent';
-            ctx.shadowBlur = 0;
-        }
 
-        // Controls-Button zeichnen
+    drawControlsButton(ctx) {
         if (this.controlsButtonImage.complete) {
             if (this.isControlsHovered) {
                 let glowIntensity = (Math.sin(Date.now() * 0.004) + 1) / 2;
@@ -215,9 +234,22 @@ class StartScreen extends DrawableObject {
             ctx.shadowColor = 'transparent';
             ctx.shadowBlur = 0;
         }
-        
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'alphabetic';
+    };
+
+
+    drawImprintButton(ctx) {
+        if (this.imprintButtonImage.complete) {
+            if (this.isImprintHovered) {
+                let glowIntensity = (Math.sin(Date.now() * 0.004) + 1) / 2;
+                ctx.shadowColor = `rgba(150, 131, 68, ${glowIntensity})`;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+                ctx.shadowBlur = 30;
+            }
+            ctx.drawImage(this.imprintButtonImage, this.imprintButtonX, this.imprintButtonY, this.imprintButtonWidth, this.imprintButtonHeight);
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+        }
     };
 
 
@@ -228,17 +260,22 @@ class StartScreen extends DrawableObject {
             ctx.shadowOffsetY = 0;
             ctx.shadowBlur = 2;
 
-            ctx.drawImage(
-                this.character.img, 
-                this.characterX + this.character.offsetX, 
-                this.characterY - this.character.height, 
-                this.character.width, 
-                this.character.height
-            );
+            this.drawCharacterImage(ctx);
 
             ctx.shadowColor = 'transparent';
             ctx.shadowBlur = 0;
         }
+    };
+
+
+    drawCharacterImage(ctx) {
+        ctx.drawImage(
+            this.character.img,
+            this.characterX + this.character.offsetX,
+            this.characterY - this.character.height,
+            this.character.width,
+            this.character.height
+        );
     };
 
 
