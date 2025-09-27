@@ -86,19 +86,30 @@ class Character extends MovableObject {
 
     
     animate() {
+        this.handleCharacterMovement(); 
+        this.handleCharacterAnimations();
+        setInterval(() => {
+            if (this.world && this.world.gameStarted && this.world.keyboard.E && !this.isMeleeAttacking && !this.isAttacking && !this.isDying && !this.isHurt()) {
+                this.startMeleeAttack();
+            }
+        }, 1000 / 30);
+    };
+
+
+    handleCharacterMovement() {
         setInterval(() => {
             if (this.world && this.world.gameStarted && !this.isDying) {
                 if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
                     this.moveRight();
                     soundManager.playSound('footSteps', 0.7);
-                }else if (this.world.keyboard.RIGHT && this.x === this.world.level.levelEndX) {
+                } else if (this.world.keyboard.RIGHT && this.x === this.world.level.levelEndX) {
                     this.world.keyboard.RIGHT = false;
                 }
-                
+
                 if (this.world.keyboard.LEFT && this.x > this.world.level.levelStartX) {
                     this.moveLeft();
                     soundManager.playSound('footSteps', 0.7);
-                }else if (this.world.keyboard.LEFT && this.x === this.world.level.levelStartX) {
+                } else if (this.world.keyboard.LEFT && this.x === this.world.level.levelStartX) {
                     this.world.keyboard.LEFT = false;
                 }
 
@@ -107,16 +118,19 @@ class Character extends MovableObject {
                     this.jump();
                 }
                 this.moveCamera();
-            }    
-        }, 1000 / 60); 
+            }
+        }, 1000 / 60);
+    };
 
+
+    handleCharacterAnimations() {
         setInterval(() => {
             if (this.world && this.world.gameStarted && this.isDying) {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.animateImages(this.IMAGES_DEAD);
                     soundManager.playSound('characterDeath', 0.2);
                 } else {
-                 this.deathAnimationComplete = true;
+                    this.deathAnimationComplete = true;
                 }
             } else if (this.isHurt()) {
                 this.animateImages(this.IMAGES_HURT);
@@ -126,18 +140,12 @@ class Character extends MovableObject {
 
             } else if (this.world && this.world.gameStarted && this.isAttacking && this.MANA > 0) {
                 this.playRangeAttackAnimation();
-            } else if (this.world && this.world.gameStarted && this.isMeleeAttacking){
+            } else if (this.world && this.world.gameStarted && this.isMeleeAttacking) {
                 this.playMeleeAttackAnimation();
-            } else {    
+            } else {
                 this.animateImages(this.IMAGES_IDLE);
             }
         }, 1000 / 10);
-
-        setInterval(() => {
-            if (this.world && this.world.gameStarted && this.world.keyboard.E && !this.isMeleeAttacking && !this.isAttacking && !this.isDying && !this.isHurt()) {
-                this.startMeleeAttack();
-            }
-        }, 1000 / 30);
     };
 
 
@@ -152,6 +160,7 @@ class Character extends MovableObject {
             }, 650);
         }
     };
+
 
     startRangeAttack() {
         if (!this.isAttacking && !this.isDying) {
@@ -177,6 +186,7 @@ class Character extends MovableObject {
             this.currentImage = 0;
         }
     };
+    
 
     playRangeAttackAnimation() {
         if (this.currentImage < this.IMAGES_ATTACK_RANGE.length) {

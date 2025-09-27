@@ -33,7 +33,17 @@ class ControlsScreen extends DrawableObject {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
         ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
 
-        // Content-Bereich
+        let { contentY, contentX } = this.drawContentArea(ctx);
+        this.drawControlsTitle(ctx, contentY);
+        this.drawControlsText(ctx, contentY, contentX);
+        this.drawBackButton(ctx);
+
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+    };
+
+
+    drawContentArea(ctx) {
         let contentWidth = 800;
         let contentHeight = 500;
         let contentX = (this.canvasWidth - contentWidth) / 2;
@@ -45,26 +55,31 @@ class ControlsScreen extends DrawableObject {
         ctx.strokeStyle = '#968344';
         ctx.lineWidth = 3;
         ctx.strokeRect(contentX, contentY, contentWidth, contentHeight);
+        return { contentY, contentX };
+    };
 
-        // Titel
+
+    drawControlsTitle(ctx, contentY) {
         ctx.font = 'bold 48px antiquityPrint';
         ctx.fillStyle = '#968344';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
-        
+
         ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
         ctx.shadowOffsetX = 2;
         ctx.shadowOffsetY = 2;
         ctx.shadowBlur = 3;
-        
+
         ctx.fillText('Controls', this.canvasWidth / 2, contentY + 40);
 
         ctx.shadowColor = 'transparent';
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
         ctx.shadowBlur = 0;
+    };
 
-        // Controls-Text
+
+    drawControlsText(ctx, contentY, contentX) {
         ctx.font = '16px antiquityPrint';
         ctx.fillStyle = '#968344';
         ctx.textAlign = 'left';
@@ -73,7 +88,7 @@ class ControlsScreen extends DrawableObject {
         let textLines = [
             'Movement:',
             'A - Move Left',
-            'D - Move Right', 
+            'D - Move Right',
             'W - Jump',
             '',
             'Attack:',
@@ -97,7 +112,10 @@ class ControlsScreen extends DrawableObject {
             }
             ctx.fillText(line, contentX + 40, startY + (index * lineHeight) + 20);
         });
+    };
 
+
+    drawBackButton(ctx) {
         if (this.backButtonImage.complete) {
             if (this.isBackHovered) {
                 let glowIntensity = (Math.sin(Date.now() * 0.004) + 1) / 2;
@@ -110,9 +128,6 @@ class ControlsScreen extends DrawableObject {
             ctx.shadowColor = 'transparent';
             ctx.shadowBlur = 0;
         }
-
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'alphabetic';
     };
 
 

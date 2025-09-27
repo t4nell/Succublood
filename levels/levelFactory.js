@@ -2,9 +2,18 @@ function createLevel1() {
     return new level (
         [
             new meleeDemon(),
+            new meleeDemon(),
+            new meleeDemon(),
+            new meleeDemon(),
+            new meleeDemon(),
+
             new rangeDemon(),
+            new rangeDemon(),
+            new rangeDemon(),
+
             new Endboss()
         ],
+
         [
             new Sky('img/background/sky.png', 0, 720),
             new Sky('img/background/sky.png', 1279, 720),
@@ -21,6 +30,7 @@ function createLevel1() {
             new Sky('img/background/sky.png', 1268 * 11, 720),
             new Sky('img/background/sky.png', 1267 * 12, 720),
         ],
+
         [
             new BackgroundObject('img/background/graves.png', 0, 720, 0.25),
             new BackgroundObject('img/background/gravesOffset.png', 640, 720, 0.25),
@@ -45,6 +55,7 @@ function createLevel1() {
             new BackgroundObject('img/background/bones.png', 0, 720, 1),
             new BackgroundObject('img/background/bones.png', 1280, 720, 1)
         ],
+
         [
             new Crow(),
             new Crow(),
@@ -57,6 +68,7 @@ function createLevel1() {
             new Crow(),
             new Crow()
         ],
+        
         [
             new ManaPotion(),
             new ManaPotion(),
@@ -69,6 +81,7 @@ function createLevel1() {
             new ManaPotion(),
             new ManaPotion()
         ],
+
         [
             new Ruby(1000, 490),
             new Ruby(1500, 490),

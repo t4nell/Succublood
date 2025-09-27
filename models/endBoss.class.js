@@ -65,6 +65,14 @@ class Endboss extends MovableObject {
 
 
     animate() {
+        this.handleBossMovement();
+        this.startIdleAnimationLoop();
+        this.updateBossAnimation();
+        this.startFloatingAnimation();
+    };
+
+
+    handleBossMovement() {
         setInterval(() => {
             if (!this.isDying) {
                 this.awakeBoss();
@@ -76,13 +84,27 @@ class Endboss extends MovableObject {
                 }
             }
         }, 1000 / 60);
+    };
 
+
+    startIdleAnimationLoop() {
         setInterval(() => {
             if (!this.isHurt() && !this.isDying && !this.isAttacking) {
                 this.startIdleAnimation();
             }
         }, 3000);
+    };
 
+
+    startIdleAnimation() {
+        if (!this.isAnimating && !this.isHurt() && !this.isDying && !this.isAttacking) {
+            this.isAnimating = true;
+            this.currentImage = 0;
+        }
+    };
+    
+
+    updateBossAnimation() {
         setInterval(() => {
             if (this.isDying) {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
@@ -123,9 +145,12 @@ class Endboss extends MovableObject {
                 this.speed = 0;
                 this.swapImg(this.IMAGES_IDLE[0]);
             }
-                
-        }, 120);
 
+        }, 120);
+    };
+
+
+    startFloatingAnimation() {
         setInterval(() => {
             if (!this.isDying) {
                 this.floatOffset += this.floatSpeed;
@@ -200,16 +225,6 @@ class Endboss extends MovableObject {
             soundManager.stopSound('gameBackground');
             soundManager.playSound('bossBackground', 0.2);
             this.speed = this.walkSpeed;
-        }
-    };
-
-
-
-
-    startIdleAnimation() {
-        if (!this.isAnimating && !this.isHurt() && !this.isDying && !this.isAttacking) {
-            this.isAnimating = true;
-            this.currentImage = 0;
         }
     };
 };

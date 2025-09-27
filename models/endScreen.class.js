@@ -54,72 +54,84 @@ class EndScreen extends DrawableObject {
                 return;
             }
             this.fadeProgress += this.fadeSpeed;
-            switch (this.fadePhase) {
-                case 'darkening':
-                    if (this.fadeProgress >= 1) {
-                        this.fadePhase = 'text-fade';
-                        this.fadeProgress = 0;
-                    }
-                    break;
-                case 'text-fade':
-                    if (this.fadeProgress >= 1) {
-                        this.fadePhase = 'button-fade';
-                        this.fadeProgress = 0;
-                    }
-                    break;
-                case 'button-fade':
-                    if (this.fadeProgress >= 1) {
-                        this.fadePhase = 'complete';
-                        this.fadeProgress = 1;
-                        clearInterval(animationInterval);
-                    }
-                    break;
-            }
+            this.handleFadeTransition(animationInterval);
         }, 1000 / 30);
+    };
+
+
+    handleFadeTransition(animationInterval) {
+        switch (this.fadePhase) {
+            case 'darkening':
+                if (this.fadeProgress >= 1) {
+                    this.fadePhase = 'text-fade';
+                    this.fadeProgress = 0;
+                }
+                break;
+            case 'text-fade':
+                if (this.fadeProgress >= 1) {
+                    this.fadePhase = 'button-fade';
+                    this.fadeProgress = 0;
+                }
+                break;
+            case 'button-fade':
+                if (this.fadeProgress >= 1) {
+                    this.fadePhase = 'complete';
+                    this.fadeProgress = 1;
+                    clearInterval(animationInterval);
+                }
+                break;
+        }
     };
 
 
     draw(ctx) {
         if (!this.isVisible) return;
-
-        // Phase 1: Verdunklung
         if (this.fadePhase === 'darkening') {
             let darknessOpacity = this.fadeProgress;
             ctx.fillStyle = `rgba(0, 0, 0, ${darknessOpacity * 0.9})`;
             ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
             return;
         }
+        this.drawBlackBackground(ctx);
+        this.fadeInText(ctx);
+        this.fadeInMenuButton(ctx);
+    };
 
-        // Ab Phase 2: Schwarzer Hintergrund
+
+    drawBlackBackground(ctx) {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
         ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    };
 
-        // Phase 2: Text einblenden
+
+    fadeInText(ctx) {
         if (this.fadePhase === 'text-fade' || this.fadePhase === 'button-fade' || this.fadePhase === 'complete') {
             let textOpacity = this.fadePhase === 'text-fade' ? this.fadeProgress : 1;
-            
+
             ctx.font = 'bold 80px antiquityPrint';
-            ctx.fillStyle = this.screenType === 'victory' ? 
-                `rgba(0, 255, 0, ${textOpacity})` : 
+            ctx.fillStyle = this.screenType === 'victory' ?
+                `rgba(0, 255, 0, ${textOpacity})` :
                 `rgba(255, 0, 0, ${textOpacity})`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-    
+
             ctx.shadowColor = `rgba(71, 71, 71, ${textOpacity * 0.75})`;
             ctx.shadowOffsetX = 6;
             ctx.shadowOffsetY = 6;
             ctx.shadowBlur = 10;
-            
+
             let titleText = this.screenType === 'victory' ? 'VICTORY!' : 'YOU DIED';
             ctx.fillText(titleText, this.canvasWidth / 2, this.canvasHeight / 2 - 50);
-            
+
             ctx.shadowColor = 'transparent';
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 0;
             ctx.shadowBlur = 0;
         }
+    };
 
-        // Phase 3: Button einblenden
+
+    fadeInMenuButton(ctx) {
         if (this.fadePhase === 'button-fade' || this.fadePhase === 'complete') {
             if (this.menuButton.complete) {
                 let buttonOpacity = this.fadePhase === 'button-fade' ? this.fadeProgress : 1;
@@ -130,7 +142,7 @@ class EndScreen extends DrawableObject {
                     ctx.shadowOffsetY = 0;
                     ctx.shadowBlur = 20;
                 }
-                
+
                 ctx.globalAlpha = buttonOpacity;
                 ctx.drawImage(this.menuButton, this.buttonX, this.buttonY, this.buttonWidth, this.buttonHeight);
                 ctx.globalAlpha = 1;
