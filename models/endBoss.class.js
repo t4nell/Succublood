@@ -36,7 +36,7 @@ class Endboss extends MovableObject {
     ];
     currentImage = 0;
     zoom = 4;
-    HP = 60;
+    HP = 180;
     isAnimating = false;
     isAttacking = false;
     lastAttack = 0;
@@ -47,7 +47,7 @@ class Endboss extends MovableObject {
     floatOffset = 0;
     baseY = 500;
     isAwakened = false;
-    walkSpeed = 3;
+    walkSpeed = 6;
     
 
     constructor() {
@@ -102,7 +102,7 @@ class Endboss extends MovableObject {
             this.currentImage = 0;
         }
     };
-    
+
 
     updateBossAnimation() {
         setInterval(() => {

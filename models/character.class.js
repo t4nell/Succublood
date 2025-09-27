@@ -66,7 +66,7 @@ class Character extends MovableObject {
     isAttacking = false;
     attackAnimationStarted = false;
     isMeleeAttacking = false;
-    meleeAttackRange = 200;
+    meleeAttackRange = 124 * this.zoom;
 
     constructor() {
         super().loadImage('img/character/idle/idle1.png');
@@ -84,12 +84,41 @@ class Character extends MovableObject {
         this.animate();
     };
 
+
+    drawMeleeHitbox(ctx) {
+        if (!this.isMeleeAttacking || !this.world) return;
+        
+        // Hitbox immer während des Melee-Angriffs zeichnen
+        let hitX = this.otherDirection ? 
+                this.x - this.meleeAttackRange : 
+                this.x + (this.width / 2);
+        
+        let hitboxX = this.otherDirection ? 
+                    hitX : 
+                    this.x;
+        
+        let hitboxWidth = this.otherDirection ? 
+                        this.x - hitX : 
+                        this.meleeAttackRange;
+        
+        let hitboxY = this.y - this.height;
+        let hitboxHeight = this.height;
+
+        // Rote durchgezogene Linie für die Hitbox zeichnen
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(hitboxX + this.offsetX, hitboxY, hitboxWidth, hitboxHeight);
+        
+        // Linie-Style zurücksetzen
+        ctx.lineWidth = 1;
+    };
+
     
     animate() {
         this.handleCharacterMovement(); 
         this.handleCharacterAnimations();
         setInterval(() => {
-            if (this.world && this.world.gameStarted && this.world.keyboard.E && !this.isMeleeAttacking && !this.isAttacking && !this.isDying && !this.isHurt()) {
+            if (this.world && this.world.gameStarted && this.world.keyboard.E && !this.isMeleeAttacking && !this.isDying && !this.isHurt()) {
                 this.startMeleeAttack();
             }
         }, 1000 / 30);
@@ -135,13 +164,12 @@ class Character extends MovableObject {
             } else if (this.isHurt()) {
                 this.animateImages(this.IMAGES_HURT);
                 soundManager.playSound('characterHurt', 0.4);
-            } else if (this.world && this.world.gameStarted && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-                this.animateImages(this.IMAGES_WALK);
-
-            } else if (this.world && this.world.gameStarted && this.isAttacking && this.MANA > 0) {
-                this.playRangeAttackAnimation();
             } else if (this.world && this.world.gameStarted && this.isMeleeAttacking) {
                 this.playMeleeAttackAnimation();
+            } else if (this.world && this.world.gameStarted && this.isAttacking && this.MANA > 0) {
+                this.playRangeAttackAnimation();
+            } else if (this.world && this.world.gameStarted && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
+                this.animateImages(this.IMAGES_WALK);
             } else {
                 this.animateImages(this.IMAGES_IDLE);
             }
@@ -163,7 +191,7 @@ class Character extends MovableObject {
 
 
     startRangeAttack() {
-        if (!this.isAttacking && !this.isDying) {
+        if (!this.isAttacking && !this.isDying && this.MANA > 0) {
             this.isAttacking = true;
             this.attackAnimationStarted = false;
             this.currentImage = 0;
@@ -186,7 +214,7 @@ class Character extends MovableObject {
             this.currentImage = 0;
         }
     };
-    
+
 
     playRangeAttackAnimation() {
         if (this.currentImage < this.IMAGES_ATTACK_RANGE.length) {

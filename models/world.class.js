@@ -563,6 +563,11 @@ class World {
 
         mo.drawBorder(this.ctx);
 
+        // Melee Hitbox für Character zeichnen
+        if (mo instanceof Character) {
+            mo.drawMeleeHitbox(this.ctx);
+        }
+
         if(mo.otherDirection) {
             this.flipImageBack(mo);
         };
