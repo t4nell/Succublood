@@ -66,7 +66,7 @@ class Character extends MovableObject {
     isAttacking = false;
     attackAnimationStarted = false;
     isMeleeAttacking = false;
-    meleeAttackRange = 124 * this.zoom;
+    meleeAttackRange = 124;
 
     constructor() {
         super().loadImage('img/character/idle/idle1.png');
@@ -88,28 +88,16 @@ class Character extends MovableObject {
     drawMeleeHitbox(ctx) {
         if (!this.isMeleeAttacking || !this.world) return;
         
-        // Hitbox immer während des Melee-Angriffs zeichnen
-        let hitX = this.otherDirection ? 
-                this.x - this.meleeAttackRange : 
-                this.x + (this.width / 2);
-        
-        let hitboxX = this.otherDirection ? 
-                    hitX : 
-                    this.x;
-        
-        let hitboxWidth = this.otherDirection ? 
-                        this.x - hitX : 
-                        this.meleeAttackRange;
-        
+        let hitX = this.otherDirection ? this.x - this.meleeAttackRange : this.x + this.meleeAttackRange;
+        let hitboxX = this.otherDirection ? hitX : this.x + this.width / 2;
+        let hitboxWidth = this.otherDirection ? this.x : this.meleeAttackRange;
         let hitboxY = this.y - this.height;
         let hitboxHeight = this.height;
 
-        // Rote durchgezogene Linie für die Hitbox zeichnen
         ctx.strokeStyle = 'red';
         ctx.lineWidth = 3;
         ctx.strokeRect(hitboxX + this.offsetX, hitboxY, hitboxWidth, hitboxHeight);
         
-        // Linie-Style zurücksetzen
         ctx.lineWidth = 1;
     };
 
