@@ -66,7 +66,7 @@ class Character extends MovableObject {
     isAttacking = false;
     attackAnimationStarted = false;
     isMeleeAttacking = false;
-    meleeAttackRange = 124;
+    meleeAttackRange = 130;
 
     constructor() {
         super().loadImage('img/character/idle/idle1.png');
@@ -89,8 +89,8 @@ class Character extends MovableObject {
         if (!this.isMeleeAttacking || !this.world) return;
         
         let hitX = this.otherDirection ? this.x - this.meleeAttackRange : this.x + this.meleeAttackRange;
-        let hitboxX = this.otherDirection ? hitX : this.x + this.width / 2;
-        let hitboxWidth = this.otherDirection ? this.x : this.meleeAttackRange;
+        let hitboxX = this.otherDirection ? hitX + this.width : hitX;
+        let hitboxWidth = this.meleeAttackRange;
         let hitboxY = this.y - this.height;
         let hitboxHeight = this.height;
 
