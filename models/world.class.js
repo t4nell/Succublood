@@ -46,7 +46,7 @@ class World {
 
         
         soundManager.loadSound('characterAttackVoice', 'audio/gameSounds/characterAttackVoice.mp3');
-        soundManager.loadSound('footSteps', 'audio/gameSounds/footSteps.mp3');//noch nicht eingebaut
+        soundManager.loadSound('footSteps', 'audio/gameSounds/footSteps.mp3', true);
         soundManager.loadSound('characterHurt', 'audio/gameSounds/characterHurt.mp3');
         soundManager.loadSound('characterDeath', 'audio/gameSounds/characterDeath.mp3');
         soundManager.loadSound('jump', 'audio/gameSounds/jump.mp3');
@@ -446,7 +446,32 @@ class World {
 
     checkCollisions() {
         this.level.enemies.forEach((enemy) => {
-            if (this.character.isColliding(enemy) && !this.character.isHurt() && !enemy.isDead() && !enemy.isAttacking) {
+            let characterIsInvulnerable = false;
+
+            if (this.character.isMeleeAttacking) {
+                const { x: hitboxX, y: hitboxY, width: hitboxWidth, height: hitboxHeight } = this.character.getMeleeHitbox();
+
+                const enemyLeft = enemy.x + enemy.offsetX;
+                const enemyRight = enemyLeft + enemy.width;
+                const enemyBottom = enemy.y;
+                const enemyTop = enemy.y - enemy.height;
+
+                const enemyInMeleeRange =
+                    enemyRight > hitboxX &&
+                    enemyLeft < hitboxX + hitboxWidth &&
+                    enemyBottom > hitboxY &&
+                    enemyTop < hitboxY + hitboxHeight;
+
+                if (enemyInMeleeRange) {
+                    characterIsInvulnerable = true;
+                }
+            }
+
+            if (this.character.isColliding(enemy) &&
+                !this.character.isHurt() &&
+                !enemy.isDead() &&
+                !enemy.isAttacking &&
+                !characterIsInvulnerable) {
                 this.character.hit();
                 this.statusLive.setPercentage(this.character.HP);
             }
@@ -556,21 +581,20 @@ class World {
 
 
     addToMap(mo) {
-        if(mo.otherDirection) {
+        if (mo.otherDirection) {
             this.flipImage(mo);
-        };
+        }
         mo.draw(this.ctx);
-
         mo.drawBorder(this.ctx);
 
-        // Melee Hitbox für Character zeichnen
+        if (mo.otherDirection) {
+            this.flipImageBack(mo);
+        }
+
+        // Hitbox jetzt in normalem (nicht gespiegelten) Koordinatensystem zeichnen
         if (mo instanceof Character) {
             mo.drawMeleeHitbox(this.ctx);
         }
-
-        if(mo.otherDirection) {
-            this.flipImageBack(mo);
-        };
     };
 
     flipImage(mo) {

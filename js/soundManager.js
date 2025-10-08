@@ -7,9 +7,7 @@ class SoundManager {
     loadSound(name, path, loop = false) {
         this.sounds[name] = new Audio(path);
         this.sounds[name].preload = 'auto';
-        
-        // Setze Loop für Hintergrundmusik
-        if (loop || name.includes('Background') || name.includes('background')) {
+        if (loop || name.includes('Background') || name.includes('background') || name.includes('footSteps')) {
             this.sounds[name].loop = true;
         }
     };
@@ -18,16 +16,29 @@ class SoundManager {
         if (this.isMuted) return;
         
         if (this.sounds[name]) {
-            this.sounds[name].volume = volume;
-            // Für Loop-Sounds nicht currentTime zurücksetzen
-            if (!this.sounds[name].loop) {
-                this.sounds[name].currentTime = 0;
+            const audio = this.sounds[name];
+            audio.volume = volume;
+            if (!audio.loop) {
+                audio.currentTime = 0;
+            } else {
+                // Loop-Sound nur starten, wenn er noch nicht läuft
+                if (!this.isPlaying(name)) {
+                    audio.play().catch(error => console.log('Sound konnte nicht abgespielt werden:', error));
+                }
+                return;
             }
-            this.sounds[name].play().catch(error => {
+            audio.play().catch(error => {
                 console.log('Sound konnte nicht abgespielt werden:', error);
             });
         }
     };
+
+
+    isPlaying(name) {
+        const a = this.sounds[name];
+        return !!a && !a.paused;
+    };
+
 
     stopSound(name) {
         if (this.sounds[name]) {
@@ -35,6 +46,7 @@ class SoundManager {
             this.sounds[name].currentTime = 0;
         }
     };
+    
     
     setMuted(muted) {
         this.isMuted = muted;

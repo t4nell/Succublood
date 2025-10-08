@@ -87,17 +87,10 @@ class Character extends MovableObject {
 
     drawMeleeHitbox(ctx) {
         if (!this.isMeleeAttacking || !this.world) return;
-        
-        let hitX = this.otherDirection ? this.x - this.meleeAttackRange : this.x + this.meleeAttackRange;
-        let hitboxX = this.otherDirection ? hitX + this.width : hitX;
-        let hitboxWidth = this.meleeAttackRange;
-        let hitboxY = this.y - this.height;
-        let hitboxHeight = this.height;
-
+        const { x: hitboxX, y: hitboxY, width: hitboxWidth, height: hitboxHeight } = this.getMeleeHitbox();
         ctx.strokeStyle = 'red';
         ctx.lineWidth = 3;
-        ctx.strokeRect(hitboxX + this.offsetX, hitboxY, hitboxWidth, hitboxHeight);
-        
+        ctx.strokeRect(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
         ctx.lineWidth = 1;
     };
 
@@ -116,25 +109,37 @@ class Character extends MovableObject {
     handleCharacterMovement() {
         setInterval(() => {
             if (this.world && this.world.gameStarted && !this.isDying) {
+                let moving = false;
                 if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
                     this.moveRight();
-                    soundManager.playSound('footSteps', 0.7);
+                    moving = true;
                 } else if (this.world.keyboard.RIGHT && this.x === this.world.level.levelEndX) {
                     this.world.keyboard.RIGHT = false;
                 }
-
                 if (this.world.keyboard.LEFT && this.x > this.world.level.levelStartX) {
                     this.moveLeft();
-                    soundManager.playSound('footSteps', 0.7);
+                    moving = true;
                 } else if (this.world.keyboard.LEFT && this.x === this.world.level.levelStartX) {
                     this.world.keyboard.LEFT = false;
                 }
-
                 if (this.world.keyboard.UP && !this.isAboveGround()) {
                     soundManager.playSound('jump', 0.5);
                     this.jump();
                 }
+                if (
+                    moving && !this.isAboveGround() && !this.isMeleeAttacking && !this.isAttacking && !this.isHurt()
+                ) {
+                    soundManager.playSound('footSteps', 0.5);
+                } else {
+                    if (soundManager.isPlaying('footSteps')) {
+                        soundManager.stopSound('footSteps');
+                    }
+                }
                 this.moveCamera();
+            } else {
+                if (soundManager.isPlaying('footSteps')) {
+                    soundManager.stopSound('footSteps');
+                }
             }
         }, 1000 / 60);
     };
@@ -221,14 +226,37 @@ class Character extends MovableObject {
 
     checkMeleeHit() {
         if (!this.world) return;
-        let hitX = this.otherDirection ? 
-                this.x - this.meleeAttackRange : 
-                this.x + (this.width / 2);
+        const { x: hitboxX, y: hitboxY, width: hitboxWidth, height: hitboxHeight } = this.getMeleeHitbox();
+        this.handleEnemyCollision(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+    };
+    
+
+    getMeleeHitbox() {
+        const baseX = this.x + this.offsetX;
+        const hitboxY = this.y - this.height;
+        const hitboxHeight = this.height;
+        const hitboxWidth = this.meleeAttackRange;
+        const hitboxX = this.otherDirection
+            ? baseX - this.meleeAttackRange                     
+            : baseX + this.meleeAttackRange;                    
+        return { x: hitboxX, y: hitboxY, width: hitboxWidth, height: hitboxHeight };
+    };
+
+
+    handleEnemyCollision(hitboxX, hitboxY, hitboxWidth, hitboxHeight) {
         this.world.level.enemies.forEach(enemy => {
-            let isInRange = this.otherDirection ? 
-                            (enemy.x > hitX && enemy.x < this.x) :
-                            (enemy.x > this.x && enemy.x < hitX + this.meleeAttackRange);
-            if (isInRange && !enemy.isDead() && !enemy.isHurt()) {
+            const enemyLeft = enemy.x + enemy.offsetX;
+            const enemyRight = enemyLeft + enemy.width;
+            const enemyBottom = enemy.y;
+            const enemyTop = enemy.y - enemy.height;
+
+            const overlap =
+                enemyRight > hitboxX &&
+                enemyLeft < hitboxX + hitboxWidth &&
+                enemyBottom > hitboxY &&
+                enemyTop < hitboxY + hitboxHeight;
+
+            if (overlap && !enemy.isDead() && !enemy.isHurt()) {
                 if (enemy instanceof meleeDemon) {
                     enemy.killMeleeDemon();
                 } else if (enemy instanceof rangeDemon) {

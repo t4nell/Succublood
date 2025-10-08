@@ -36,7 +36,7 @@ class Endboss extends MovableObject {
     ];
     currentImage = 0;
     zoom = 4;
-    HP = 180;
+    HP = 100;
     isAnimating = false;
     isAttacking = false;
     lastAttack = 0;

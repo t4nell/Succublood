@@ -10,6 +10,8 @@ function createLevel1() {
             new rangeDemon(),
             new rangeDemon(),
             new rangeDemon(),
+            new rangeDemon(),
+            new rangeDemon(),
 
             new Endboss()
         ],
