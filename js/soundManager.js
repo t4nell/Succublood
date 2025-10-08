@@ -21,7 +21,6 @@ class SoundManager {
             if (!audio.loop) {
                 audio.currentTime = 0;
             } else {
-                // Loop-Sound nur starten, wenn er noch nicht läuft
                 if (!this.isPlaying(name)) {
                     audio.play().catch(error => console.log('Sound konnte nicht abgespielt werden:', error));
                 }

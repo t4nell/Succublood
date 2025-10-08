@@ -8,7 +8,7 @@ class World {
     keyboard;
     cameraX = 0;
     throwableObject = [];
-    spacePressed = false;
+    SPressed = false;
     collectables = [];
     rubyCount = 0;
     enemyProjectiles = [];
@@ -434,12 +434,12 @@ class World {
 
     
     checkThrowObjects() {
-        if (this.keyboard.SPACE && !this.spacePressed && !this.character.isDying && !this.character.isAttacking && !this.character.isMeleeAttacking) {
+        if (this.keyboard.S && !this.SPressed && !this.character.isDying && !this.character.isAttacking && !this.character.isMeleeAttacking) {
             this.character.startRangeAttack();
-            this.spacePressed = true;
+            this.SPressed = true;
         }
-        if (!this.keyboard.SPACE) {
-            this.spacePressed = false;
+        if (!this.keyboard.S) {
+            this.SPressed = false;
         }
     };
 

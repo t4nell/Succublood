@@ -99,7 +99,7 @@ class Character extends MovableObject {
         this.handleCharacterMovement(); 
         this.handleCharacterAnimations();
         setInterval(() => {
-            if (this.world && this.world.gameStarted && this.world.keyboard.E && !this.isMeleeAttacking && !this.isDying && !this.isHurt()) {
+            if (this.world && this.world.gameStarted && this.world.keyboard.W && !this.isMeleeAttacking && !this.isDying && !this.isHurt()) {
                 this.startMeleeAttack();
             }
         }, 1000 / 30);
@@ -122,7 +122,7 @@ class Character extends MovableObject {
                 } else if (this.world.keyboard.LEFT && this.x === this.world.level.levelStartX) {
                     this.world.keyboard.LEFT = false;
                 }
-                if (this.world.keyboard.UP && !this.isAboveGround()) {
+                if (this.world.keyboard.SPACE && !this.isAboveGround()) {
                     soundManager.playSound('jump', 0.5);
                     this.jump();
                 }
