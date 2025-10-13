@@ -23,6 +23,7 @@ class StartScreen extends DrawableObject {
     characterY;
     isCharacterHurt = false;
     hurtTimer = 0;
+    intervals = [];
 
     
     constructor(canvasWidth, canvasHeight) {
@@ -108,7 +109,7 @@ class StartScreen extends DrawableObject {
 
 
     startCharacterAnimation() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (this.isVisible) {
                 if (this.isCharacterHurt) {
                     this.updateHurtAnimation();
@@ -117,7 +118,7 @@ class StartScreen extends DrawableObject {
                     this.updateIdleAnimation();
                 }
             }
-        }, 1000 / 8);
+        }, 1000 / 8));
     };
 
 
@@ -342,5 +343,11 @@ class StartScreen extends DrawableObject {
 
     show() {
         this.isVisible = true;
+    };
+
+
+    clearIntervals() {
+        this.intervals.forEach(id => clearInterval(id));
+        this.intervals = [];
     };
 };

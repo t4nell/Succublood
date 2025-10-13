@@ -26,7 +26,7 @@ class EnemyProjectile extends MovableObject {
 
 
     animate() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (this.isExploding) {
                 if (this.currentImage < this.IMAGES_CHARGE.length) {
                     this.animateImages(this.IMAGES_CHARGE);
@@ -37,16 +37,16 @@ class EnemyProjectile extends MovableObject {
                 this.swapImg(sprite);
                 this.currentImage = (this.currentImage + 1) % this.maxFlightImages;
             }
-        }, 100);
+        }, 100));
     };
 
 
     shoot() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (!this.isExploding) {
                 this.x -= 20;
             }
-        }, 40);
+        }, 40));
     };
 
 

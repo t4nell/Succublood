@@ -83,7 +83,7 @@ class rangeDemon extends MovableObject {
 
 
     startMovementControl() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (this.world && this.world.gameStarted) {
                 if ((!this.isCharacterInRange() && !this.isAttacking && !this.isDying)) {
                     this.moveLeft();
@@ -92,12 +92,12 @@ class rangeDemon extends MovableObject {
                     this.startAttack();
                 }
             }
-        }, 1000 / 30);
+        }, 1000 / 30));
     };
 
 
     updateAnimationState() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (this.world && this.world.gameStarted && this.isDying) {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.speed = 0;
@@ -133,7 +133,7 @@ class rangeDemon extends MovableObject {
                 this.speed = 0;
                 this.animateImages(this.IMAGES_IDLE);
             }
-        }, 100);
+        }, 100));
     };
 
 

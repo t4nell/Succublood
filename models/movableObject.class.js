@@ -7,6 +7,7 @@ class MovableObject extends DrawableObject{
     lastHit = 0;
     isDying = false;
     deathAnimationComplete = false;
+    intervals = [];
     
     
     drawBorder(ctx){
@@ -66,12 +67,12 @@ class MovableObject extends DrawableObject{
     
 
     applyGravity() {
-        setInterval (() => {
+        this.intervals.push(setInterval (() => {
             if (this.isAboveGround() || this.speedY > 0) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
             };
-        }, 1000 /60);
+        }, 1000 /60));
     };
 
     
@@ -119,6 +120,12 @@ class MovableObject extends DrawableObject{
 
     moveCamera() {
         this.world.cameraX = -this.x + settings.characterOffsetLeft;
+    };
+
+
+    clearIntervals() {
+        this.intervals.forEach(id => clearInterval(id));
+        this.intervals = [];
     };
 };
 

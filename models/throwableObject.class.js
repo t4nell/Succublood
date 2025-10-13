@@ -29,17 +29,17 @@ class ThrowableObject extends MovableObject {
     };
 
     animate() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             this.animateImages(this.IMAGES_fireball);
-        }, 1000 / 30);
+        }, 1000 / 30));
     };
 
 
     throw() {
         // this.speedY = 35;
         // this.applyGravity();
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             this.x += 20;
-        }, 25);
+        }, 25));
     };
 }

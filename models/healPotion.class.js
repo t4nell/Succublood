@@ -17,10 +17,10 @@ class HealPotion extends CollectableObjects {
 
 
     animate() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             this.floatOffset += this.floatSpeed;
             this.y = this.baseY + Math.sin(this.floatOffset) * this.floatAmplitude;
-        }, 1000 / 30);
+        }, 1000 / 30));
     };
 
 

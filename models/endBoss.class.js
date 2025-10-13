@@ -73,7 +73,7 @@ class Endboss extends MovableObject {
 
 
     handleBossMovement() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (!this.isDying) {
                 this.awakeBoss();
                 if (this.isAwakened && !this.isAttacking && !this.isHurt() && !this.isCharacterInAttackRange()) {
@@ -83,16 +83,16 @@ class Endboss extends MovableObject {
                     this.startAttack();
                 }
             }
-        }, 1000 / 60);
+        }, 1000 / 60));
     };
 
 
     startIdleAnimationLoop() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (!this.isHurt() && !this.isDying && !this.isAttacking) {
                 this.startIdleAnimation();
             }
-        }, 3000);
+        }, 3000));
     };
 
 
@@ -105,7 +105,7 @@ class Endboss extends MovableObject {
 
 
     updateBossAnimation() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (this.isDying) {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.speed = 0;
@@ -146,17 +146,17 @@ class Endboss extends MovableObject {
                 this.swapImg(this.IMAGES_IDLE[0]);
             }
 
-        }, 120);
+        }, 120));
     };
 
 
     startFloatingAnimation() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (!this.isDying) {
                 this.floatOffset += this.floatSpeed;
                 this.y = this.baseY + Math.sin(this.floatOffset) * this.floatAmplitude;
             }
-        }, 1000 / 60);
+        }, 1000 / 60));
     };
 
 

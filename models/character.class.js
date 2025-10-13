@@ -98,16 +98,16 @@ class Character extends MovableObject {
     animate() {
         this.handleCharacterMovement(); 
         this.handleCharacterAnimations();
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (this.world && this.world.gameStarted && this.world.keyboard.W && !this.isMeleeAttacking && !this.isDying && !this.isHurt()) {
                 this.startMeleeAttack();
             }
-        }, 1000 / 30);
+        }, 1000 / 30));
     };
 
 
     handleCharacterMovement() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (this.world && this.world.gameStarted && !this.isDying) {
                 let moving = false;
                 if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
@@ -141,12 +141,12 @@ class Character extends MovableObject {
                     soundManager.stopSound('footSteps');
                 }
             }
-        }, 1000 / 60);
+        }, 1000 / 60));
     };
 
 
     handleCharacterAnimations() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (this.world && this.world.gameStarted && this.isDying) {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.animateImages(this.IMAGES_DEAD);
@@ -166,7 +166,7 @@ class Character extends MovableObject {
             } else {
                 this.animateImages(this.IMAGES_IDLE);
             }
-        }, 1000 / 10);
+        }, 1000 / 10));
     };
 
 

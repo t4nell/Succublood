@@ -75,7 +75,7 @@ class meleeDemon extends MovableObject {
     
     
     animate() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (this.world && this.world.gameStarted) {
                 if ((!this.isCharacterInRange() && !this.isAttacking && !this.isDying)) {
                     this.moveLeft();
@@ -84,10 +84,10 @@ class meleeDemon extends MovableObject {
                     this.startAttack();
                 }
             }
-        }, 1000 / 20);  
-        
-        setInterval(() => {
-            if (this.world && this.world.gameStarted && this.isDying) {    
+        }, 1000 / 20));  
+
+        this.intervals.push(setInterval(() => {
+            if (this.world && this.world.gameStarted && this.isDying) {
                 if (this.currentImage < this.IMAGES_DEAD.length) {
                     this.speed = 0;
                     this.animateImages(this.IMAGES_DEAD);
@@ -123,7 +123,7 @@ class meleeDemon extends MovableObject {
                 this.speed = 0;
                 this.animateImages(this.IMAGES_IDLE);
             }
-        }, 100);
+        }, 100));
     };
 
 

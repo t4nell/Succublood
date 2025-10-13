@@ -20,12 +20,12 @@ class Crow extends MovableObject {
     };
 
     animate() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             this.moveLeft()
-        }, 1000 / 30);
+        }, 1000 / 30));
 
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             this.animateImages(this.IMAGES_FLY);
-        }, 1000 / 10);
+        }, 1000 / 10));
     };
 };

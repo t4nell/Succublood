@@ -11,7 +11,7 @@ class BackgroundObject extends MovableObject {
     };
 
     animate() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (!this.world || !this.world.keyboard || this.world.character.isDying) {
                 return;
             }
@@ -29,6 +29,6 @@ class BackgroundObject extends MovableObject {
                     this.x -= this.width * 2;
                 }
             }
-        }, 1000 / 30);
+        }, 1000 / 30));
     };
 };

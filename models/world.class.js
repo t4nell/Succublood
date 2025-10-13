@@ -21,6 +21,7 @@ class World {
     endScreen;
     imprintScreen;
     controlsScreen;
+    intervals = [];
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -319,8 +320,65 @@ class World {
 
 
     clearAllIntervals() {
-        location.reload();
-    };
+    // World Intervale clearen
+    this.intervals.forEach(id => clearInterval(id));
+    this.intervals = [];
+    
+    // Character Intervale clearen
+    if (this.character && this.character.clearIntervals) {
+        this.character.clearIntervals();
+    }
+    
+    // Enemy Intervale clearen
+    if (this.level && this.level.enemies) {
+        this.level.enemies.forEach(enemy => {
+            if (enemy.clearIntervals) enemy.clearIntervals();
+        });
+    }
+    
+    // Background Object Intervale clearen
+    if (this.level && this.level.backgroundObjects) {
+        this.level.backgroundObjects.forEach(obj => {
+            if (obj.clearIntervals) obj.clearIntervals();
+        });
+    }
+    
+    // Sky Intervale clearen
+    if (this.level && this.level.sky) {
+        this.level.sky.forEach(sky => {
+            if (sky.clearIntervals) sky.clearIntervals();
+        });
+    }
+    
+    // Crows Intervale clearen
+    if (this.level && this.level.backgroundCrows) {
+        this.level.backgroundCrows.forEach(crow => {
+            if (crow.clearIntervals) crow.clearIntervals();
+        });
+    }
+    
+    // Collectables clearen
+    [...this.throwableObject, ...this.collectables, ...this.enemyProjectiles, ...this.bossProjectiles].forEach(obj => {
+        if (obj.clearIntervals) obj.clearIntervals();
+    });
+    
+    if (this.level && this.level.manaPotions) {
+        this.level.manaPotions.forEach(potion => {
+            if (potion.clearIntervals) potion.clearIntervals();
+        });
+    }
+    
+    if (this.level && this.level.rubys) {
+        this.level.rubys.forEach(ruby => {
+            if (ruby.clearIntervals) ruby.clearIntervals();
+        });
+    }
+    
+    // StartScreen Intervale clearen
+    if (this.startScreen && this.startScreen.clearIntervals) {
+        this.startScreen.clearIntervals();
+    }
+};
 
 
     checkGameEnd() {
@@ -366,37 +424,37 @@ class World {
 
 
     run() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (this.gameStarted && !this.gameEnded) {
                 this.checkCollisions();
                 this.checkGameEnd();
             }
-        }, 300);
-        setInterval(() => {
+        }, 300));
+        this.intervals.push(setInterval(() => {
             if (this.gameStarted && !this.gameEnded) {
                 this.checkThrowObjects();
             }    
-        }, 125);
-        setInterval(() => {
+        }, 125));
+        this.intervals.push(setInterval(() => {
             if (this.gameStarted && !this.gameEnded) {
                 this.checkFireballCollisions();
             }
-        }, 25);
-        setInterval(() => {
+        }, 25));
+        this.intervals.push(setInterval(() => {
             if (this.gameStarted && !this.gameEnded) {
                 this.checkCollectableCollisions();
             }
-        }, 50);
-        setInterval(() => {
+        }, 50));
+        this.intervals.push(setInterval(() => {
             if (this.gameStarted && !this.gameEnded) {
                 this.checkEnemyProjectileCollisions();
             }
-        }, 25);
-        setInterval(() => {
+        }, 25));
+        this.intervals.push(setInterval(() => {
             if (this.gameStarted && !this.gameEnded) {
                 this.checkBossProjectileCollisions();
             }
-        }, 25);
+        }, 25));
     };
 
     

@@ -23,7 +23,7 @@ class BossProjectile extends MovableObject {
     };
 
     animate() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (this.isExploding) {
                 if (this.currentImage < this.IMAGES_CHARGE.length) {
                     this.animateImages(this.IMAGES_CHARGE);
@@ -34,15 +34,15 @@ class BossProjectile extends MovableObject {
                 this.swapImg(sprite);
                 this.currentImage = (this.currentImage + 1) % this.maxFlightImages;
             }
-        }, 120);
+        }, 120));
     };
 
     shoot() {
-        setInterval(() => {
+        this.intervals.push(setInterval(() => {
             if (!this.isExploding) {
                 this.x -= 25;
             }
-        }, 50);
+        }, 50));
     };
 
     startExplosion() {
