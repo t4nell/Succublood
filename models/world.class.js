@@ -21,6 +21,7 @@ class World {
     endScreen;
     imprintScreen;
     controlsScreen;
+    fullscreenButton;
     intervals = [];
 
     constructor(canvas, keyboard) {
@@ -32,6 +33,7 @@ class World {
         this.endScreen = new EndScreen(canvas.width, canvas.height);
         this.imprintScreen = new ImprintScreen(canvas.width, canvas.height);
         this.controlsScreen = new ControlsScreen(canvas.width, canvas.height);
+        this.fullscreenButton = new FullscreenButton(canvas.width, canvas.height);
         this.level = createLevel1();
         this.loadSounds();
         this.setupMouseEvents();
@@ -77,12 +79,15 @@ class World {
         
         if (!this.gameStarted && !this.imprintVisible && !this.controlsVisible) {
             this.startScreen.draw(this.ctx);
+            this.fullscreenButton.draw(this.ctx);
         } else if (!this.gameStarted && this.imprintVisible) {
             this.startScreen.draw(this.ctx);
             this.imprintScreen.draw(this.ctx);
+            this.fullscreenButton.draw(this.ctx);
         } else if (!this.gameStarted && this.controlsVisible) { 
             this.startScreen.draw(this.ctx);
             this.controlsScreen.draw(this.ctx);
+            this.fullscreenButton.draw(this.ctx);
         } else if (this.gameEnded) {
             if (this.endScreen.fadePhase === 'darkening') {
                 this.addObjectsToMap(this.level.sky);
@@ -103,6 +108,7 @@ class World {
                 this.rubyCounter.draw(this.ctx, this.rubyCount, this.canvas.width);
             }
             this.endScreen.draw(this.ctx);
+            this.fullscreenButton.draw(this.ctx);
         } else {
             this.addObjectsToMap(this.level.sky);
             this.addObjectsToMap(this.level.backgroundCrows);
@@ -120,6 +126,7 @@ class World {
             this.statusLive.draw(this.ctx);
             this.statusMana.draw(this.ctx);
             this.rubyCounter.draw(this.ctx, this.rubyCount, this.canvas.width);
+            this.fullscreenButton.draw(this.ctx);
         }
 
         let self = this;
@@ -138,34 +145,45 @@ class World {
             let rect = this.canvas.getBoundingClientRect();
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
+
+            if (this.fullscreenButton.isButtonClicked(mouseX, mouseY)) {
+                soundManager.playSound('buttonClick', 0.7);
+                fullscreenManager.toggleFullscreen();
+                return;
+            }
+
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            const canvasX = mouseX * scaleX;
+            const canvasY = mouseY * scaleY;
             
             if (!this.gameStarted && !this.imprintVisible && !this.controlsVisible) {
-                if (this.startScreen.isCharacterClicked(mouseX, mouseY)) {
+                if (this.startScreen.isCharacterClicked(canvasX, canvasY)) {
                     soundManager.playSound('characterHurt', 0.7);
                     this.startScreen.triggerHurtAnimation();
                 }
-                else if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
+                else if (this.startScreen.isButtonClicked(canvasX, canvasY)) {
                     soundManager.playSound('buttonClick', 0.7);
                     this.startGame();
-                } else if (this.startScreen.isImprintButtonClicked(mouseX, mouseY)) {
+                } else if (this.startScreen.isImprintButtonClicked(canvasX, canvasY)) {
                     soundManager.playSound('buttonClick', 0.7);
                     this.showImprint();
-                } else if (this.startScreen.isControlsButtonClicked(mouseX, mouseY)) {
+                } else if (this.startScreen.isControlsButtonClicked(canvasX, canvasY)) {
                     soundManager.playSound('buttonClick', 0.7);
                     this.showControls();
                 }   
             } else if (!this.gameStarted && this.imprintVisible) {
-                if (this.imprintScreen.isBackButtonClicked(mouseX, mouseY)) {
+                if (this.imprintScreen.isBackButtonClicked(canvasX, canvasY)) {
                     soundManager.playSound('buttonClick', 0.7);
                     this.hideImprint();
                 }
             } else if (!this.gameStarted && this.controlsVisible) {
-                if (this.controlsScreen.isBackButtonClicked(mouseX, mouseY)) {
+                if (this.controlsScreen.isBackButtonClicked(canvasX, canvasY)) {
                     soundManager.playSound('buttonClick', 0.7);
                     this.hideControls();
                 }
             } else if (this.gameEnded) {
-                if (this.endScreen.isButtonClicked(mouseX, mouseY)) {
+                if (this.endScreen.isButtonClicked(canvasX, canvasY)) {
                     soundManager.playSound('buttonClick', 0.7);
                     this.restartGame();
                 }
@@ -177,24 +195,36 @@ class World {
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
 
+            if (this.fullscreenButton.isButtonClicked(mouseX, mouseY)) {
+                this.canvas.style.cursor = 'pointer';
+                this.fullscreenButton.setHovered(true);
+                return;
+            } else {
+                this.fullscreenButton.setHovered(false);
+            }
+
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            const canvasX = mouseX * scaleX;
+            const canvasY = mouseY * scaleY;
             if (!this.gameStarted && !this.imprintVisible && !this.controlsVisible) {
-                if (this.startScreen.isCharacterClicked(mouseX, mouseY)) {
+                if (this.startScreen.isCharacterClicked(canvasX, canvasY)) {
                     this.canvas.style.cursor = 'pointer';
                     this.startScreen.setHovered(false);
                     this.startScreen.setImprintHovered(false);
                     this.startScreen.setControlsHovered(false);
                 }
-                else if (this.startScreen.isButtonClicked(mouseX, mouseY)) {
+                else if (this.startScreen.isButtonClicked(canvasX, canvasY)) {
                     this.canvas.style.cursor = 'pointer';
                     this.startScreen.setHovered(true);
                     this.startScreen.setImprintHovered(false);
                     this.startScreen.setControlsHovered(false);
-                } else if (this.startScreen.isImprintButtonClicked(mouseX, mouseY)) {
+                } else if (this.startScreen.isImprintButtonClicked(canvasX, canvasY)) {
                     this.canvas.style.cursor = 'pointer';
                     this.startScreen.setHovered(false);
                     this.startScreen.setImprintHovered(true);
                     this.startScreen.setControlsHovered(false);
-                } else if (this.startScreen.isControlsButtonClicked(mouseX, mouseY)) {
+                } else if (this.startScreen.isControlsButtonClicked(canvasX, canvasY)) {
                     this.canvas.style.cursor = 'pointer';
                     this.startScreen.setHovered(false);
                     this.startScreen.setImprintHovered(false);
@@ -206,7 +236,7 @@ class World {
                     this.startScreen.setControlsHovered(false);
                 }
             } else if (!this.gameStarted && this.imprintVisible) {
-                if (this.imprintScreen.isBackButtonClicked(mouseX, mouseY)) {
+                if (this.imprintScreen.isBackButtonClicked(canvasX, canvasY)) {
                     this.canvas.style.cursor = 'pointer';
                     this.imprintScreen.setBackHovered(true);
                 } else {
@@ -214,7 +244,7 @@ class World {
                     this.imprintScreen.setBackHovered(false);
                 }
             } else if (!this.gameStarted && this.controlsVisible) {
-                if (this.controlsScreen.isBackButtonClicked(mouseX, mouseY)) {
+                if (this.controlsScreen.isBackButtonClicked(canvasX, canvasY)) {
                     this.canvas.style.cursor = 'pointer';
                     this.controlsScreen.setBackHovered(true);
                 } else {
@@ -222,7 +252,7 @@ class World {
                     this.controlsScreen.setBackHovered(false);
                 }
             } else if (this.gameEnded) {
-                if (this.endScreen.isButtonClicked(mouseX, mouseY)) {
+                if (this.endScreen.isButtonClicked(canvasX, canvasY)) {
                     this.canvas.style.cursor = 'pointer';
                     this.endScreen.setMenuHovered(true);
                 } else {
@@ -235,6 +265,7 @@ class World {
         });
         
         this.canvas.addEventListener('mouseleave', () => {
+            this.fullscreenButton.setHovered(false);
             if (!this.gameStarted && !this.imprintVisible && !this.controlsVisible) {
                 this.startScreen.setHovered(false);
                 this.startScreen.setImprintHovered(false);

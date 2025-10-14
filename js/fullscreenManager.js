@@ -2,6 +2,21 @@ class FullscreenManager {
     constructor() {
         this.fullscreenDiv = document.getElementById('fullScreen');
         this.isFullscreen = false;
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.init();
+            });
+        } else {
+            this.init();
+        }
+    };
+
+    init() {
+        this.fullscreenDiv = document.getElementById('fullScreen');
+        if (!this.fullscreenDiv) {
+            console.error('Element with ID "fullScreen" not found');
+            return;
+        }
         this.setupEventListeners();
     };
 
@@ -123,5 +138,12 @@ class FullscreenManager {
     }
 }
 
-// Globale Instanz erstellen
-const fullscreenManager = new FullscreenManager();
+// Globale Instanz erst nach DOM-Laden erstellen
+let fullscreenManager;
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        fullscreenManager = new FullscreenManager();
+    });
+} else {
+    fullscreenManager = new FullscreenManager();
+}
