@@ -2,7 +2,7 @@ class SoundManager {
     constructor() {
         this.sounds = {};
         this.isMuted = false;
-    };
+    }
 
     loadSound(name, path, loop = false) {
         this.sounds[name] = new Audio(path);
@@ -50,6 +50,24 @@ class SoundManager {
     setMuted(muted) {
         this.isMuted = muted;
     };
-};
+
+
+    toggleMute() {
+        this.isMuted = !this.isMuted;
+        Object.keys(this.sounds).forEach(name => {
+            if (this.isMuted) {
+                if (this.isPlaying(name)) {
+                    this.sounds[name].pause();
+                }
+            } else {
+                if (this.sounds[name].loop && this.sounds[name].currentTime > 0) {
+                    this.sounds[name].play().catch(error => 
+                        console.log('Sound konnte nicht fortgesetzt werden:', error)
+                    );
+                }
+            }
+        });
+    };
+}
 
 const soundManager = new SoundManager();

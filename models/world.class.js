@@ -22,6 +22,7 @@ class World {
     imprintScreen;
     controlsScreen;
     fullscreenButton;
+    muteButton;
     intervals = [];
 
     constructor(canvas, keyboard) {
@@ -34,6 +35,7 @@ class World {
         this.imprintScreen = new ImprintScreen(canvas.width, canvas.height);
         this.controlsScreen = new ControlsScreen(canvas.width, canvas.height);
         this.fullscreenButton = new FullscreenButton(canvas.width, canvas.height);
+        this.muteButton = new MuteButton(canvas.width, canvas.height);
         this.level = createLevel1();
         this.loadSounds();
         this.setupMouseEvents();
@@ -80,14 +82,17 @@ class World {
         if (!this.gameStarted && !this.imprintVisible && !this.controlsVisible) {
             this.startScreen.draw(this.ctx);
             this.fullscreenButton.draw(this.ctx);
+            this.muteButton.draw(this.ctx);
         } else if (!this.gameStarted && this.imprintVisible) {
             this.startScreen.draw(this.ctx);
             this.imprintScreen.draw(this.ctx);
             this.fullscreenButton.draw(this.ctx);
+            this.muteButton.draw(this.ctx);
         } else if (!this.gameStarted && this.controlsVisible) { 
             this.startScreen.draw(this.ctx);
             this.controlsScreen.draw(this.ctx);
             this.fullscreenButton.draw(this.ctx);
+            this.muteButton.draw(this.ctx);
         } else if (this.gameEnded) {
             if (this.endScreen.fadePhase === 'darkening') {
                 this.addObjectsToMap(this.level.sky);
@@ -109,6 +114,7 @@ class World {
             }
             this.endScreen.draw(this.ctx);
             this.fullscreenButton.draw(this.ctx);
+            this.muteButton.draw(this.ctx);
         } else {
             this.addObjectsToMap(this.level.sky);
             this.addObjectsToMap(this.level.backgroundCrows);
@@ -127,6 +133,7 @@ class World {
             this.statusMana.draw(this.ctx);
             this.rubyCounter.draw(this.ctx, this.rubyCount, this.canvas.width);
             this.fullscreenButton.draw(this.ctx);
+            this.muteButton.draw(this.ctx);
         }
 
         let self = this;
@@ -145,6 +152,12 @@ class World {
             let rect = this.canvas.getBoundingClientRect();
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
+
+            if (this.muteButton.isButtonClicked(mouseX, mouseY)) {
+                soundManager.playSound('buttonClick', 0.7);
+                soundManager.toggleMute();
+                return;
+            }
 
             if (this.fullscreenButton.isButtonClicked(mouseX, mouseY)) {
                 soundManager.playSound('buttonClick', 0.7);
@@ -194,6 +207,15 @@ class World {
             let rect = this.canvas.getBoundingClientRect();
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
+
+            if (this.muteButton.isButtonClicked(mouseX, mouseY)) {
+                this.canvas.style.cursor = 'pointer';
+                this.muteButton.setHovered(true);
+                this.fullscreenButton.setHovered(false);
+                return;
+            } else {
+                this.muteButton.setHovered(false);
+            }
 
             if (this.fullscreenButton.isButtonClicked(mouseX, mouseY)) {
                 this.canvas.style.cursor = 'pointer';
@@ -266,6 +288,7 @@ class World {
         
         this.canvas.addEventListener('mouseleave', () => {
             this.fullscreenButton.setHovered(false);
+            this.muteButton.setHovered(false);
             if (!this.gameStarted && !this.imprintVisible && !this.controlsVisible) {
                 this.startScreen.setHovered(false);
                 this.startScreen.setImprintHovered(false);
@@ -429,7 +452,6 @@ class World {
         setTimeout(() => {
             this.gameEnded = true;
             this.endScreen.show('victory'); 
-            // soundManager.playSound('victory', 0.3);
         }, 5000);
     };
 
@@ -680,7 +702,7 @@ class World {
             this.flipImageBack(mo);
         }
 
-        // Hitbox jetzt in normalem (nicht gespiegelten) Koordinatensystem zeichnen
+        //wieder entfernen, nur zum Testen der Hitboxen
         if (mo instanceof Character) {
             mo.drawMeleeHitbox(this.ctx);
         }

@@ -1,29 +1,30 @@
-class FullscreenButton extends DrawableObject {
+class MuteButton extends DrawableObject {
     buttonImage = new Image();
+    mutedButtonImage = new Image();
     buttonWidth = 60;
     buttonHeight = 60;
     buttonX;
     buttonY;
     isHovered = false;
 
-    
     constructor(canvasWidth, canvasHeight) {
         super();
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
-        this.buttonX = this.canvasWidth - this.buttonWidth - 20;
+        this.buttonX = this.canvasWidth - (this.buttonWidth * 2) - 30;
         this.buttonY = 20;
-        this.loadButtonImage();
-    };
+        this.loadButtonImages();
+    }
 
-
-    loadButtonImage() {
-        this.buttonImage.src = 'img/buttons/fullscreenButton.png';
-    };
-
+    loadButtonImages() {
+        this.buttonImage.src = 'img/buttons/soundButtonOn.png';
+        this.mutedButtonImage.src = 'img/buttons/soundButtonOff.png';
+    }
 
     draw(ctx) {
-        if (this.buttonImage.complete) {
+        const currentImage = soundManager.isMuted ? this.mutedButtonImage : this.buttonImage;
+        
+        if (currentImage.complete) {
             if (this.isHovered) {
                 let glowIntensity = (Math.sin(Date.now() * 0.004) + 1) / 2;
                 ctx.shadowColor = `rgba(150, 131, 68, ${glowIntensity})`;
@@ -31,7 +32,7 @@ class FullscreenButton extends DrawableObject {
                 ctx.shadowOffsetY = 0;
                 ctx.shadowBlur = 15;
             }
-            ctx.drawImage(this.buttonImage, this.buttonX, this.buttonY, this.buttonWidth, this.buttonHeight);
+            ctx.drawImage(currentImage, this.buttonX, this.buttonY, this.buttonWidth, this.buttonHeight);
             ctx.shadowColor = 'transparent';
             ctx.shadowBlur = 0;
         }
@@ -46,8 +47,10 @@ class FullscreenButton extends DrawableObject {
     isButtonClicked(mouseX, mouseY) {
         const canvas = document.getElementById('canvas');
         const rect = canvas.getBoundingClientRect();
+        
         const scaleX = this.canvasWidth / rect.width;
         const scaleY = this.canvasHeight / rect.height;
+        
         const canvasX = mouseX * scaleX;
         const canvasY = mouseY * scaleY;
         
@@ -56,4 +59,5 @@ class FullscreenButton extends DrawableObject {
                canvasY >= this.buttonY && 
                canvasY <= this.buttonY + this.buttonHeight;
     };
+
 }
