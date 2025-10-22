@@ -8,8 +8,8 @@ class RubyCounter extends DrawableObject {
 
     draw(ctx, rubyCount, canvasWidth) {
         let rubySize = 60;
-        let padding = 30;
-        let rubyX = canvasWidth - padding - rubySize;
+        let padding = 20;
+        let rubyX = canvasWidth - 180 - rubySize;
         let rubyY = padding;
         let textX = rubyX - 10;
         let textY = rubyY + (rubySize / 2);

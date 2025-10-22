@@ -134,6 +134,11 @@ class World {
             this.rubyCounter.draw(this.ctx, this.rubyCount, this.canvas.width);
             this.fullscreenButton.draw(this.ctx);
             this.muteButton.draw(this.ctx);
+            
+            // Touch Controls zeichnen
+            if (window.drawTouchControls) {
+                window.drawTouchControls();
+            }
         }
 
         let self = this;

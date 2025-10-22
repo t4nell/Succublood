@@ -36,7 +36,10 @@ class MovableObject extends DrawableObject{
            this.die();
         } else {
             this.lastHit = new Date().getTime();
-            this.currentImage = 0;
+            if (this instanceof Character && (this.isMeleeAttacking || this.isAttacking)) {
+            } else {
+                this.currentImage = 0;
+            }
         };
     };
 

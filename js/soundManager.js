@@ -1,7 +1,8 @@
 class SoundManager {
     constructor() {
         this.sounds = {};
-        this.isMuted = false;
+        // Mute-Status aus LocalStorage laden, Standard: false
+        this.isMuted = localStorage.getItem('gameIsMuted') === 'true';
     }
 
     loadSound(name, path, loop = false) {
@@ -10,7 +11,7 @@ class SoundManager {
         if (loop || name.includes('Background') || name.includes('background') || name.includes('footSteps')) {
             this.sounds[name].loop = true;
         }
-    };
+    }
 
     playSound(name, volume = 1) {
         if (this.isMuted) return;
@@ -30,30 +31,29 @@ class SoundManager {
                 console.log('Sound konnte nicht abgespielt werden:', error);
             });
         }
-    };
-
+    }
 
     isPlaying(name) {
         const a = this.sounds[name];
         return !!a && !a.paused;
-    };
-
+    }
 
     stopSound(name) {
         if (this.sounds[name]) {
             this.sounds[name].pause();
             this.sounds[name].currentTime = 0;
         }
-    };
-    
+    }
     
     setMuted(muted) {
         this.isMuted = muted;
-    };
-
+        localStorage.setItem('gameIsMuted', muted.toString());
+    }
 
     toggleMute() {
         this.isMuted = !this.isMuted;
+        localStorage.setItem('gameIsMuted', this.isMuted.toString());
+        
         Object.keys(this.sounds).forEach(name => {
             if (this.isMuted) {
                 if (this.isPlaying(name)) {
@@ -67,7 +67,7 @@ class SoundManager {
                 }
             }
         });
-    };
+    }
 }
 
 const soundManager = new SoundManager();

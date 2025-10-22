@@ -27,6 +27,10 @@ h1 {
 canvas {
     background-color: black;
     display: block;
+    
+    /* Verhindert Kontextmenü auf langen Tap */
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 @media only screen and (max-width: 1280px) {
