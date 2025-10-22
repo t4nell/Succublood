@@ -1,7 +1,6 @@
 class SoundManager {
     constructor() {
         this.sounds = {};
-        // Mute-Status aus LocalStorage laden, Standard: false
         this.isMuted = localStorage.getItem('gameIsMuted') === 'true';
     }
 

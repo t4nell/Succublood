@@ -20,14 +20,17 @@ function initTouchControls() {
                 right: new Image(),
                 jump: new Image(),
                 whip: new Image(),
-                fireball: new Image()
+                fireball: new Image(),
+                mute: new Image(),    
+                unmute: new Image()
             },
             buttons: {
                 left: { x: 50, y: canvas.height - 100, width: 80, height: 80, pressed: false },
                 right: { x: 180, y: canvas.height - 100, width: 80, height: 80, pressed: false },
                 jump: { x: 118, y: canvas.height - 200, width: 80, height: 80, pressed: false },
                 whip: { x: canvas.width - 260, y: canvas.height - 130, width: 80, height: 80, pressed: false },
-                fireball: { x: canvas.width - 130, y: canvas.height - 130, width: 80, height: 80, pressed: false }
+                fireball: { x: canvas.width - 130, y: canvas.height - 130, width: 80, height: 80, pressed: false },
+                mute: { x: canvas.width - 150, y: 20, width: 60, height: 60, pressed: false }
             }
         };
         touchControls.images.left.src = 'img/buttons/touchButtons/leftButton.jpg';
@@ -35,6 +38,8 @@ function initTouchControls() {
         touchControls.images.jump.src = 'img/buttons/touchButtons/jumpButton.jpg';
         touchControls.images.whip.src = 'img/buttons/touchButtons/whipButton.jpg';
         touchControls.images.fireball.src = 'img/buttons/touchButtons/fireballButton.jpg';
+        touchControls.images.mute.src = 'img/buttons/soundButtonOn.png';      
+        touchControls.images.unmute.src = 'img/buttons/soundButtonOff.png';
         
         setupTouchEvents();
     }
@@ -71,7 +76,7 @@ function setupTouchEvents() {
 
 
 function handleTouch(event, touchType) {
-    if (!touchControls || !world.gameStarted) return;
+    if (!touchControls) return;
     
     const rect = canvas.getBoundingClientRect();
     const touches = event.changedTouches || event.touches;
@@ -80,12 +85,17 @@ function handleTouch(event, touchType) {
         const touchX = (touch.clientX - rect.left) * (canvas.width / rect.width);
         const touchY = (touch.clientY - rect.top) * (canvas.height / rect.height);
         
-        // Prüfen welcher Button berührt wurde
         for (let [buttonName, button] of Object.entries(touchControls.buttons)) {
             if (touchX >= button.x && touchX <= button.x + button.width && 
                 touchY >= button.y && touchY <= button.y + button.height) {
                 
                 if (touchType === 'start') {
+                    if (buttonName === 'mute') {
+                        soundManager.playSound('buttonClick', 0.7);
+                        soundManager.toggleMute();
+                        return; 
+                    }
+                    
                     button.pressed = true;
                     activateButton(buttonName);
                 } else if (touchType === 'end') {
@@ -98,8 +108,10 @@ function handleTouch(event, touchType) {
     
     if (touchType === 'end' && touches.length === 0) {
         for (let [buttonName, button] of Object.entries(touchControls.buttons)) {
-            button.pressed = false;
-            deactivateButton(buttonName);
+            if (buttonName !== 'mute') { 
+                button.pressed = false;
+                deactivateButton(buttonName);
+            }
         }
     }
 };
@@ -151,17 +163,25 @@ function drawTouchControls() {
     const ctx = canvas.getContext('2d');
     
     for (let [buttonName, button] of Object.entries(touchControls.buttons)) {
-        const buttonImage = touchControls.images[buttonName];
-        
-        if (buttonImage.complete) {
-            if (button.pressed) {
-                ctx.globalAlpha = 0.7;
-            } else {
+        // Spezialfall für Mute-Button
+        if (buttonName === 'mute') {
+            const buttonImage = soundManager.isMuted ? 
+                touchControls.images.unmute : touchControls.images.mute;
+            
+            if (buttonImage.complete) {
+                ctx.globalAlpha = button.pressed ? 0.7 : 1;
+                ctx.drawImage(buttonImage, button.x, button.y, button.width, button.height);
                 ctx.globalAlpha = 1;
             }
+        } else {
+            // Standard-Buttons wie bisher
+            const buttonImage = touchControls.images[buttonName];
             
-            ctx.drawImage(buttonImage, button.x, button.y, button.width, button.height);
-            ctx.globalAlpha = 1;
+            if (buttonImage.complete) {
+                ctx.globalAlpha = button.pressed ? 0.7 : 1;
+                ctx.drawImage(buttonImage, button.x, button.y, button.width, button.height);
+                ctx.globalAlpha = 1;
+            }
         }
     }
 };
