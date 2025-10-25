@@ -133,10 +133,8 @@ class World {
             this.statusMana.draw(this.ctx);
             this.rubyCounter.draw(this.ctx, this.rubyCount, this.canvas.width);
             this.fullscreenButton.draw(this.ctx);
-    
-            if (!touchControls || !touchControls.isVisible) {
-                this.muteButton.draw(this.ctx);
-            }
+            this.muteButton.draw(this.ctx);
+            
 
             if (window.drawTouchControls) {
                 window.drawTouchControls();
