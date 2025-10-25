@@ -77,12 +77,8 @@ function handleTouch(event, touchType) {
     const touches = event.changedTouches || event.touches;
     
     for (let touch of touches) {
-        const touchX = (touch.clientX - rect.left) * (canvas.width / rect.width);
-        const touchY = (touch.clientY - rect.top) * (canvas.height / rect.height);
-        const rawX = touch.clientX - rect.left;
-        const rawY = touch.clientY - rect.top;
-        
-        // Prüfe alle Button-Typen nacheinander
+        const { rawX, rawY, touchX, touchY } = calculateTouchCoordinates(touch, rect);
+    
         if (handleMuteButtonTouch(rawX, rawY, touchType)) return;
         if (handleFullscreenButtonTouch(rawX, rawY, touchType)) return;
         if (handleStartScreenButtonsTouch(touchX, touchY, touchType)) return;
@@ -92,10 +88,18 @@ function handleTouch(event, touchType) {
         handleGameControlsTouch(touchX, touchY, touchType);
     }
     
-    // Alle Buttons zurücksetzen wenn Touch endet
     if (touchType === 'end' && touches.length === 0 && world.gameStarted) {
         resetAllGameButtons();
     }
+};
+
+
+function calculateTouchCoordinates(touch, rect) {
+    const touchX = (touch.clientX - rect.left) * (canvas.width / rect.width);
+    const touchY = (touch.clientY - rect.top) * (canvas.height / rect.height);
+    const rawX = touch.clientX - rect.left;
+    const rawY = touch.clientY - rect.top;
+    return { rawX, rawY, touchX, touchY };
 };
 
 
@@ -106,9 +110,9 @@ function handleMuteButtonTouch(rawX, rawY, touchType) {
         return true;
     }
     return false;
-}
+};
 
-// Fullscreen Button (funktioniert überall)
+
 function handleFullscreenButtonTouch(rawX, rawY, touchType) {
     if (world.fullscreenButton.isButtonClicked(rawX, rawY) && touchType === 'start') {
         soundManager.playSound('buttonClick', 0.7);
@@ -116,9 +120,9 @@ function handleFullscreenButtonTouch(rawX, rawY, touchType) {
         return true;
     }
     return false;
-}
+};
 
-// Start Screen Buttons (Play, Imprint, Controls, Character)
+
 function handleStartScreenButtonsTouch(touchX, touchY, touchType) {
     if (!world.gameStarted && !world.imprintVisible && !world.controlsVisible && touchType === 'start') {
         if (world.startScreen.isCharacterClicked(touchX, touchY)) {
@@ -143,9 +147,9 @@ function handleStartScreenButtonsTouch(touchX, touchY, touchType) {
         }
     }
     return false;
-}
+};
 
-// Imprint Screen Back Button
+
 function handleImprintScreenButtonTouch(touchX, touchY, touchType) {
     if (!world.gameStarted && world.imprintVisible && touchType === 'start') {
         if (world.imprintScreen.isBackButtonClicked(touchX, touchY)) {
@@ -155,9 +159,9 @@ function handleImprintScreenButtonTouch(touchX, touchY, touchType) {
         }
     }
     return false;
-}
+};
 
-// Controls Screen Back Button
+
 function handleControlsScreenButtonTouch(touchX, touchY, touchType) {
     if (!world.gameStarted && world.controlsVisible && touchType === 'start') {
         if (world.controlsScreen.isBackButtonClicked(touchX, touchY)) {
@@ -167,9 +171,9 @@ function handleControlsScreenButtonTouch(touchX, touchY, touchType) {
         }
     }
     return false;
-}
+};
 
-// End Screen Menu Button
+
 function handleEndScreenButtonTouch(touchX, touchY, touchType) {
     if (world.gameEnded && touchType === 'start') {
         if (world.endScreen.isButtonClicked(touchX, touchY)) {
@@ -179,9 +183,9 @@ function handleEndScreenButtonTouch(touchX, touchY, touchType) {
         }
     }
     return false;
-}
+};
 
-// Game Controls (nur während des Spiels)
+
 function handleGameControlsTouch(touchX, touchY, touchType) {
     if (!world.gameStarted) return;
     
@@ -198,15 +202,15 @@ function handleGameControlsTouch(touchX, touchY, touchType) {
             }
         }
     }
-}
+};
 
-// Alle Game-Buttons zurücksetzen
+
 function resetAllGameButtons() {
     for (let [buttonName, button] of Object.entries(touchControls.buttons)) {
         button.pressed = false;
         deactivateButton(buttonName);
     }
-}
+};
 
 
 function activateButton(buttonName) {
@@ -229,22 +233,20 @@ function activateButton(buttonName) {
 
 
 function deactivateButton(buttonName) {
-    switch(buttonName) {
-        case 'left':
-            keyboard.LEFT = false;
-            break;
-        case 'right':
-            keyboard.RIGHT = false;
-            break;
-        case 'jump':
-            keyboard.SPACE = false;
-            break;
-        case 'whip':
-            keyboard.W = false;
-            break;
-        case 'fireball':
-            keyboard.S = false;
-            break;
+    if (buttonName === 'left') {
+        keyboard.LEFT = false;
+    }
+    if (buttonName === 'right') {
+        keyboard.RIGHT = false;
+    }
+    if (buttonName === 'jump') {
+        keyboard.SPACE = false;
+    }
+    if (buttonName === 'whip') {
+        keyboard.W = false;
+    }
+    if (buttonName === 'fireball') {
+        keyboard.S = false;
     }
 };
 
