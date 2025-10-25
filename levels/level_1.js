@@ -4,10 +4,7 @@ const level_1 = new level (
         new meleeDemon(),
         new meleeDemon(),
         new meleeDemon(),
-        new meleeDemon(),
   
-        new rangeDemon(),
-        new rangeDemon(),
         new rangeDemon(),
         new rangeDemon(),
         new rangeDemon(),

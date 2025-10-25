@@ -25,9 +25,9 @@ function initTouchControls() {
             buttons: {
                 left: { x: 50, y: canvas.height - 100, width: 80, height: 80, pressed: false },
                 right: { x: 180, y: canvas.height - 100, width: 80, height: 80, pressed: false },
-                jump: { x: 118, y: canvas.height - 200, width: 80, height: 80, pressed: false },
-                whip: { x: canvas.width - 260, y: canvas.height - 130, width: 80, height: 80, pressed: false },
-                fireball: { x: canvas.width - 130, y: canvas.height - 130, width: 80, height: 80, pressed: false }
+                jump: { x: canvas.width - 130, y: canvas.height - 100, width: 80, height: 80, pressed: false },
+                whip: { x: canvas.width - 240, y: canvas.height - 100, width: 80, height: 80, pressed: false },
+                fireball: { x: canvas.width - 130, y: canvas.height - 210, width: 80, height: 80, pressed: false }
             }
         };
         touchControls.images.left.src = 'img/buttons/touchButtons/leftButton.jpg';
