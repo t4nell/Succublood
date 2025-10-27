@@ -6,7 +6,7 @@ class Character extends MovableObject {
         {path:'img/character/idle/idle4.png',width: 68, height: 75, offsetX: -40}, 
         {path:'img/character/idle/idle5.png',width: 68, height: 75, offsetX: -38}, 
         {path:'img/character/idle/idle6.png',width: 68, height: 75, offsetX: -36}
-    ]; 
+    ];
     IMAGES_WALK = [
         {path:'img/character/walk/walk1.png',width: 52, height: 72, offsetX: -34},  
         {path:'img/character/walk/walk2.png',width: 47, height: 72, offsetX: -34},  
@@ -68,108 +68,207 @@ class Character extends MovableObject {
     isMeleeAttacking = false;
     meleeAttackRange = 130;
 
+
     constructor() {
         super().loadImage('img/character/idle/idle1.png');
+        this.loadCharacterImages();
+        this.initializeCharacterPosition();
+        this.applyGravity();
+        this.animate();
+    };
+
+
+    loadCharacterImages() {
         this.loadImages(this.IMAGES_IDLE.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_DEAD.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_ATTACK_RANGE.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_HURT.map(sprite => sprite.path));
         this.loadImages(this.IMAGES_ATTACK_MELEE.map(sprite => sprite.path));
+    };
+
+
+    initializeCharacterPosition() {
         this.x = 200;
         this.y = 500;
         this.offsetX = -34 * this.zoom;
         this.speed = settings.characterSpeed;
-        this.applyGravity();
-        this.animate();
     };
 
 
     drawMeleeHitbox(ctx) {
-        if (!this.isMeleeAttacking || !this.world) return;
-        const { x: hitboxX, y: hitboxY, width: hitboxWidth, height: hitboxHeight } = this.getMeleeHitbox();
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
-        ctx.lineWidth = 1;
+        if (this.isMeleeAttacking) {
+            const hitbox = this.getMeleeHitbox();
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'red';
+            ctx.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+            ctx.stroke();
+        }
     };
 
-    
+
     animate() {
         this.handleCharacterMovement(); 
         this.handleCharacterAnimations();
+        this.handleMeleeAttackInput();
+    };
+
+
+    handleMeleeAttackInput() {
         this.intervals.push(setInterval(() => {
-            if (this.world && this.world.gameStarted && this.world.keyboard.W && !this.isMeleeAttacking && !this.isDying && !this.isHurt()) {
+            if (this.canStartMeleeAttack()) {
                 this.startMeleeAttack();
             }
         }, 1000 / 30));
     };
 
 
+    canStartMeleeAttack() {
+        return this.world && 
+               this.world.gameStarted && 
+               this.world.keyboard.W && 
+               !this.isMeleeAttacking && 
+               !this.isDying && 
+               !this.isHurt();
+    };
+
+
     handleCharacterMovement() {
         this.intervals.push(setInterval(() => {
-            if (this.world && this.world.gameStarted && !this.isDying) {
-                let moving = false;
-                if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
-                    this.moveRight();
-                    moving = true;
-                } else if (this.world.keyboard.RIGHT && this.x === this.world.level.levelEndX) {
-                    this.world.keyboard.RIGHT = false;
-                }
-                if (this.world.keyboard.LEFT && this.x > this.world.level.levelStartX) {
-                    this.moveLeft();
-                    moving = true;
-                } else if (this.world.keyboard.LEFT && this.x === this.world.level.levelStartX) {
-                    this.world.keyboard.LEFT = false;
-                }
-                if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-                    soundManager.playSound('jump', 0.5);
-                    this.jump();
-                }
-                if (
-                    moving && !this.isAboveGround() && !this.isMeleeAttacking && !this.isAttacking && !this.isHurt()
-                ) {
-                    soundManager.playSound('footSteps', 0.5);
-                } else {
-                    if (soundManager.isPlaying('footSteps')) {
-                        soundManager.stopSound('footSteps');
-                    }
-                }
-                this.moveCamera();
+            if (this.shouldMove()) {
+                this.processMovement();
             } else {
-                if (soundManager.isPlaying('footSteps')) {
-                    soundManager.stopSound('footSteps');
-                }
+                this.stopFootsteps();
             }
         }, 1000 / 60));
     };
 
 
+    shouldMove() {
+        return this.world && this.world.gameStarted && !this.isDying;
+    };
+
+
+    processMovement() {
+        let moving = false;
+        moving = this.handleRightMovement() || moving;
+        moving = this.handleLeftMovement() || moving;
+        this.handleJump();
+        this.handleFootsteps(moving);
+        this.moveCamera();
+    };
+
+
+    handleRightMovement() {
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
+            this.moveRight();
+            return true;
+        } else if (this.world.keyboard.RIGHT && this.x === this.world.level.levelEndX) {
+            this.world.keyboard.RIGHT = false;
+        }
+        return false;
+    };
+
+
+    handleLeftMovement() {
+        if (this.world.keyboard.LEFT && this.x > this.world.level.levelStartX) {
+            this.moveLeft();
+            return true;
+        } else if (this.world.keyboard.LEFT && this.x === this.world.level.levelStartX) {
+            this.world.keyboard.LEFT = false;
+        }
+        return false;
+    };
+
+
+    handleJump() {
+        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+            soundManager.playSound('jump', 0.5);
+            this.jump();
+        }
+    };
+
+
+    handleFootsteps(moving) {
+        if (this.shouldPlayFootsteps(moving)) {
+            soundManager.playSound('footSteps', 0.5);
+        } else {
+            this.stopFootsteps();
+        }
+    };
+
+
+    shouldPlayFootsteps(moving) {
+        return moving && 
+               !this.isAboveGround() && 
+               !this.isMeleeAttacking && 
+               !this.isAttacking && 
+               !this.isHurt();
+    };
+
+
+    stopFootsteps() {
+        if (soundManager.isPlaying('footSteps')) {
+            soundManager.stopSound('footSteps');
+        }
+    };
+
+
     handleCharacterAnimations() {
         this.intervals.push(setInterval(() => {
-            if (this.world && this.world.gameStarted && this.isDying) {
-                if (this.currentImage < this.IMAGES_DEAD.length) {
-                    this.animateImages(this.IMAGES_DEAD);
-                    soundManager.playSound('characterDeath', 0.2);
-                } else {
-                    this.deathAnimationComplete = true;
-                }
-            } else if (this.world && this.world.gameStarted && this.isMeleeAttacking) {
-                // Melee Attack hat höchste Priorität (außer Death)
+            if (this.shouldPlayDeathAnimation()) {
+                this.playDeathAnimation();
+            } else if (this.shouldPlayMeleeAttack()) {
                 this.playMeleeAttackAnimation();
-            } else if (this.world && this.world.gameStarted && this.isAttacking && this.MANA > 0) {
-                // Range Attack hat zweithöchste Priorität
+            } else if (this.shouldPlayRangeAttack()) {
                 this.playRangeAttackAnimation();
             } else if (this.isHurt()) {
-                // Hurt Animation nur wenn nicht attackiert wird
-                this.animateImages(this.IMAGES_HURT);
-                soundManager.playSound('characterHurt', 0.4);
-            } else if (this.world && this.world.gameStarted && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
+                this.playHurtAnimation();
+            } else if (this.shouldPlayWalkAnimation()) {
                 this.animateImages(this.IMAGES_WALK);
             } else {
                 this.animateImages(this.IMAGES_IDLE);
             }
         }, 1000 / 10));
+    };
+
+
+    shouldPlayDeathAnimation() {
+        return this.world && this.world.gameStarted && this.isDying;
+    };
+
+
+    playDeathAnimation() {
+        if (this.currentImage < this.IMAGES_DEAD.length) {
+            this.animateImages(this.IMAGES_DEAD);
+            soundManager.playSound('characterDeath', 0.2);
+        } else {
+            this.deathAnimationComplete = true;
+        }
+    };
+
+
+    shouldPlayMeleeAttack() {
+        return this.world && this.world.gameStarted && this.isMeleeAttacking;
+    };
+
+
+    shouldPlayRangeAttack() {
+        return this.world && this.world.gameStarted && this.isAttacking && this.MANA > 0;
+    };
+
+
+    playHurtAnimation() {
+        this.animateImages(this.IMAGES_HURT);
+        soundManager.playSound('characterHurt', 0.4);
+    };
+
+
+    shouldPlayWalkAnimation() {
+        return this.world && 
+               this.world.gameStarted && 
+               (this.world.keyboard.RIGHT || this.world.keyboard.LEFT);
     };
 
 
@@ -187,15 +286,25 @@ class Character extends MovableObject {
 
 
     startRangeAttack() {
-        if (!this.isAttacking && !this.isDying && this.MANA > 0) {
+        if (this.canStartRangeAttack()) {
             this.isAttacking = true;
             this.attackAnimationStarted = false;
             this.currentImage = 0;
-            setTimeout(() => {
-                soundManager.playSound('characterAttackVoice', 0.3);
-                soundManager.playSound('fireball', 0.3);
-            }, 600);
+            this.playRangeAttackSounds();
         }
+    };
+
+
+    canStartRangeAttack() {
+        return !this.isAttacking && !this.isDying && this.MANA > 0;
+    };
+
+
+    playRangeAttackSounds() {
+        setTimeout(() => {
+            soundManager.playSound('characterAttackVoice', 0.3);
+            soundManager.playSound('fireball', 0.3);
+        }, 600);
     };
 
 
@@ -206,33 +315,48 @@ class Character extends MovableObject {
             }
             this.animateImages(this.IMAGES_ATTACK_MELEE);
         } else {
-            this.isMeleeAttacking = false;
-            this.currentImage = 0;
+            this.resetMeleeAttack();
         }
+    };
+
+
+    resetMeleeAttack() {
+        this.isMeleeAttacking = false;
+        this.currentImage = 0;
     };
 
 
     playRangeAttackAnimation() {
         if (this.currentImage < this.IMAGES_ATTACK_RANGE.length) {
-            if (this.currentImage === 6 && !this.attackAnimationStarted) {
-                this.world.spawnFireball();
-                this.attackAnimationStarted = true;
-            }
+            this.handleFireballSpawn();
             this.animateImages(this.IMAGES_ATTACK_RANGE);
         } else {
-            this.isAttacking = false;
-            this.attackAnimationStarted = false;
-            this.currentImage = 0;
+            this.resetRangeAttack();
         }
+    };
+
+
+    handleFireballSpawn() {
+        if (this.currentImage === 6 && !this.attackAnimationStarted) {
+            this.world.spawnFireball();
+            this.attackAnimationStarted = true;
+        }
+    };
+
+
+    resetRangeAttack() {
+        this.isAttacking = false;
+        this.attackAnimationStarted = false;
+        this.currentImage = 0;
     };
 
 
     checkMeleeHit() {
         if (!this.world) return;
-        const { x: hitboxX, y: hitboxY, width: hitboxWidth, height: hitboxHeight } = this.getMeleeHitbox();
-        this.handleEnemyCollision(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+        const hitbox = this.getMeleeHitbox();
+        this.handleEnemyCollision(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
     };
-    
+
 
     getMeleeHitbox() {
         const baseX = this.x + this.offsetX;
@@ -240,35 +364,54 @@ class Character extends MovableObject {
         const hitboxHeight = this.height;
         const hitboxWidth = this.meleeAttackRange;
         const hitboxX = this.otherDirection
-            ? baseX - this.meleeAttackRange                     
-            : baseX + this.meleeAttackRange;                    
+            ? baseX - this.meleeAttackRange
+            : baseX + this.meleeAttackRange;
         return { x: hitboxX, y: hitboxY, width: hitboxWidth, height: hitboxHeight };
     };
 
 
     handleEnemyCollision(hitboxX, hitboxY, hitboxWidth, hitboxHeight) {
         this.world.level.enemies.forEach(enemy => {
-            const enemyLeft = enemy.x + enemy.offsetX;
-            const enemyRight = enemyLeft + enemy.width;
-            const enemyBottom = enemy.y;
-            const enemyTop = enemy.y - enemy.height;
-
-            const overlap =
-                enemyRight > hitboxX &&
-                enemyLeft < hitboxX + hitboxWidth &&
-                enemyBottom > hitboxY &&
-                enemyTop < hitboxY + hitboxHeight;
-
-            if (overlap && !enemy.isDead() && !enemy.isHurt()) {
-                if (enemy instanceof meleeDemon) {
-                    enemy.killMeleeDemon();
-                } else if (enemy instanceof rangeDemon) {
-                    enemy.killRangeDemon();
-                } else if (enemy instanceof Endboss) {
-                    enemy.killEndboss();
-                }
+            if (this.isEnemyHit(enemy, hitboxX, hitboxY, hitboxWidth, hitboxHeight)) {
+                this.damageEnemy(enemy);
             }
         });
     };
+
+
+    isEnemyHit(enemy, hitboxX, hitboxY, hitboxWidth, hitboxHeight) {
+        const enemyBounds = this.getEnemyBounds(enemy);
+        const overlap = this.checkOverlap(enemyBounds, hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+        return overlap && !enemy.isDead() && !enemy.isHurt();
+    };
+
+
+    getEnemyBounds(enemy) {
+        const enemyLeft = enemy.x + enemy.offsetX;
+        const enemyRight = enemyLeft + enemy.width;
+        const enemyBottom = enemy.y;
+        const enemyTop = enemy.y - enemy.height;
+        return { left: enemyLeft, right: enemyRight, top: enemyTop, bottom: enemyBottom };
+    };
+
+
+    checkOverlap(enemyBounds, hitboxX, hitboxY, hitboxWidth, hitboxHeight) {
+        return enemyBounds.right > hitboxX &&
+               enemyBounds.left < hitboxX + hitboxWidth &&
+               enemyBounds.bottom > hitboxY &&
+               enemyBounds.top < hitboxY + hitboxHeight;
+    };
+
+
+    damageEnemy(enemy) {
+        if (enemy instanceof meleeDemon) {
+            enemy.killMeleeDemon();
+        } else if (enemy instanceof rangeDemon) {
+            enemy.killRangeDemon();
+        } else if (enemy instanceof Endboss) {
+            enemy.killEndboss();
+        }
+    };
+
 };
 

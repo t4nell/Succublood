@@ -9,26 +9,35 @@ class BackgroundObject extends MovableObject {
         this.speed = speed;
         this.animate();
     };
+    
 
     animate() {
         this.intervals.push(setInterval(() => {
             if (!this.world || !this.world.keyboard || this.world.character.isDying) {
                 return;
             }
-
-            if (this.world.keyboard.RIGHT) {
-                this.x += (1 - this.speed) * settings.characterSpeed;
-                if (this.world.cameraX < -(this.width + this.x)) {
-                    this.x += this.width * 2;
-                }
-            }
-
-            if (this.world.keyboard.LEFT) {
-                this.x -= (1 - this.speed) * settings.characterSpeed;
-                if (this.world.cameraX > (this.width - this.x)) {
-                    this.x -= this.width * 2;
-                }
-            }
+            this.handleMovementRight();
+            this.handleLeftMovement();
         }, 1000 / 30));
+    };
+
+
+    handleLeftMovement() {
+        if (this.world.keyboard.LEFT) {
+            this.x -= (1 - this.speed) * settings.characterSpeed;
+            if (this.world.cameraX > (this.width - this.x)) {
+                this.x -= this.width * 2;
+            }
+        }
+    };
+
+
+    handleMovementRight() {
+        if (this.world.keyboard.RIGHT) {
+            this.x += (1 - this.speed) * settings.characterSpeed;
+            if (this.world.cameraX < -(this.width + this.x)) {
+                this.x += this.width * 2;
+            }
+        }
     };
 };

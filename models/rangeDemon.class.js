@@ -63,77 +63,162 @@ class rangeDemon extends MovableObject {
 
     constructor() {
         super().loadImage('img/enemies/demon1/walk/walk1.png');
-        this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
-        this.loadImages(this.IMAGES_HURT.map(sprite => sprite.path));
-        this.loadImages(this.IMAGES_DEAD.map(sprite => sprite.path));
-        this.loadImages(this.IMAGES_ATTACK.map(sprite => sprite.path));
-        this.loadImages(this.IMAGES_IDLE.map(sprite => sprite.path));
-        this.x = 1200 + Math.random() * 2000;
-        this.y = 500;
-        this.speed = 0.15 + Math.random() * 1;
+        this.loadDemonImages();
+        this.initializeDemonPosition();
         this.applyGravity();
         this.animate();
     };
 
 
+    loadDemonImages() {
+        this.loadImages(this.IMAGES_WALK.map(sprite => sprite.path));
+        this.loadImages(this.IMAGES_HURT.map(sprite => sprite.path));
+        this.loadImages(this.IMAGES_DEAD.map(sprite => sprite.path));
+        this.loadImages(this.IMAGES_ATTACK.map(sprite => sprite.path));
+        this.loadImages(this.IMAGES_IDLE.map(sprite => sprite.path));
+    };
+
+
+    initializeDemonPosition() {
+        this.x = 1200 + Math.random() * 2000;
+        this.y = 500;
+        this.speed = 0.15 + Math.random() * 1;
+    };
+
+
     animate() {
         this.startMovementControl();  
-        this.updateAnimationState();
+        this.startAnimationControl();
     };
 
 
     startMovementControl() {
         this.intervals.push(setInterval(() => {
-            if (this.world && this.world.gameStarted) {
-                if ((!this.isCharacterInRange() && !this.isAttacking && !this.isDying)) {
-                    this.moveLeft();
-                }
-                if (this.isCharacterInRange() && !this.isAttacking && !this.world.character.isDying) {
-                    this.startAttack();
-                }
+            if (this.shouldMove()) {
+                this.handleMovement();
             }
         }, 1000 / 30));
     };
 
 
-    updateAnimationState() {
+    shouldMove() {
+        return this.world && this.world.gameStarted;
+    };
+
+
+    handleMovement() {
+        if (this.shouldMoveTowardsCharacter()) {
+            this.moveLeft();
+        }
+        if (this.shouldStartAttack()) {
+            this.startAttack();
+        }
+    };
+
+
+    shouldMoveTowardsCharacter() {
+        return !this.isCharacterInRange() && !this.isAttacking && !this.isDying;
+    };
+
+
+    shouldStartAttack() {
+        return this.isCharacterInRange() && 
+               !this.isAttacking && 
+               !this.world.character.isDying;
+    };
+
+
+    startAnimationControl() {
         this.intervals.push(setInterval(() => {
-            if (this.world && this.world.gameStarted && this.isDying) {
-                if (this.currentImage < this.IMAGES_DEAD.length) {
-                    this.speed = 0;
-                    this.animateImages(this.IMAGES_DEAD);
-                }
-            } else if (this.world && this.world.gameStarted && this.isHurt()) {
-                this.speed = 0;
-                if (this.currentImage < this.IMAGES_HURT.length) {
-                    this.animateImages(this.IMAGES_HURT);
-                }
-            } else if (this.world && this.world.gameStarted && this.isAttacking) {
-                this.speed = 0;
-                if (this.currentImage < this.IMAGES_ATTACK.length) {
-                    this.animateImages(this.IMAGES_ATTACK);
-                    if (this.currentImage === 7 && this.isCharacterInRange()) {
-                        soundManager.playSound('rangeDemonAttack', 0.3);
-                        this.shootEnemyProjectile();
-                    }
-                } else {
-                    this.isAttacking = false;
-                    this.currentImage = 0;
-                    if (!this.isCharacterInRange()) {
-                        this.speed = 0.15 + Math.random() * 1;
-                    }
-                }
-            } else if (this.world && this.world.gameStarted && this.isCharacterInRange() && !this.world.character.isDying) {
-                this.speed = 0;
-                this.animateImages(this.IMAGES_IDLE);
-            } else if (this.world && this.world.gameStarted) {
-                this.speed = 0.15 + Math.random() * 1;
-                this.animateImages(this.IMAGES_WALK);
+            if (this.isDying) {
+                this.playDeathAnimation();
+            } else if (this.isHurt()) {
+                this.playHurtAnimation();
+            } else if (this.isAttacking) {
+                this.playAttackAnimation();
+            } else if (this.shouldPlayIdleAnimation()) {
+                this.playIdleAnimation();
+            } else if (this.shouldPlayWalkAnimation()) {
+                this.playWalkAnimation();
             } else {
-                this.speed = 0;
-                this.animateImages(this.IMAGES_IDLE);
+                this.playDefaultIdleAnimation();
             }
         }, 100));
+    };
+
+
+    playDeathAnimation() {
+        if (this.currentImage < this.IMAGES_DEAD.length) {
+            this.speed = 0;
+            this.animateImages(this.IMAGES_DEAD);
+        }
+    };
+
+
+    playHurtAnimation() {
+        this.speed = 0;
+        if (this.currentImage < this.IMAGES_HURT.length) {
+            this.animateImages(this.IMAGES_HURT);
+        }
+    };
+
+
+    playAttackAnimation() {
+        this.speed = 0;
+        if (this.currentImage < this.IMAGES_ATTACK.length) {
+            this.animateImages(this.IMAGES_ATTACK);
+            this.handleAttackFrame();
+        } else {
+            this.resetAttackState();
+        }
+    };
+
+
+    handleAttackFrame() {
+        if (this.currentImage === 7 && this.isCharacterInRange()) {
+            soundManager.playSound('rangeDemonAttack', 0.3);
+            this.shootEnemyProjectile();
+        }
+    };
+
+
+    resetAttackState() {
+        this.isAttacking = false;
+        this.currentImage = 0;
+        if (!this.isCharacterInRange()) {
+            this.speed = 0.15 + Math.random() * 1;
+        }
+    };
+
+
+    shouldPlayIdleAnimation() {
+        return this.world && 
+               this.world.gameStarted && 
+               this.isCharacterInRange() && 
+               !this.world.character.isDying;
+    };
+
+
+    playIdleAnimation() {
+        this.speed = 0;
+        this.animateImages(this.IMAGES_IDLE);
+    };
+
+
+    shouldPlayWalkAnimation() {
+        return this.world && this.world.gameStarted;
+    };
+
+
+    playWalkAnimation() {
+        this.speed = 0.15 + Math.random() * 1;
+        this.animateImages(this.IMAGES_WALK);
+    };
+
+
+    playDefaultIdleAnimation() {
+        this.speed = 0;
+        this.animateImages(this.IMAGES_IDLE);
     };
 
 
@@ -141,19 +226,31 @@ class rangeDemon extends MovableObject {
         this.hit();
         soundManager.playSound('demonHurt', 0.3);
         if (this.isDead()) {
-            soundManager.stopSound('demonHurt');
-            soundManager.playSound('rangeDemonDeath', 0.3);
-            this.world.spawnManaPotion(this.x, this.y);
-            setTimeout(() => {
-                this.world.removeEnemy(this);
-            }, this.IMAGES_DEAD.length * 200);
+            this.handleDemonDeath();
         }
+    };
+
+
+    handleDemonDeath() {
+        soundManager.stopSound('demonHurt');
+        soundManager.playSound('rangeDemonDeath', 0.3);
+        this.world.spawnManaPotion(this.x, this.y);
+        this.removeDemonAfterAnimation();
+    };
+
+
+    removeDemonAfterAnimation() {
+        setTimeout(() => {
+            this.world.removeEnemy(this);
+        }, this.IMAGES_DEAD.length * 200);
     };
 
 
     canAttack() {
         let timeSinceLastAttack = new Date().getTime() - this.lastAttack;
-        return timeSinceLastAttack > this.attackCooldown && !this.isDying && !this.isHurt();
+        return timeSinceLastAttack > this.attackCooldown && 
+               !this.isDying && 
+               !this.isHurt();
     };
 
 
@@ -168,8 +265,9 @@ class rangeDemon extends MovableObject {
 
 
     isCharacterInRange() {
-        if (!this.world || !this.world.character || this.world.character.isDying) return false;
-        
+        if (!this.world || !this.world.character || this.world.character.isDying) {
+            return false;
+        }
         let distance = Math.abs(this.x - this.world.character.x);
         return distance < this.attackRange;
     };
@@ -181,6 +279,5 @@ class rangeDemon extends MovableObject {
             this.world.enemyProjectiles.push(enemyProjectile);
         }
     };
-    
 
 };

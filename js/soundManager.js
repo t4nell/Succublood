@@ -1,72 +1,121 @@
 class SoundManager {
     constructor() {
         this.sounds = {};
-        this.isMuted = localStorage.getItem('gameIsMuted') === 'true';
-    }
+        this.isMuted = this.loadMuteState();
+    };
+
+
+    loadMuteState() {
+        return localStorage.getItem('gameIsMuted') === 'true';
+    };
+
+
+    saveMuteState() {
+        localStorage.setItem('gameIsMuted', this.isMuted.toString());
+    };
+
 
     loadSound(name, path, loop = false) {
         this.sounds[name] = new Audio(path);
         this.sounds[name].preload = 'auto';
-        if (loop || name.includes('Background') || name.includes('background') || name.includes('footSteps')) {
+        if (this.shouldLoop(name, loop)) {
             this.sounds[name].loop = true;
         }
-    }
+    };
+
+
+    shouldLoop(name, loop) {
+        return loop || 
+               name.includes('Background') || 
+               name.includes('background') || 
+               name.includes('footSteps');
+    };
+
 
     playSound(name, volume = 1) {
-        if (this.isMuted) return;
+        if (this.isMuted || !this.sounds[name]) return;
         
-        if (this.sounds[name]) {
-            const audio = this.sounds[name];
-            audio.volume = volume;
-            if (!audio.loop) {
-                audio.currentTime = 0;
-            } else {
-                if (!this.isPlaying(name)) {
-                    audio.play().catch(error => console.log('Sound konnte nicht abgespielt werden:', error));
-                }
-                return;
-            }
-            audio.play().catch(error => {
-                console.log('Sound konnte nicht abgespielt werden:', error);
-            });
+        const audio = this.sounds[name];
+        audio.volume = volume;
+        
+        if (audio.loop) {
+            this.playLoopSound(audio, name);
+        } else {
+            this.playOneShotSound(audio);
         }
-    }
+    };
+
+
+    playLoopSound(audio, name) {
+        if (!this.isPlaying(name)) {
+            audio.play().catch(error => 
+                console.log('Sound konnte nicht abgespielt werden:', error)
+            );
+        }
+    };
+
+
+    playOneShotSound(audio) {
+        audio.currentTime = 0;
+        audio.play().catch(error => 
+            console.log('Sound konnte nicht abgespielt werden:', error)
+        );
+    };
+
 
     isPlaying(name) {
-        const a = this.sounds[name];
-        return !!a && !a.paused;
-    }
+        const audio = this.sounds[name];
+        return !!audio && !audio.paused;
+    };
+
 
     stopSound(name) {
         if (this.sounds[name]) {
             this.sounds[name].pause();
             this.sounds[name].currentTime = 0;
         }
-    }
+    };
+
     
     setMuted(muted) {
         this.isMuted = muted;
-        localStorage.setItem('gameIsMuted', muted.toString());
-    }
+        this.saveMuteState();
+    };
+
 
     toggleMute() {
         this.isMuted = !this.isMuted;
-        localStorage.setItem('gameIsMuted', this.isMuted.toString());
-        
+        this.saveMuteState();
+        this.updateAllSounds();
+    };
+
+
+    updateAllSounds() {
         Object.keys(this.sounds).forEach(name => {
             if (this.isMuted) {
-                if (this.isPlaying(name)) {
-                    this.sounds[name].pause();
-                }
+                this.pauseIfPlaying(name);
             } else {
-                if (this.sounds[name].loop && this.sounds[name].currentTime > 0) {
-                    this.sounds[name].play().catch(error => 
-                        console.log('Sound konnte nicht fortgesetzt werden:', error)
-                    );
-                }
+                this.resumeIfLoop(name);
             }
         });
-    }
+    };
+
+
+    pauseIfPlaying(name) {
+        if (this.isPlaying(name)) {
+            this.sounds[name].pause();
+        }
+    };
+    
+
+    resumeIfLoop(name) {
+        const sound = this.sounds[name];
+        if (sound.loop && sound.currentTime > 0) {
+            sound.play().catch(error => 
+                console.log('Sound konnte nicht fortgesetzt werden:', error)
+            );
+        }
+    };
 }
 
 const soundManager = new SoundManager();

@@ -7,6 +7,7 @@ class ControlsScreen extends DrawableObject {
     buttonY;
     isBackHovered = false;
     
+
     constructor(canvasWidth, canvasHeight) {
         super();
         this.canvasWidth = canvasWidth;
@@ -16,30 +17,36 @@ class ControlsScreen extends DrawableObject {
         this.loadControlsImages();
     };
 
+
     loadControlsImages() {
         this.backButtonImage.src = 'img/buttons/backButton.png';
     };
+
 
     show() {
         this.isVisible = true;
     };
 
+
     hide() {
         this.isVisible = false;
     };
 
+
     draw(ctx) {
         if (!this.isVisible) return;
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
-        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-
+        this.drawBackground(ctx);
         let { contentY, contentX } = this.drawContentArea(ctx);
         this.drawControlsTitle(ctx, contentY);
         this.drawControlsText(ctx, contentY, contentX);
         this.drawBackButton(ctx);
+        this.resetContextSettings(ctx);
+    };
 
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'alphabetic';
+
+    drawBackground(ctx) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
     };
 
 
@@ -48,30 +55,45 @@ class ControlsScreen extends DrawableObject {
         let contentHeight = 500;
         let contentX = (this.canvasWidth - contentWidth) / 2;
         let contentY = (this.canvasHeight - contentHeight) / 2;
-
-        ctx.fillStyle = '#26212bff';
-        ctx.fillRect(contentX, contentY, contentWidth, contentHeight);
-
-        ctx.strokeStyle = '#968344';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(contentX, contentY, contentWidth, contentHeight);
+        this.drawContentBox(ctx, contentX, contentY, contentWidth, contentHeight);
         return { contentY, contentX };
     };
 
 
+    drawContentBox(ctx, contentX, contentY, contentWidth, contentHeight) {
+        ctx.fillStyle = '#26212bff';
+        ctx.fillRect(contentX, contentY, contentWidth, contentHeight);
+        ctx.strokeStyle = '#968344';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(contentX, contentY, contentWidth, contentHeight);
+    };
+
+
     drawControlsTitle(ctx, contentY) {
+        this.setTitleStyle(ctx);
+        this.addTitleShadow(ctx);
+        ctx.fillText('Controls', this.canvasWidth / 2, contentY + 40);
+        this.removeShadow(ctx);
+    };
+
+
+    setTitleStyle(ctx) {
         ctx.font = 'bold 48px antiquityPrint';
         ctx.fillStyle = '#968344';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
+    };
 
+
+    addTitleShadow(ctx) {
         ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
         ctx.shadowOffsetX = 2;
         ctx.shadowOffsetY = 2;
         ctx.shadowBlur = 3;
+    };
 
-        ctx.fillText('Controls', this.canvasWidth / 2, contentY + 40);
 
+    removeShadow(ctx) {
         ctx.shadowColor = 'transparent';
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
@@ -80,12 +102,24 @@ class ControlsScreen extends DrawableObject {
 
 
     drawControlsText(ctx, contentY, contentX) {
+        this.setTextStyle(ctx);
+        const textLines = this.getControlsTextLines();
+        const lineHeight = 28;
+        const startY = contentY + 100;
+        this.renderTextLines(ctx, textLines, contentX, startY, lineHeight);
+    };
+
+
+    setTextStyle(ctx) {
         ctx.font = '16px antiquityPrint';
         ctx.fillStyle = '#968344';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
+    };
 
-        let textLines = [
+
+    getControlsTextLines() {
+        return [
             'Movement:',
             'A - Move Left',
             'D - Move Right',
@@ -100,34 +134,60 @@ class ControlsScreen extends DrawableObject {
             'Collect potions to restore HP/Mana',
             'Collect rubies for points'
         ];
+    };
 
-        let lineHeight = 28;
-        let startY = contentY + 100;
 
+    renderTextLines(ctx, textLines, contentX, startY, lineHeight) {
         textLines.forEach((line, index) => {
-            if (line.includes(':')) {
-                ctx.font = 'bold 18px antiquityPrint';
-            } else {
-                ctx.font = '18px antiquityPrint';
-            }
+            this.setLineFont(ctx, line);
             ctx.fillText(line, contentX + 40, startY + (index * lineHeight) + 20);
         });
     };
 
 
+    setLineFont(ctx, line) {
+        if (line.includes(':')) {
+            ctx.font = 'bold 18px antiquityPrint';
+        } else {
+            ctx.font = '18px antiquityPrint';
+        }
+    };
+
+
     drawBackButton(ctx) {
         if (this.backButtonImage.complete) {
-            if (this.isBackHovered) {
-                let glowIntensity = (Math.sin(Date.now() * 0.004) + 1) / 2;
-                ctx.shadowColor = `rgba(150, 131, 68, ${glowIntensity})`;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 0;
-                ctx.shadowBlur = 15;
-            }
-            ctx.drawImage(this.backButtonImage, this.buttonX, this.buttonY, this.buttonWidth, this.buttonHeight);
-            ctx.shadowColor = 'transparent';
-            ctx.shadowBlur = 0;
+            this.applyHoverEffect(ctx);
+            this.renderBackButton(ctx);
+            this.removeShadow(ctx);
         }
+    };
+
+
+    applyHoverEffect(ctx) {
+        if (this.isBackHovered) {
+            let glowIntensity = (Math.sin(Date.now() * 0.004) + 1) / 2;
+            ctx.shadowColor = `rgba(150, 131, 68, ${glowIntensity})`;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            ctx.shadowBlur = 15;
+        }
+    };
+
+
+    renderBackButton(ctx) {
+        ctx.drawImage(
+            this.backButtonImage, 
+            this.buttonX, 
+            this.buttonY, 
+            this.buttonWidth, 
+            this.buttonHeight
+        );
+    };
+
+
+    resetContextSettings(ctx) {
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
     };
 
 
@@ -142,4 +202,5 @@ class ControlsScreen extends DrawableObject {
                mouseY >= this.buttonY && 
                mouseY <= this.buttonY + this.buttonHeight;
     };
+
 };

@@ -52,15 +52,25 @@ class Endboss extends MovableObject {
 
     constructor() {
         super().loadImage(this.IMAGES_IDLE[0].path);
+        this.loadBossImages();
+        this.initializeBossPosition();
+        this.animate();
+    };
+
+
+    loadBossImages() {
         this.loadImages(this.IMAGES_IDLE.map(img => img.path));
         this.loadImages(this.IMAGES_WALK.map(img => img.path));
         this.loadImages(this.IMAGES_ATTACK.map(img => img.path));
         this.loadImages(this.IMAGES_HURT.map(img => img.path));
         this.loadImages(this.IMAGES_DEAD.map(img => img.path));
+    };
+
+
+    initializeBossPosition() {
         this.x = 5500;
         this.y = 500;
         this.baseY = this.y;
-        this.animate();
     };
 
 
@@ -74,30 +84,65 @@ class Endboss extends MovableObject {
 
     handleBossMovement() {
         this.intervals.push(setInterval(() => {
-            if (!this.isDying) {
-                this.awakeBoss();
-                if (this.isAwakened && !this.isAttacking && !this.isHurt() && !this.isCharacterInAttackRange()) {
-                    this.moveLeft();
-                }
-                if (this.isAwakened && this.isCharacterInAttackRange() && !this.isAttacking && !this.world.character.isDying) {
-                    this.startAttack();
-                }
-            }
+            if (this.shouldStopMovement()) return;
+            this.awakeBoss();
+            this.handleBossWalking();
+            this.handleBossAttacking();
         }, 1000 / 60));
+    };
+
+
+    shouldStopMovement() {
+        return this.isDying;
+    };
+
+
+    handleBossWalking() {
+        if (this.canWalk()) {
+            this.moveLeft();
+        }
+    };
+
+
+    canWalk() {
+        return this.isAwakened && 
+               !this.isAttacking && 
+               !this.isHurt() && 
+               !this.isCharacterInAttackRange();
+    };
+
+
+    handleBossAttacking() {
+        if (this.shouldAttackCharacter()) {
+            this.startAttack();
+        }
+    };
+
+
+    shouldAttackCharacter() {
+        return this.isAwakened && 
+               this.isCharacterInAttackRange() && 
+               !this.isAttacking && 
+               !this.world.character.isDying;
     };
 
 
     startIdleAnimationLoop() {
         this.intervals.push(setInterval(() => {
-            if (!this.isHurt() && !this.isDying && !this.isAttacking) {
+            if (this.canStartIdle()) {
                 this.startIdleAnimation();
             }
         }, 3000));
     };
 
 
+    canStartIdle() {
+        return !this.isHurt() && !this.isDying && !this.isAttacking;
+    };
+
+
     startIdleAnimation() {
-        if (!this.isAnimating && !this.isHurt() && !this.isDying && !this.isAttacking) {
+        if (!this.isAnimating && this.canStartIdle()) {
             this.isAnimating = true;
             this.currentImage = 0;
         }
@@ -107,46 +152,82 @@ class Endboss extends MovableObject {
     updateBossAnimation() {
         this.intervals.push(setInterval(() => {
             if (this.isDying) {
-                if (this.currentImage < this.IMAGES_DEAD.length) {
-                    this.speed = 0;
-                    this.animateImages(this.IMAGES_DEAD);
-                }
+                this.playDeathAnimation();
             } else if (this.isHurt()) {
-                this.speed = 0;
-                if (this.currentImage < this.IMAGES_HURT.length) {
-                    this.animateImages(this.IMAGES_HURT);
-                }
+                this.playHurtAnimation();
             } else if (this.isAttacking) {
-                this.speed = 0;
-                if (this.currentImage < this.IMAGES_ATTACK.length) {
-                    this.animateImages(this.IMAGES_ATTACK);
-                    if (this.currentImage === 11 && this.isCharacterInAttackRange()) {
-                        this.shootBossProjectile();
-                        soundManager.playSound('bossAttack', 0.3);
-                    }
-                } else {
-                    this.isAttacking = false;
-                    this.currentImage = 0;
-                    if (!this.isCharacterInAttackRange()) {
-                        this.speed = this.walkSpeed;
-                    }
-                }
+                this.playAttackAnimation();
             } else if (this.isAnimating) {
-                if (this.currentImage < this.IMAGES_IDLE.length) {
-                    this.animateImages(this.IMAGES_IDLE);
-                } else {
-                    this.isAnimating = false;
-                    this.currentImage = 0;
-                }
-            } else if (this.isAwakened && !this.isCharacterInAttackRange()) {
-                this.speed = this.walkSpeed;
-                this.swapImg(this.IMAGES_WALK[0]);
+                this.playIdleAnimation();
             } else {
-                this.speed = 0;
-                this.swapImg(this.IMAGES_IDLE[0]);
+                this.playDefaultAnimation();
             }
-
         }, 120));
+    };
+
+
+    playDeathAnimation() {
+        if (this.currentImage < this.IMAGES_DEAD.length) {
+            this.speed = 0;
+            this.animateImages(this.IMAGES_DEAD);
+        }
+    };
+
+
+    playHurtAnimation() {
+        this.speed = 0;
+        if (this.currentImage < this.IMAGES_HURT.length) {
+            this.animateImages(this.IMAGES_HURT);
+        }
+    };
+
+
+    playAttackAnimation() {
+        this.speed = 0;
+        if (this.currentImage < this.IMAGES_ATTACK.length) {
+            this.animateImages(this.IMAGES_ATTACK);
+            this.handleAttackFrame();
+        } else {
+            this.resetAttackState();
+        }
+    };
+
+
+    handleAttackFrame() {
+        if (this.currentImage === 11 && this.isCharacterInAttackRange()) {
+            this.shootBossProjectile();
+            soundManager.playSound('bossAttack', 0.3);
+        }
+    };
+
+
+    resetAttackState() {
+        this.isAttacking = false;
+        this.currentImage = 0;
+        if (!this.isCharacterInAttackRange()) {
+            this.speed = this.walkSpeed;
+        }
+    };
+
+
+    playIdleAnimation() {
+        if (this.currentImage < this.IMAGES_IDLE.length) {
+            this.animateImages(this.IMAGES_IDLE);
+        } else {
+            this.isAnimating = false;
+            this.currentImage = 0;
+        }
+    };
+
+
+    playDefaultAnimation() {
+        if (this.isAwakened && !this.isCharacterInAttackRange()) {
+            this.speed = this.walkSpeed;
+            this.swapImg(this.IMAGES_WALK[0]);
+        } else {
+            this.speed = 0;
+            this.swapImg(this.IMAGES_IDLE[0]);
+        }
     };
 
 
@@ -164,22 +245,34 @@ class Endboss extends MovableObject {
         soundManager.playSound('bossHurt', 0.1);
         this.hit();
         if (this.isDead()) {
-            soundManager.stopSound('bossHurt');
-            soundManager.stopSound('bossBackground');
-            soundManager.playSound('bossDeath', 0.1);
-            this.world.spawnHealPotion(this.x - 50, this.y);
-            this.world.spawnHealPotion(this.x + 50, this.y);
-            setTimeout(() => {
-                this.world.spawnManaPotion(this.x, this.y);
-            }, 500);
-            
-            setTimeout(() => {
-                this.world.removeEnemy(this);
-            }, this.IMAGES_DEAD.length * 800);
+            this.handleBossDeath();
         }
     };
 
-    
+
+    handleBossDeath() {
+        soundManager.stopSound('bossHurt');
+        soundManager.stopSound('bossBackground');
+        soundManager.playSound('bossDeath', 0.1);
+        this.spawnDeathLoot();
+        this.removeAfterDeathAnimation();
+    };
+
+
+    spawnDeathLoot() {
+        this.world.spawnHealPotion(this.x - 50, this.y);
+        this.world.spawnHealPotion(this.x + 50, this.y);
+        setTimeout(() => {
+            this.world.spawnManaPotion(this.x, this.y);
+        }, 500);
+    };
+
+
+    removeAfterDeathAnimation() {
+        setTimeout(() => {
+            this.world.removeEnemy(this);
+        }, this.IMAGES_DEAD.length * 800);
+    };
 
 
     isCharacterInTriggerRange() {
@@ -197,7 +290,9 @@ class Endboss extends MovableObject {
 
     canAttack() {
         let timeSinceLastAttack = new Date().getTime() - this.lastAttack;
-        return timeSinceLastAttack > this.attackCooldown && !this.isDying && !this.isHurt();
+        return timeSinceLastAttack > this.attackCooldown && 
+               !this.isDying && 
+               !this.isHurt();
     };
 
 
@@ -222,9 +317,15 @@ class Endboss extends MovableObject {
     awakeBoss() {
         if (!this.isAwakened && this.isCharacterInTriggerRange()) {
             this.isAwakened = true;
-            soundManager.stopSound('gameBackground');
-            soundManager.playSound('bossBackground', 0.2);
+            this.switchToBosMusicssic();
             this.speed = this.walkSpeed;
         }
     };
+
+
+    switchToBossMusic() {
+        soundManager.stopSound('gameBackground');
+        soundManager.playSound('bossBackground', 0.2);
+    };
+
 };

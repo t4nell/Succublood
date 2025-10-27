@@ -6,38 +6,61 @@ let touchControls;
 function init() {
     canvas = document.getElementById('canvas');
     world = new World(canvas, keyboard);
-
     initTouchControls();
 };
 
 
 function initTouchControls() {
-    if (window.innerWidth <= 1024 || 'ontouchstart' in window) {
-        touchControls = {
-            isVisible: true,
-            images: {
-                left: new Image(),
-                right: new Image(),
-                jump: new Image(),
-                whip: new Image(),
-                fireball: new Image()
-            },
-            buttons: {
-                left: { x: 50, y: canvas.height - 100, width: 80, height: 80, pressed: false },
-                right: { x: 180, y: canvas.height - 100, width: 80, height: 80, pressed: false },
-                jump: { x: canvas.width - 130, y: canvas.height - 100, width: 80, height: 80, pressed: false },
-                whip: { x: canvas.width - 240, y: canvas.height - 100, width: 80, height: 80, pressed: false },
-                fireball: { x: canvas.width - 130, y: canvas.height - 210, width: 80, height: 80, pressed: false }
-            }
-        };
-        touchControls.images.left.src = 'img/buttons/touchButtons/leftButton.jpg';
-        touchControls.images.right.src = 'img/buttons/touchButtons/rightButton.jpg';
-        touchControls.images.jump.src = 'img/buttons/touchButtons/jumpButton.jpg';
-        touchControls.images.whip.src = 'img/buttons/touchButtons/whipButton.jpg';
-        touchControls.images.fireball.src = 'img/buttons/touchButtons/fireballButton.jpg';
-        
+    if (shouldShowTouchControls()) {
+        touchControls = createTouchControlsObject();
+        loadTouchButtonImages();
         setupTouchEvents();
     }
+};
+
+
+function shouldShowTouchControls() {
+    return window.innerWidth <= 1024 || 'ontouchstart' in window;
+};
+
+
+function createTouchControlsObject() {
+    return {
+        isVisible: true,
+        images: createTouchImages(),
+        buttons: createTouchButtons()
+    };
+};
+
+
+function createTouchImages() {
+    return {
+        left: new Image(),
+        right: new Image(),
+        jump: new Image(),
+        whip: new Image(),
+        fireball: new Image()
+    };
+};
+
+
+function createTouchButtons() {
+    return {
+        left: { x: 50, y: canvas.height - 100, width: 80, height: 80, pressed: false },
+        right: { x: 180, y: canvas.height - 100, width: 80, height: 80, pressed: false },
+        jump: { x: canvas.width - 130, y: canvas.height - 100, width: 80, height: 80, pressed: false },
+        whip: { x: canvas.width - 240, y: canvas.height - 100, width: 80, height: 80, pressed: false },
+        fireball: { x: canvas.width - 130, y: canvas.height - 210, width: 80, height: 80, pressed: false }
+    };
+};
+
+
+function loadTouchButtonImages() {
+    touchControls.images.left.src = 'img/buttons/touchButtons/leftButton.jpg';
+    touchControls.images.right.src = 'img/buttons/touchButtons/rightButton.jpg';
+    touchControls.images.jump.src = 'img/buttons/touchButtons/jumpButton.jpg';
+    touchControls.images.whip.src = 'img/buttons/touchButtons/whipButton.jpg';
+    touchControls.images.fireball.src = 'img/buttons/touchButtons/fireballButton.jpg';
 };
 
 
@@ -52,14 +75,7 @@ function setupTouchEvents() {
     
     canvas.addEventListener('touchmove', (event) => {
         event.preventDefault();
-        
-        // Scroll im Imprint-Screen
-        if (world.imprintVisible) {
-            const touchCurrentY = event.touches[0].clientY;
-            const deltaY = touchStartY - touchCurrentY;
-            world.imprintScreen.scroll(deltaY * 0.5);
-            touchStartY = touchCurrentY;
-        }
+        handleTouchMove(event, touchStartY);
     });
     
     canvas.addEventListener('touchend', (event) => {
@@ -92,19 +108,24 @@ function handleTouch(event, touchType) {
     
     for (let touch of touches) {
         const { rawX, rawY, touchX, touchY } = calculateTouchCoordinates(touch, rect);
-    
-        if (handleMuteButtonTouch(rawX, rawY, touchType)) return;
-        if (handleFullscreenButtonTouch(rawX, rawY, touchType)) return;
-        if (handleStartScreenButtonsTouch(touchX, touchY, touchType)) return;
-        if (handleImprintScreenButtonTouch(touchX, touchY, touchType)) return;
-        if (handleControlsScreenButtonTouch(touchX, touchY, touchType)) return;
-        if (handleEndScreenButtonTouch(touchX, touchY, touchType)) return;
-        handleGameControlsTouch(touchX, touchY, touchType);
+        if (handleAllTouchButtons(rawX, rawY, touchX, touchY, touchType)) return;
     }
     
     if (touchType === 'end' && touches.length === 0 && world.gameStarted) {
         resetAllGameButtons();
     }
+};
+
+
+function handleAllTouchButtons(rawX, rawY, touchX, touchY, touchType) {
+    if (handleMuteButtonTouch(rawX, rawY, touchType)) return true;
+    if (handleFullscreenButtonTouch(rawX, rawY, touchType)) return true;
+    if (handleStartScreenButtonsTouch(touchX, touchY, touchType)) return true;
+    if (handleImprintScreenButtonTouch(touchX, touchY, touchType)) return true;
+    if (handleControlsScreenButtonTouch(touchX, touchY, touchType)) return true;
+    if (handleEndScreenButtonTouch(touchX, touchY, touchType)) return true;
+    handleGameControlsTouch(touchX, touchY, touchType);
+    return false;
 };
 
 
@@ -139,26 +160,50 @@ function handleFullscreenButtonTouch(rawX, rawY, touchType) {
 
 function handleStartScreenButtonsTouch(touchX, touchY, touchType) {
     if (!world.gameStarted && !world.imprintVisible && !world.controlsVisible && touchType === 'start') {
-        if (world.startScreen.isCharacterClicked(touchX, touchY)) {
-            soundManager.playSound('characterHurt', 0.7);
-            world.startScreen.triggerHurtAnimation();
-            return true;
-        }
-        if (world.startScreen.isButtonClicked(touchX, touchY)) {
-            soundManager.playSound('buttonClick', 0.7);
-            world.startGame();
-            return true;
-        }
-        if (world.startScreen.isImprintButtonClicked(touchX, touchY)) {
-            soundManager.playSound('buttonClick', 0.7);
-            world.showImprint();
-            return true;
-        }
-        if (world.startScreen.isControlsButtonClicked(touchX, touchY)) {
-            soundManager.playSound('buttonClick', 0.7);
-            world.showControls();
-            return true;
-        }
+        if (handleCharacterClick(touchX, touchY)) return true;
+        if (handleStartButtonClick(touchX, touchY)) return true;
+        if (handleImprintButtonClick(touchX, touchY)) return true;
+        if (handleControlsButtonClick(touchX, touchY)) return true;
+    }
+    return false;
+};
+
+
+function handleCharacterClick(touchX, touchY) {
+    if (world.startScreen.isCharacterClicked(touchX, touchY)) {
+        soundManager.playSound('characterHurt', 0.7);
+        world.startScreen.triggerHurtAnimation();
+        return true;
+    }
+    return false;
+};
+
+
+function handleStartButtonClick(touchX, touchY) {
+    if (world.startScreen.isButtonClicked(touchX, touchY)) {
+        soundManager.playSound('buttonClick', 0.7);
+        world.startGame();
+        return true;
+    }
+    return false;
+};
+
+
+function handleImprintButtonClick(touchX, touchY) {
+    if (world.startScreen.isImprintButtonClicked(touchX, touchY)) {
+        soundManager.playSound('buttonClick', 0.7);
+        world.showImprint();
+        return true;
+    }
+    return false;
+};
+
+
+function handleControlsButtonClick(touchX, touchY) {
+    if (world.startScreen.isControlsButtonClicked(touchX, touchY)) {
+        soundManager.playSound('buttonClick', 0.7);
+        world.showControls();
+        return true;
     }
     return false;
 };
@@ -204,17 +249,26 @@ function handleGameControlsTouch(touchX, touchY, touchType) {
     if (!world.gameStarted) return;
     
     for (let [buttonName, button] of Object.entries(touchControls.buttons)) {
-        if (touchX >= button.x && touchX <= button.x + button.width && 
-            touchY >= button.y && touchY <= button.y + button.height) {
-            
-            if (touchType === 'start') {
-                button.pressed = true;
-                activateButton(buttonName);
-            } else if (touchType === 'end') {
-                button.pressed = false;
-                deactivateButton(buttonName);
-            }
+        if (isTouchInsideButton(touchX, touchY, button)) {
+            updateButtonState(buttonName, button, touchType);
         }
+    }
+};
+
+
+function isTouchInsideButton(touchX, touchY, button) {
+    return touchX >= button.x && touchX <= button.x + button.width && 
+           touchY >= button.y && touchY <= button.y + button.height;
+};
+
+
+function updateButtonState(buttonName, button, touchType) {
+    if (touchType === 'start') {
+        button.pressed = true;
+        activateButton(buttonName);
+    } else if (touchType === 'end') {
+        button.pressed = false;
+        deactivateButton(buttonName);
     }
 };
 
@@ -271,13 +325,18 @@ function drawTouchControls() {
     const ctx = canvas.getContext('2d');
     
     for (let [buttonName, button] of Object.entries(touchControls.buttons)) {
-        const buttonImage = touchControls.images[buttonName];
-        
-        if (buttonImage.complete) {
-            ctx.globalAlpha = button.pressed ? 0.7 : 1;
-            ctx.drawImage(buttonImage, button.x, button.y, button.width, button.height);
-            ctx.globalAlpha = 1;
-        }
+        drawTouchButton(ctx, buttonName, button);
+    }
+};
+
+
+function drawTouchButton(ctx, buttonName, button) {
+    const buttonImage = touchControls.images[buttonName];
+    
+    if (buttonImage.complete) {
+        ctx.globalAlpha = button.pressed ? 0.7 : 1;
+        ctx.drawImage(buttonImage, button.x, button.y, button.width, button.height);
+        ctx.globalAlpha = 1;
     }
 };
 
@@ -328,6 +387,4 @@ window.addEventListener('keyup', (event) => {
     }
 });
 
-
-// Globale Funktion für World-Klasse
 window.drawTouchControls = drawTouchControls;
