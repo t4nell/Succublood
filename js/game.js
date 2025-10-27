@@ -42,10 +42,24 @@ function initTouchControls() {
 
 
 function setupTouchEvents() {
-    // Touch Events
+    let touchStartY = 0;
+    
     canvas.addEventListener('touchstart', (event) => {
         event.preventDefault();
+        touchStartY = event.touches[0].clientY;
         handleTouch(event, 'start');
+    });
+    
+    canvas.addEventListener('touchmove', (event) => {
+        event.preventDefault();
+        
+        // Scroll im Imprint-Screen
+        if (world.imprintVisible) {
+            const touchCurrentY = event.touches[0].clientY;
+            const deltaY = touchStartY - touchCurrentY;
+            world.imprintScreen.scroll(deltaY * 0.5);
+            touchStartY = touchCurrentY;
+        }
     });
     
     canvas.addEventListener('touchend', (event) => {

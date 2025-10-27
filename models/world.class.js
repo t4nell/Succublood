@@ -308,6 +308,14 @@ class World {
             }
             this.canvas.style.cursor = 'default';
         });
+        
+        // Wheel-Event für Scroll im Imprint-Screen
+        this.canvas.addEventListener('wheel', (event) => {
+            if (this.imprintVisible) {
+                event.preventDefault();
+                this.imprintScreen.scroll(event.deltaY * 0.5);
+            }
+        });
     };
 
 
